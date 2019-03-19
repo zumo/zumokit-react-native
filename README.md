@@ -34,15 +34,6 @@
       compile project(':react-native-zumo-kit')
   	```
 
-#### Windows
-[Read it! :D](https://github.com/ReactWindows/react-native)
-
-1. In Visual Studio add the `RNZumoKit.sln` in `node_modules/react-native-zumo-kit/windows/RNZumoKit.sln` folder to their solution, reference from their app.
-2. Open up your `MainPage.cs` app
-  - Add `using Zumo.Kit.RNZumoKit;` to the usings at the top of the file
-  - Add `new RNZumoKitPackage()` to the `List<IReactPackage>` returned by the `Packages` method
-
-
 ## Usage
 ```javascript
 import RNZumoKit from 'react-native-zumo-kit';
