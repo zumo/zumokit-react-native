@@ -11,37 +11,33 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 
+import com.blockstar.zumokit.Currency;
+import com.blockstar.zumokit.Keystore;
+
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
 
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
-    this.reactContext = reactContext;
-  }
-
-  private WritableMap hello(String name) {
-    WritableMap map = Arguments.createMap();
     
-    Date date = new Date(System.currentTimeMillis());
-    SimpleDateFormat sdf;
-    sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-    sdf.setTimeZone(TimeZone.getTimeZone("CET"));
-    String timestamp = sdf.format(date);
+    this.reactContext = reactContext;
 
-    map.putString("name", name);
-    map.putString("timestamp", timestamp);
+    Keystore newKeystore = new Keystore("c6800133-79b2-44d8-b5e8-168a04652886", Currency.ETH,
+      "7357589f8e367c2c31f51242fb77b350a11830f3", "keystore_json");
 
-    return map;
   }
 
   @ReactMethod
-  public void hello(String name, Promise promise) {
-    promise.resolve(this.hello(name));
+  public void initialize() {
+
+    // THis method is callable from the JS side.
+
   }
 
   @Override
   public String getName() {
     return "RNZumoKit";
   }
+
 }
