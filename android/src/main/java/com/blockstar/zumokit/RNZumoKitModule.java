@@ -34,15 +34,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // Abstracting this out into a method so it's not called before we need it.
     // Ultimately this will have URL and keys like the current JS implementation.
 
-    // String dbPath = this.reactContext
-    //   .getFilesDir()
-    //   .getAbsolutePath();
+     String dbPath = this.reactContext
+       .getFilesDir()
+       .getAbsolutePath();
 
-    // HttpImpl httpImpl = new AndroidHttp();
+     HttpImpl httpImpl = new AndroidHttp();
 
-    // this.zumoCore = ZumoCore.init(dbPath, httpImpl);
-    // this.zumoStore = this.zumoCore.store();
-    // this.zumoState = zumoStore.getState();
+     this.zumoCore = ZumoCore.init(dbPath, httpImpl);
+     this.zumoStore = this.zumoCore.store();
+     this.zumoState = zumoStore.getState();
 
   }
 
