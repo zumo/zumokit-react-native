@@ -1,5 +1,5 @@
 
-package com.blockstar.zumokit;
+package com.zumokit.reactnative;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.blockstar.zumokit;
+package com.zumokit.reactnative;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -13,6 +13,8 @@ import com.blockstar.zumokit.Store;
 import com.blockstar.zumokit.State;
 import com.blockstar.zumokit.Currency;
 import com.blockstar.zumokit.Keystore;
+import com.blockstar.zumokit.AndroidHttp;
+import com.blockstar.zumokit.HttpImpl;
 
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
@@ -40,9 +42,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
      HttpImpl httpImpl = new AndroidHttp();
 
-     this.zumoCore = ZumoCore.init(dbPath, httpImpl);
-     this.zumoStore = this.zumoCore.store();
-     this.zumoState = zumoStore.getState();
+    //  this.zumoCore = ZumoCore.init(dbPath, httpImpl);
+    //  this.zumoStore = this.zumoCore.store();
+    //  this.zumoState = zumoStore.getState();
 
   }
 
