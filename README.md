@@ -47,6 +47,26 @@ import { ZKUtility, ZKAPI } from 'react-native-zumo-kit';
 
 This is the core class that offers the most interaction with the Zumo network and will be how a wallet is created or retreived.
 
+#### Initialisation
+
+The first step in getting ZumoKit integrated into your app is initialising it. Using the credentials provided to you by Zumo, you can use the `ZumoKit.init()` method do get started.
+
+You'll need the following:
+
+- `apiKey`
+- `appId`
+- `apiUrl`
+
+```javascript
+ZumoKit.init({
+	apiKey: 'abc123456789defhij',
+	appId: '12a3456-92de-45gh-0000-2d451a54111',
+	apiUrl: 'https://zumokit.provider.com'
+});
+```
+
+#### Wallet Creation
+
 ### `ZKUtility`
 
 The `ZKUtility` class offers a few helpful methods that will help fully integrate ZumoKit into your app.
