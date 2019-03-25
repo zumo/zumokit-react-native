@@ -83,9 +83,16 @@ export default class Transaction {
     note;
 
     constructor(json) {
-        if(!json) return;
+        if(!json) throw 'JSON required to construct a Transaction.';
 
-
+        if(json.from) this.fromAddress = json.from;
+        if(json.to) this.toAddress = json.to;
+        if(json.hash) this.hash = json.hash;
+        if(json.timeStamp) this.timestamp = parseInt(json.timeStamp);
+        if(json.txreceipt_status) this.status = json.txreceipt_status;
+        if(json.value) this.weiValue = json.value;
+        if(json.gasPrice) this.gasPrice = json.gasPrice;
+        if(json.gasUsed) this.gasUsed = json.gasUsed;
     }
 
 }

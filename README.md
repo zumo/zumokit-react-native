@@ -75,4 +75,9 @@ The `ZKUtility` class offers a few helpful methods that will help fully integrat
 
 You'll need to interface with the Zumo API to fully integrate ZumoKit. There are a few methods that the `ZKAPI` class offer that can help with this.
 
-  
+## Models
+
+There are a few models that are provided by ZumoKit that represent various structures on the API and blockchain.
+
+- Transaction
+- Wallet
