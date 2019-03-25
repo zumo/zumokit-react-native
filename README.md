@@ -35,10 +35,24 @@
   	```
 
 ## Usage
-```javascript
-import RNZumoKit from 'react-native-zumo-kit';
 
-// TODO: What to do with the module?
-RNZumoKit;
+ZumoKit provides three core classes that offer a variety of methods when interacting with the Zumo network. The classes can be imported into your codebase using the following:
+
+```javascript
+import ZumoKit from 'react-native-zumo-kit';
+import { ZKUtility, ZKAPI } from 'react-native-zumo-kit';
 ```
+
+### `ZumoKit`
+
+This is the core class that offers the most interaction with the Zumo network and will be how a wallet is created or retreived.
+
+### `ZKUtility`
+
+The `ZKUtility` class offers a few helpful methods that will help fully integrate ZumoKit into your app.
+
+### `ZKAPI`
+
+You'll need to interface with the Zumo API to fully integrate ZumoKit. There are a few methods that the `ZKAPI` class offer that can help with this.
+
   
