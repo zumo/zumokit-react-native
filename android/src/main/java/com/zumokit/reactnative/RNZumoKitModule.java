@@ -28,12 +28,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     super(reactContext);
 
     this.reactContext = reactContext;
-
-    this.initialize();
   }
 
   @ReactMethod
-  public void initialize() {
+  public void init() {
 
     // Abstracting this out into a method so it's not called before we need it.
     // Ultimately this will have URL and keys like the current JS implementation.
