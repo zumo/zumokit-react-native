@@ -15,6 +15,7 @@ import com.blockstar.zumokit.Currency;
 import com.blockstar.zumokit.Keystore;
 import com.blockstar.zumokit.AndroidHttp;
 import com.blockstar.zumokit.HttpImpl;
+import com.blockstar.zumokit.WalletManagement;
 
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
@@ -41,6 +42,24 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.zumoStore = zumoKit.store();
     this.zumoState = zumoStore.getState();
     
+  }
+
+  // - Wallet Management
+
+  @ReactMethod
+  public void createWallet(String password, Integer mnemonicCount, Promise promise) {
+    
+    WalletManagement wm = this.zumoKit.walletManagement();
+    String mnemonic = wm.generateMnemonic(mnemonicCount);
+    
+    Keystore keystore = wm.createWallet(Currency.ETH, password, mnemonic);
+    boolean unlockedStatus = wm.unlockWallet(keystore, password);
+
+    WritableMap map = Arguments.createMap();
+    map.putString("mnemonic", mnemonic);
+
+    promise.resolve(map);
+
   }
 
   @Override
