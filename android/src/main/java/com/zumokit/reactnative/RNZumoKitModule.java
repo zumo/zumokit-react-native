@@ -49,15 +49,26 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void createWallet(String password, Integer mnemonicCount, Promise promise) {
     
+    // Generate a mnemonic phrase.
     WalletManagement wm = this.zumoKit.walletManagement();
     String mnemonic = wm.generateMnemonic(mnemonicCount);
     
+    // Create the keystore and instantly unlock it so it can be used.
     Keystore keystore = wm.createWallet(Currency.ETH, password, mnemonic);
     boolean unlockedStatus = wm.unlockWallet(keystore, password);
 
+    // Create a map to resolve the promise
     WritableMap map = Arguments.createMap();
     map.putString("mnemonic", mnemonic);
 
+    // Add some idems from the keystore to a writeable map.
+    // The map is automatically translated into a JS object.
+    WritableMap ksMap = Arguments.createMap();
+    ksMap.putString("id", keystore.getId());
+    ksMap.putString("address", keystore.getAddress());
+    map.putMap("keystore", ksMap);
+
+    // Resolve the promise if everything was okay.
     promise.resolve(map);
 
   }
