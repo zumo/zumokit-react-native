@@ -31,7 +31,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void initialize() {
+  public void init() {
 
     String dbPath = this.reactContext
       .getFilesDir()

@@ -1,6 +1,5 @@
+import ZumoKit from './src/ZumoKit';
+export default ZumoKit;
 
-import { NativeModules } from 'react-native';
-
-const { RNZumoKit } = NativeModules;
-
-export default RNZumoKit;
+export { default as ZKAPI } from './src/ZKAPI';
+export { default as ZKUtility } from './src/ZKUtility';
