@@ -1,3 +1,4 @@
+import Wallet from './models/Wallet';
 import { NativeModules } from 'react-native';
 const { RNZumoKit } = NativeModules;
 
@@ -18,9 +19,21 @@ class ZumoKit {
         RNZumoKit.init();
     }
 
+    /**
+     * Creates a new ETH wallet.
+     *
+     * @param {string} password
+     * @param {number} nmemonicCount
+     * @returns
+     * @memberof ZumoKit
+     */
     async createWallet(password, nmemonicCount) {
-        const response = await RNZumoKit.createWallet(password, nmemonicCount);
-        console.log(response);
+        const { mnemonic, keystore } = await RNZumoKit.createWallet(password, nmemonicCount);
+
+        return {
+            mnemonic,
+            wallet: new Wallet(keystore)
+        };
     }
 
 }
