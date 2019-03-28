@@ -18,6 +18,11 @@ class ZumoKit {
         RNZumoKit.init();
     }
 
+    async createWallet(password, nmemonicCount) {
+        const response = await RNZumoKit.createWallet(password, nmemonicCount);
+        console.log(response);
+    }
+
 }
 
 export default new ZumoKit();

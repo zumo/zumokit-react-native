@@ -26,4 +26,19 @@ export default class Wallet {
         
     }
 
+    /**
+     * Creates a transaction to the provided address.
+     *
+     * @param {*} amount
+     * @param {*} address
+     * @memberof Wallet
+     */
+    async createTransaction(amount, address) {
+
+    }
+
+    async sendTransaction(transaction) {
+        
+    }
+
 }
