@@ -7,6 +7,7 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableArray;
 
 import com.blockstar.zumokit.ZumoKit;
 import com.blockstar.zumokit.Store;
@@ -17,13 +18,13 @@ import com.blockstar.zumokit.AndroidHttp;
 import com.blockstar.zumokit.HttpImpl;
 import com.blockstar.zumokit.WalletManagement;
 
+import java.util.ArrayList;
+
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
 
   private ZumoKit zumoKit;
-  private Store zumoStore;
-  private State zumoState;
 
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -39,8 +40,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .getAbsolutePath();
 
     this.zumoKit = new ZumoKit(dbPath);
-    this.zumoStore = zumoKit.store();
-    this.zumoState = zumoStore.getState();
     
   }
 
@@ -70,6 +69,29 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     // Resolve the promise if everything was okay.
     promise.resolve(map);
+
+  }
+
+  @ReactMethod
+  public void getWallets(Promise promise) {
+    
+    // Fetch the keystores from the state
+    State state = this.zumoKit.store().getState();
+    ArrayList<Keystore> keystores = state.getKeystores();
+
+    // Create a map to resolve the promise
+    WritableArray response = Arguments.createArray();
+
+    // Loop through the keystores and covert to maps.
+    for (Keystore keystore : keystores) {
+      WritableMap map = Arguments.createMap();
+      map.putString("id", keystore.getId());
+      map.putString("address", keystore.getAddress());
+      response.pushMap(map);
+    }
+
+    // Resolve the promise with the array
+    promise.resolve(response);
 
   }
 
