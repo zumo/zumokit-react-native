@@ -95,6 +95,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  @ReactMethod
+  public void unlockWallet(String walletId, String password, Promise promise) {
+    
+  }
+
   @Override
   public String getName() {
     return "RNZumoKit";

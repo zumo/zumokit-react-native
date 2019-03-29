@@ -36,6 +36,17 @@ class ZumoKit {
         };
     }
 
+    /**
+     * Loads any wallets saved within the keystore.
+     *
+     * @returns
+     * @memberof ZumoKit
+     */
+    async getWallets() {
+        const response = await RNZumoKit.getWallets();
+        return response.map((keystore) => new Wallet(keystore));
+    }
+
 }
 
 export default new ZumoKit();
