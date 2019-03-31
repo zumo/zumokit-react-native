@@ -17,6 +17,7 @@ import com.blockstar.zumokit.Keystore;
 import com.blockstar.zumokit.AndroidHttp;
 import com.blockstar.zumokit.HttpImpl;
 import com.blockstar.zumokit.WalletManagement;
+import com.blockstar.zumokit.BlockchainCallback;
 
 import java.util.ArrayList;
 
@@ -117,6 +118,34 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .unlockWallet(keystore, password);
 
     promise.resolve(unlockedStatus);
+
+  }
+
+  // - Transactions
+
+  @ReactMethod
+  public void sendTransaction(String walletId, String address, String amount, Promise promise) {
+
+    // Fetch the keystore from the store
+    Store store = this.zumoKit.store();
+    Keystore keystore = store.getKeystore(walletId);
+
+    // Get the wallet management instance
+    WalletManagement wm = this.zumoKit.walletManagement();
+
+    wm.sendTransaction(keystore, address, amount, "myPayload", new BlockchainCallback() {
+      
+      @Override
+      public void onError(String error) {
+        promise.reject(error);
+      }
+
+      @Override
+      public void onSuccess(String response) {
+        promise.resolve(response);
+      }
+
+    });
 
   }
 

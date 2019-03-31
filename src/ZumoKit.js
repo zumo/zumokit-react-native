@@ -47,15 +47,6 @@ class ZumoKit {
         return response.map((keystore) => new Wallet(keystore));
     }
 
-    /**
-     * Unlocks the wallet with the password provided.
-     *
-     * @param {string} password
-     * @returns
-     * @memberof ZumoKit
-     */
-    unlockWallet = RNZumoKit.unlockWallet;
-
 }
 
 export default new ZumoKit();

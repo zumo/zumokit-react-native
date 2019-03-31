@@ -1,4 +1,5 @@
-import ZumoKit from '../ZumoKit';
+import { NativeModules } from 'react-native';
+const { RNZumoKit } = NativeModules;
 
 /**
  * Represents a wallet on the blockchain/Zumo network.
@@ -43,7 +44,7 @@ export default class Wallet {
      * @memberof Wallet
      */
     async unlock(password) {
-        const status = await ZumoKit.unlockWallet(this.id, password);
+        const status = await RNZumoKit.unlockWallet(this.id, password);
         this.unlocked = status;
 
         if(!status) throw 'Wallet could not be unlocked. Password could be incorrect.';
@@ -64,19 +65,21 @@ export default class Wallet {
     // - TRANSACTIONS
 
     async getTransactions() {
-        
+
     }
 
     /**
      * Sends a transaction of the given amount to the address provided.
      *
-     * @param {number} amount
      * @param {string} address
+     * @param {number} amount
      * @memberof Wallet
      */
-    async sendTransaction(amount, address) {
+    async sendTransaction(address, amount) {
         if(!this.unlocked) throw 'Wallet not unlocked.';
 
+        const status = await RNZumoKit.sendTransaction(this.id, address, `${amount}`);
+        console.log(status);
     }
 
 }
