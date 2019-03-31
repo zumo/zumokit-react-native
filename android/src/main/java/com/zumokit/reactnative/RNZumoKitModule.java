@@ -39,8 +39,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .getFilesDir()
       .getAbsolutePath();
 
-    this.zumoKit = new ZumoKit(dbPath);
+    String txServiceUrl = "wss://4413eb50.ngrok.io";
     
+    this.zumoKit = new ZumoKit(dbPath, txServiceUrl);
+
   }
 
   // - Wallet Management
@@ -65,6 +67,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WritableMap ksMap = Arguments.createMap();
     ksMap.putString("id", keystore.getId());
     ksMap.putString("address", keystore.getAddress());
+    ksMap.putBoolean("unlocked", keystore.getUnlocked());
     map.putMap("keystore", ksMap);
 
     // Resolve the promise if everything was okay.
@@ -87,6 +90,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       WritableMap map = Arguments.createMap();
       map.putString("id", keystore.getId());
       map.putString("address", keystore.getAddress());
+      map.putBoolean("unlocked", keystore.getUnlocked());
       response.pushMap(map);
     }
 
@@ -98,6 +102,22 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void unlockWallet(String walletId, String password, Promise promise) {
     
+    // Fetch the keystore from the store
+    Store store = this.zumoKit.store();
+    Keystore keystore = store.getKeystore(walletId);
+
+    if(keystore == null) {
+      promise.reject("A wallet with that ID was not found.");
+      return;
+    }
+
+    boolean unlockedStatus = this
+      .zumoKit
+      .walletManagement()
+      .unlockWallet(keystore, password);
+
+    promise.resolve(unlockedStatus);
+
   }
 
   @Override

@@ -1,3 +1,5 @@
+import ZumoKit from '../ZumoKit';
+
 /**
  * Represents a wallet on the blockchain/Zumo network.
  *
@@ -20,11 +22,33 @@ export default class Wallet {
      */
     address;
 
+    /**
+     * Whether the wallet is locked or unlocked.
+     *
+     * @memberof Wallet
+     */
+    unlocked;
+
     constructor(json) {
         if(!json) throw 'JSON required to construct a Wallet.';
 
         this.address = json.address;
         this.id = json.id;
+        this.unlocked = json.unlocked;
+    }
+
+    /**
+     * Unlocks the wallet to enable other methods.
+     *
+     * @memberof Wallet
+     */
+    async unlock(password) {
+        const status = await ZumoKit.unlockWallet(this.id, password);
+        this.unlocked = status;
+
+        if(!status) throw 'Wallet could not be unlocked. Password could be incorrect.';
+
+        return status;
     }
 
     /**
@@ -33,22 +57,26 @@ export default class Wallet {
      * @memberof Wallet
      */
     async getBalance() {
+        if(!this.unlocked) throw 'Wallet not unlocked.';
+        
+    }
+
+    // - TRANSACTIONS
+
+    async getTransactions() {
         
     }
 
     /**
-     * Creates a transaction to the provided address.
+     * Sends a transaction of the given amount to the address provided.
      *
-     * @param {*} amount
-     * @param {*} address
+     * @param {number} amount
+     * @param {string} address
      * @memberof Wallet
      */
-    async createTransaction(amount, address) {
+    async sendTransaction(amount, address) {
+        if(!this.unlocked) throw 'Wallet not unlocked.';
 
-    }
-
-    async sendTransaction(transaction) {
-        
     }
 
 }
