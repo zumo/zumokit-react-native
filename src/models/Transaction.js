@@ -86,6 +86,8 @@ export default class Transaction {
     constructor(json) {
         if(!json) throw 'JSON required to construct a Transaction.';
 
+        console.log(json);
+
         if(json.from) this.fromAddress = json.from;
         if(json.to) this.toAddress = json.to;
         if(json.hash) this.hash = json.hash;
@@ -94,8 +96,8 @@ export default class Transaction {
         if(json.value) this.value = json.value;
 
         // Not currently implemented!
-        if(json.gasPrice) this.gasPrice = json.gasPrice;
-        if(json.gasUsed) this.gasUsed = json.gasUsed;
+        if(json.gas_price) this.gasPrice = json.gas_price;
+        if(json.gas_used) this.gasUsed = json.gas_used;
     }
 
 }

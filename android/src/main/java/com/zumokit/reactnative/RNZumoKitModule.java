@@ -17,7 +17,8 @@ import com.blockstar.zumokit.Keystore;
 import com.blockstar.zumokit.AndroidHttp;
 import com.blockstar.zumokit.HttpImpl;
 import com.blockstar.zumokit.WalletManagement;
-import com.blockstar.zumokit.BlockchainCallback;
+import com.blockstar.zumokit.SendTransactionCallback;
+import com.blockstar.zumokit.Transaction;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -137,36 +138,41 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WalletManagement wm = this.zumoKit.walletManagement();
 
     // Get a timestamp for when the transaction was sent
-    String timestamp = this.getTimestamp();
+    RNZumoKitModule module = this;
 
-    wm.sendTransaction(keystore, address, amount, "myPayload", new BlockchainCallback() {
+    wm.sendTransaction(keystore, address, amount, "myPayload", new SendTransactionCallback() {
       
       @Override
-      public void onError(String error) {
-        promise.reject(error);
+      public void onError(String message, Transaction txn) {
+        promise.reject(message);
       }
 
       @Override
-      public void onSuccess(String response) {
+      public void onSuccess(Transaction txn) {
+        
         WritableMap map = Arguments.createMap();
 
-        map.putString("value", amount);
-        map.putString("hash", response);
-        map.putString("status", "PENDING");
-        map.putString("to", address);
-        map.putString("from", keystore.getAddress());
-        map.putString("timestamp", timestamp);
+        map.putString("value", txn.getAmount());
+        map.putString("hash", txn.getHash());
+        map.putString("status", txn.getStatus().name());
+        map.putString("to", txn.getToAddress());
+        map.putString("from", txn.getFromAddress());
+        map.putString("timestamp", module.getTimestamp(txn.getTimestamp()));
+        map.putString("gas_price", txn.getGasPrice());
 
         promise.resolve(map);
+
       }
 
     });
 
   }
 
-  private String getTimestamp() {
+  // HELPERS
+
+  private String getTimestamp(Long epoch) {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
-    return sdf.format(new Date());
+    return sdf.format(new Date(epoch));
   }
 
   @Override
