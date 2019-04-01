@@ -65,8 +65,15 @@ export default class Wallet {
 
     // - TRANSACTIONS
 
+    /**
+     * Loads the transactions that are to/from the wallet.
+     *
+     * @returns
+     * @memberof Wallet
+     */
     async getTransactions() {
-
+        const response = await RNZumoKit.getTransactions(this.id);
+        return response.map((json) => new Transaction(json));
     }
 
     /**

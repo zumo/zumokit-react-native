@@ -149,22 +149,39 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onSuccess(Transaction txn) {
-        
-        WritableMap map = Arguments.createMap();
-
-        map.putString("value", txn.getAmount());
-        map.putString("hash", txn.getHash());
-        map.putString("status", txn.getStatus().name());
-        map.putString("to", txn.getToAddress());
-        map.putString("from", txn.getFromAddress());
-        map.putString("timestamp", module.getTimestamp(txn.getTimestamp()));
-        map.putString("gas_price", txn.getGasPrice());
-
+        WritableMap map = module.getMap(txn);
         promise.resolve(map);
-
       }
 
     });
+
+  }
+
+  @ReactMethod
+  public void getTransactions(String walletId, Promise promise) {
+
+    // Load the wallet from the store
+    Store store = this.zumoKit.store();
+    Keystore keystore = store.getKeystore(walletId);
+    String address = keystore.getAddress();
+
+    // Load the the transactions from the state
+    State state = store.getState();
+    ArrayList<Transaction> transactions = state.getTransactions();
+
+    // Create an array for the response
+    WritableArray response = Arguments.createArray();
+
+    // Loop through the transactions looking for address matches
+    for (Transaction txn : transactions) {
+      if(txn.getToAddress() == address || txn.getFromAddress() == address) {
+        WritableMap map = this.getMap(txn);
+        response.pushMap(map);
+      }
+    }
+
+    // Resolve the promise with our response array
+    promise.resolve(response);
 
   }
 
@@ -173,6 +190,20 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   private String getTimestamp(Long epoch) {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
     return sdf.format(new Date(epoch));
+  }
+
+  private WritableMap getMap(Transaction txn) {
+    WritableMap map = Arguments.createMap();
+
+    map.putString("value", txn.getAmount());
+    map.putString("hash", txn.getHash());
+    map.putString("status", txn.getStatus().name());
+    map.putString("to", txn.getToAddress());
+    map.putString("from", txn.getFromAddress());
+    map.putString("timestamp", this.getTimestamp(txn.getTimestamp()));
+    map.putString("gas_price", txn.getGasPrice());
+
+    return map;
   }
 
   @Override
