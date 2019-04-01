@@ -163,8 +163,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // Load the wallet from the store
     Store store = this.zumoKit.store();
     Keystore keystore = store.getKeystore(walletId);
-    String address = keystore.getAddress();
-
+    String address = keystore.getAddress().toLowerCase();
+    
     // Load the the transactions from the state
     State state = store.getState();
     ArrayList<Transaction> transactions = state.getTransactions();
@@ -174,7 +174,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     // Loop through the transactions looking for address matches
     for (Transaction txn : transactions) {
-      if(txn.getToAddress() == address || txn.getFromAddress() == address) {
+      if((txn.getFromAddress().toLowerCase().equals(address) || txn.getToAddress().toLowerCase().equals(address)) && (txn.getHash().length() > 1)) {
         WritableMap map = this.getMap(txn);
         response.pushMap(map);
       }
