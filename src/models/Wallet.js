@@ -1,4 +1,5 @@
 import { NativeModules } from 'react-native';
+import Transaction from './Transaction';
 const { RNZumoKit } = NativeModules;
 
 /**
@@ -77,9 +78,9 @@ export default class Wallet {
      */
     async sendTransaction(address, amount) {
         if(!this.unlocked) throw 'Wallet not unlocked.';
-
-        const status = await RNZumoKit.sendTransaction(this.id, address, `${amount}`);
-        console.log(status);
+        
+        const response = await RNZumoKit.sendTransaction(this.id, address, `${amount}`);
+        return new Transaction(response);
     }
 
 }

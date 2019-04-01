@@ -20,6 +20,9 @@ import com.blockstar.zumokit.WalletManagement;
 import com.blockstar.zumokit.BlockchainCallback;
 
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Date;
 
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
@@ -133,6 +136,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // Get the wallet management instance
     WalletManagement wm = this.zumoKit.walletManagement();
 
+    // Get a timestamp for when the transaction was sent
+    String timestamp = this.getTimestamp();
+
     wm.sendTransaction(keystore, address, amount, "myPayload", new BlockchainCallback() {
       
       @Override
@@ -142,11 +148,25 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onSuccess(String response) {
-        promise.resolve(response);
+        WritableMap map = Arguments.createMap();
+
+        map.putString("amount", amount);
+        map.putString("hash", response);
+        map.putString("status", "PENDING");
+        map.putString("to", address);
+        map.putString("from", keystore.getAddress());
+        map.putString("timestamp", timestamp);
+
+        promise.resolve(map);
       }
 
     });
 
+  }
+
+  private String getTimestamp() {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
+    return sdf.format(new Date());
   }
 
   @Override
