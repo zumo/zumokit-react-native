@@ -86,8 +86,6 @@ export default class Transaction {
     constructor(json) {
         if(!json) throw 'JSON required to construct a Transaction.';
 
-        console.log(json);
-
         if(json.from) this.fromAddress = json.from;
         if(json.to) this.toAddress = json.to;
         if(json.hash) this.hash = json.hash;

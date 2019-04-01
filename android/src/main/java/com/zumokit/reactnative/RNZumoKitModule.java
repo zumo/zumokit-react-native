@@ -150,7 +150,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       public void onSuccess(String response) {
         WritableMap map = Arguments.createMap();
 
-        map.putString("amount", amount);
+        map.putString("value", amount);
         map.putString("hash", response);
         map.putString("status", "PENDING");
         map.putString("to", address);
