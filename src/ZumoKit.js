@@ -42,9 +42,9 @@ class ZumoKit {
      * @returns
      * @memberof ZumoKit
      */
-    async getWallets() {
-        const response = await RNZumoKit.getWallets();
-        return response.map((keystore) => new Wallet(keystore));
+    async getWallet() {
+        const response = await RNZumoKit.getWallet();
+        return new Wallet(response);
     }
 
 }

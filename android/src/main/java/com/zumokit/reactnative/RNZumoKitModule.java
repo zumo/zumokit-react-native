@@ -81,26 +81,30 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getWallets(Promise promise) {
+  public void getWallet(Promise promise) {
     
     // Fetch the keystores from the state
     State state = this.zumoKit.store().getState();
     ArrayList<Keystore> keystores = state.getKeystores();
 
-    // Create a map to resolve the promise
-    WritableArray response = Arguments.createArray();
+    try {
+      
+      Keystore keystore = keystores.get(0);
 
-    // Loop through the keystores and covert to maps.
-    for (Keystore keystore : keystores) {
+      // Create a map to resolve the promise
       WritableMap map = Arguments.createMap();
       map.putString("id", keystore.getId());
       map.putString("address", keystore.getAddress());
       map.putBoolean("unlocked", keystore.getUnlocked());
-      response.pushMap(map);
-    }
 
-    // Resolve the promise with the array
-    promise.resolve(response);
+      // Resolve the promise with the map
+      promise.resolve(map);
+
+    } catch(Exception e) {
+
+      promise.reject("No wallet found.");
+
+    }
 
   }
 
