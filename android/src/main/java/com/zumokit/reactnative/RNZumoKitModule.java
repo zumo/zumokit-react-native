@@ -19,6 +19,7 @@ import com.blockstar.zumokit.HttpImpl;
 import com.blockstar.zumokit.WalletManagement;
 import com.blockstar.zumokit.SendTransactionCallback;
 import com.blockstar.zumokit.Transaction;
+import com.blockstar.zumoKit.StoreObserver;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -44,10 +45,26 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .getFilesDir()
       .getAbsolutePath();
 
-    String txServiceUrl = "wss://4413eb50.ngrok.io";
+    String txServiceUrl = "wss://tx.kit.staging.zumopay.com/";
     
     this.zumoKit = new ZumoKit(dbPath, txServiceUrl);
+    this.subscribeToEvents();
 
+  }
+
+  private void subscribeToEvents() {
+    RNZumoKitModule module = this;
+    RCTDeviceEventEmitter emitter = this.reactContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
+
+    this.zumoKit.store().subscribe(new StoreObserver() {
+      @Override
+      public void update(State state) {
+        
+        emitter.emit("onZumoKitUpdated", "hello");
+
+      }
+    });
   }
 
   // - Wallet Management
@@ -178,10 +195,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     // Loop through the transactions looking for address matches
     for (Transaction txn : transactions) {
-      if((txn.getFromAddress().toLowerCase().equals(address) || txn.getToAddress().toLowerCase().equals(address)) && (txn.getHash().length() > 1)) {
+      // if((txn.getFromAddress().toLowerCase().equals(address) || txn.getToAddress().toLowerCase().equals(address)) && (txn.getHash().length() > 1)) {
         WritableMap map = this.getMap(txn);
         response.pushMap(map);
-      }
+      // }
     }
 
     // Resolve the promise with our response array
