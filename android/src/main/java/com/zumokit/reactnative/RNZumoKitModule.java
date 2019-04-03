@@ -9,6 +9,8 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
 
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import com.blockstar.zumokit.ZumoKit;
 import com.blockstar.zumokit.Store;
 import com.blockstar.zumokit.State;
@@ -54,14 +56,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private void subscribeToEvents() {
     RNZumoKitModule module = this;
-    RCTDeviceEventEmitter emitter = this.reactContext
-      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
 
     this.zumoKit.store().subscribe(new StoreObserver() {
       @Override
       public void update(State state) {
         
-        emitter.emit("onZumoKitUpdated", "hello");
+        module.reactContext
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+        .emit("onZumoKitUpdated", "hello");
 
       }
     });
