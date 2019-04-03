@@ -19,7 +19,7 @@ import com.blockstar.zumokit.HttpImpl;
 import com.blockstar.zumokit.WalletManagement;
 import com.blockstar.zumokit.SendTransactionCallback;
 import com.blockstar.zumokit.Transaction;
-import com.blockstar.zumoKit.StoreObserver;
+import com.blockstar.zumokit.StoreObserver;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
