@@ -275,6 +275,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  @ReactMethod
+  public void getFiat(Float eth, Promise promise) {
+    promise.resolve(eth * 120.93);
+  } 
+
   @Override
   public String getName() {
     return "RNZumoKit";

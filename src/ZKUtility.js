@@ -11,6 +11,8 @@ class ZKUtility {
     // public String gweiToEth(String number);
     // public String ethToGwei(String number);
 
+    getFiat = RNZumoKit.getFiat;
+
 }
 
 export default new ZKUtility();
