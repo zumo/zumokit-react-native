@@ -42,15 +42,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void init() {
+  public void init(String apiKey, String appId, String apiRoot) {
 
     String dbPath = this.reactContext
       .getFilesDir()
       .getAbsolutePath();
 
     String txServiceUrl = "wss://tx.kit.staging.zumopay.com/";
+
+    this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, appId, apiRoot);
     
-    this.zumoKit = new ZumoKit(dbPath, txServiceUrl);
     this.subscribeToEvents();
 
   }

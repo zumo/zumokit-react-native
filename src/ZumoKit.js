@@ -12,11 +12,12 @@ class ZumoKit {
     /**
      * Initialise ZumoKit with the provided JSON config.
      *
-     * @param {Object} json
+     * @param {Object} config
      * @memberof ZumoKit
      */
-    init(json) {
-        RNZumoKit.init();
+    init(config) {
+        const { apiKey, appId, apiRoot } = config;
+        RNZumoKit.init(apiKey, appId, apiRoot);
     }
 
     /**
