@@ -165,7 +165,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // Get a timestamp for when the transaction was sent
     RNZumoKitModule module = this;
 
-    wm.sendTransaction(keystore, address, amount, "myPayload", new SendTransactionCallback() {
+    wm.sendTransaction(keystore, address, amount, "", new SendTransactionCallback() {
       
       @Override
       public void onError(String message, Transaction txn) {
