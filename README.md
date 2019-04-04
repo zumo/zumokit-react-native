@@ -55,13 +55,13 @@ You'll need the following:
 
 - `apiKey`
 - `appId`
-- `apiUrl`
+- `apiRoot`
 
 ```javascript
 ZumoKit.init({
-	apiKey: 'abc123456789defhij',
 	appId: '12a3456-92de-45gh-0000-2d451a54111',
-	apiUrl: 'https://zumokit.provider.com'
+	apiKey: 'abc123456789defhij',
+	apiRoot: 'https://zumokit.provider.com'
 });
 ```
 
