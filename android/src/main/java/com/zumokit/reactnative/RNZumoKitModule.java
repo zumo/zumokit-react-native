@@ -236,6 +236,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void auth(String email, Promise promise) {
 
+    if(this.zumoKit == null) {
+      promise.reject("ZumoKit not initialized.");
+      return;
+    }
+
     this.zumoKit.auth(email, new AuthCallback() {
       @Override
       public void onError(short httpCode, String data) {
