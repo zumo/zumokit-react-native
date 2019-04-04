@@ -250,6 +250,26 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  // UTILITY
+
+  // public String getBalance(Keystore keystore);
+  //   public String ethGetBalance(String address);
+  //   public boolean isValidEthAddress(String address);
+  //   public String weiToEth(String number);
+  //   public String ethToWei(String number);
+  //   public String gweiToEth(String number);
+  //   public String ethToGwei(String number);
+
+  @ReactMethod
+  public void getBalance(String address, Promise promise) {
+
+    String balance = this.zumoKit.utils()
+      .ethGetBalance(address);
+
+    promise.resolve(balance);
+
+  }
+
   @Override
   public String getName() {
     return "RNZumoKit";

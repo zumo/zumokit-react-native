@@ -60,7 +60,9 @@ export default class Wallet {
      */
     async getBalance() {
         if(!this.unlocked) throw 'Wallet not unlocked.';
-        
+
+        const balance = await RNZumoKit.getBalance(this.address);
+        return parseFloat(balance);
     }
 
     // - TRANSACTIONS
