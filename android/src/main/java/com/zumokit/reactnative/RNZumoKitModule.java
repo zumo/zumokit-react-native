@@ -22,6 +22,7 @@ import com.blockstar.zumokit.WalletManagement;
 import com.blockstar.zumokit.SendTransactionCallback;
 import com.blockstar.zumokit.Transaction;
 import com.blockstar.zumokit.StoreObserver;
+import com.blockstar.zumokit.AuthCallback;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -227,6 +228,25 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("gas_price", txn.getGasPrice());
 
     return map;
+  }
+
+  // API
+
+  @ReactMethod
+  public void auth(String email, Promise promise) {
+
+    this.zumoKit.auth(email, new AuthCallback() {
+      @Override
+      public void onError(short httpCode, String data) {
+        promise.reject(data);
+      }
+
+      @Override
+      public void onSuccess() {
+        promise.resolve(true);
+      }
+    });
+
   }
 
   @Override

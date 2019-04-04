@@ -47,6 +47,15 @@ class ZumoKit {
         return new Wallet(response);
     }
 
+    /**
+     * Authenticates the user with the API.
+     * This will enable synchonised wallets and should be called first.
+     *
+     * @returns
+     * @memberof ZumoKit
+     */
+    auth = RNZumoKit.auth;
+
 }
 
 export default new ZumoKit();
