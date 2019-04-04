@@ -257,9 +257,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   // UTILITY
 
-  // public String getBalance(Keystore keystore);
-  //   public String ethGetBalance(String address);
-  //   public boolean isValidEthAddress(String address);
   //   public String weiToEth(String number);
   //   public String ethToWei(String number);
   //   public String gweiToEth(String number);
@@ -278,7 +275,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void getFiat(Float eth, Promise promise) {
     promise.resolve(eth * 120.93);
-  } 
+  }
+
+  @ReactMethod
+  public void isValidEthAddress(String address, Promise promise) {
+
+    Boolean valid = this.zumoKit.utils()
+      .isValidEthAddress(address);
+
+    promise.resolve(valid);
+
+  }
 
   @Override
   public String getName() {

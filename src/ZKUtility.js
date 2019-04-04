@@ -3,15 +3,23 @@ const { RNZumoKit } = NativeModules;
 
 class ZKUtility {
 
-    // public String getBalance(Keystore keystore);
-    // public String ethGetBalance(String address);
-    // public boolean isValidEthAddress(String address);
-    // public String weiToEth(String number);
-    // public String ethToWei(String number);
-    // public String gweiToEth(String number);
-    // public String ethToGwei(String number);
-
+    /**
+     * Converts the given ETH value into Fiat.
+     * 
+     * @param {number} eth
+     * @returns
+     * @memberof ZKUtility
+     */
     getFiat = RNZumoKit.getFiat;
+
+    /**
+     * Checks whether the address is valid or not.
+     * 
+     * @param {string} address
+     * @returns
+     * @memberof ZKUtility
+     */
+    isValidEthAddress = RNZumoKit.isValidEthAddress;
 
 }
 
