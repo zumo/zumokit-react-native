@@ -10,6 +10,13 @@ const { RNZumoKit } = NativeModules;
 class ZumoKit {
 
     /**
+     * Private cached wallet.
+     *
+     * @memberof ZumoKit
+     */
+    _cachedWallet;
+
+    /**
      * Initialise ZumoKit with the provided JSON config.
      *
      * @param {Object} config
@@ -44,8 +51,35 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     async getWallet() {
-        const response = await RNZumoKit.getWallet();
-        return new Wallet(response);
+        return new Promise((resolve, reject) => {
+
+            if(this._cachedWallet) {
+                resolve(this._cachedWallet);
+                return;
+            }
+
+            let retries = 0;
+
+            const interval = setInterval(async () => {
+                if(retries >= 10) {
+                    clearInterval(interval);
+                    reject(new Error('No wallet found'));
+                    return
+                }
+
+                try {
+                    const json = await RNZumoKit.getWallet();
+                    const wallet = new Wallet(json);
+                    this._cachedWallet = wallet;
+
+                    clearInterval(interval);
+                    resolve(wallet);
+                } catch(error) {
+                    retries++;
+                }
+            }, 1000);
+
+        });
     }
 
     /**
