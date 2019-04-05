@@ -57,9 +57,6 @@ export default class Transaction {
      * @memberof Transaction
      */
     value;
-    // get value() {
-    //     return ZKUtility.toEther(this.weiValue);
-    // }
 
     /**
      * The price of the gas that was used by the transaction.
@@ -83,10 +80,15 @@ export default class Transaction {
      */
     note;
 
+    /**
+     * The type of transaction. Either INCOMING or OUTGOING.
+     *
+     * @memberof Transaction
+     */
+    type;
+
     constructor(json) {
         if(!json) throw 'JSON required to construct a Transaction.';
-
-        console.log(json);
 
         if(json.from) this.fromAddress = json.from;
         if(json.to) this.toAddress = json.to;
@@ -94,6 +96,7 @@ export default class Transaction {
         if(json.timestamp) this.timestamp = json.timeStamp;
         if(json.status) this.status = json.status;
         if(json.value) this.value = json.value;
+        if(json.type) this.type = json.type;
 
         // Not currently implemented!
         if(json.gas_price) this.gasPrice = json.gas_price;

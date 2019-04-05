@@ -174,7 +174,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onSuccess(Transaction txn) {
-        WritableMap map = module.getMap(txn);
+        WritableMap map = module.getMap(txn, keystore.getAddress());
         promise.resolve(map);
       }
 
@@ -200,7 +200,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // Loop through the transactions looking for address matches
     for (Transaction txn : transactions) {
       // if((txn.getFromAddress().toLowerCase().equals(address) || txn.getToAddress().toLowerCase().equals(address)) && (txn.getHash().length() > 1)) {
-        WritableMap map = this.getMap(txn);
+        WritableMap map = this.getMap(txn, address);
         response.pushMap(map);
       // }
     }
@@ -217,8 +217,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     return sdf.format(new Date(epoch));
   }
 
-  private WritableMap getMap(Transaction txn) {
+  private WritableMap getMap(Transaction txn, String address) {
     WritableMap map = Arguments.createMap();
+
+    Boolean incoming = txn.getToAddress().toLowerCase().equals(address);
+    String type = (incoming) ? "INCOMING" : "OUTGOING";
 
     map.putString("value", txn.getAmount());
     map.putString("hash", txn.getHash());
@@ -227,6 +230,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("from", txn.getFromAddress());
     map.putString("timestamp", this.getTimestamp(txn.getTimestamp()));
     map.putString("gas_price", txn.getGasPrice());
+    map.putString("type", type);
 
     return map;
   }
@@ -256,11 +260,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   // UTILITY
-
-  //   public String weiToEth(String number);
-  //   public String ethToWei(String number);
-  //   public String gweiToEth(String number);
-  //   public String ethToGwei(String number);
 
   @ReactMethod
   public void getBalance(String address, Promise promise) {
