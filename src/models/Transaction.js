@@ -87,6 +87,16 @@ export default class Transaction {
      */
     type;
 
+    /**
+     * The address to be displayed dependant on the type of transaction.
+     *
+     * @readonly
+     * @memberof Transaction
+     */
+    get address() {
+        return (this.type == 'INCOMING') ? this.fromAddress : this.toAddress;
+    }
+
     constructor(json) {
         if(!json) throw 'JSON required to construct a Transaction.';
 
