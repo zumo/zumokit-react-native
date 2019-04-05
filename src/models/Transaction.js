@@ -105,7 +105,7 @@ export default class Transaction {
         if(json.hash) this.hash = json.hash;
         if(json.timestamp) this.timestamp = json.timeStamp;
         if(json.status) this.status = json.status;
-        if(json.value) this.value = json.value;
+        if(json.value) this.value = parseFloat(json.value);
         if(json.type) this.type = json.type;
 
         // Not currently implemented!
