@@ -214,7 +214,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private String getTimestamp(Long epoch) {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
-    return sdf.format(new Date(epoch));
+    return sdf.format(new Date(epoch * 1000));
   }
 
   private WritableMap getMap(Transaction txn, String address) {
