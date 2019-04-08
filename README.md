@@ -47,7 +47,7 @@ import { ZKUtility, ZKAPI } from 'react-native-zumo-kit';
 
 This is the core class that offers the most interaction with the Zumo network and will be how a wallet is created or retreived.
 
-#### Initialisation
+#### `init(config)`
 
 The first step in getting ZumoKit integrated into your app is initialising it. Using the credentials provided to you by Zumo, you can use the `ZumoKit.init()` method do get started.
 
@@ -57,7 +57,7 @@ You'll need the following:
 - `appId`
 - `apiRoot`
 
-```javascript
+```js
 import ZumoKit from 'react-native-zumo-kit';
 
 ZumoKit.init({
@@ -67,7 +67,39 @@ ZumoKit.init({
 });
 ```
 
-#### Wallet Creation
+#### `createWallet(password, nmemonicCount)`
+
+Creates a new wallet with the given password and generates a nmemonic phrase with the length provided. Returns an object with `nmemonic` and `wallet` properties.
+
+```js
+import ZumoKit from 'react-native-zumo-kit';
+
+await ZumoKit.createWallet('password', 12);
+```
+
+#### `auth(email)`
+
+This method should be called before trying to fetch a wallet. The email address provided is used to authenticate the user with the ZumoKit API.
+
+```js
+import ZumoKit from 'react-native-zumo-kit';
+
+await ZumoKit.auth('steve@zumokit.com');
+```
+
+#### `getWallet()`
+
+Loads a synced wallet from the API. An exception is thrown if a wallet could not be found.
+
+```js
+import ZumoKit from 'react-native-zumo-kit';
+
+try {
+	const wallet = await ZumoKit.getWallet();
+} catch(error) {
+	console.error(error);
+}
+```
 
 ### `ZKUtility`
 
@@ -105,7 +137,47 @@ await ZKUtility.isValidEthAddress('0x14d24tdws3rfsasb1356');
 
 ## Models
 
-There are a few models that are provided by ZumoKit that represent various structures on the API and blockchain.
+There are also a couple of models that are provided by ZumoKit that represent various structures on the API and blockchain.
 
 - Transaction
 - Wallet
+
+### Wallet
+
+As well as containing the various properties that represent a wallet, this model is also how a lot of interaction with the blockchain is done. Once a wallet has been obtained using the `ZumoKit.getWallet()` method, you interact with that object directly.
+
+#### `unlock(password)`
+
+Before any interaction can be done with the wallet it will need to be unlocked. When a wallet has just been created it is automatically unlocked and you can check the status on the `unlocked` property.
+
+```js
+try {
+	await wallet.unlock('password');
+} catch(error) {
+	console.error(error);
+}
+```
+
+#### `getBalance()`
+
+Once unlocked, the balance can be obtained via this method.
+
+```js
+await wallet.getBalance();
+```
+
+#### `getTransactions()`
+
+Once unlocked, transactions can be obtained via this method.
+
+```js
+await wallet.getTransactions();
+```
+
+#### `sendTransaction(address, eth)`
+
+Once unlocked, a transaction can be sent to an address via this method.
+
+```js
+await wallet.sendTransaction('Ox12...', 0.5);
+```
