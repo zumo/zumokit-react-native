@@ -12,7 +12,7 @@ class ZKUtility {
      */
     async getFiat(eth) {
         const rates = await this.getExchangeRates();
-        return rates.ETH.EUR * eth;
+        return parseFloat(rates.ETH.EUR) * eth;
     }
 
     /**
