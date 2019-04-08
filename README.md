@@ -58,6 +58,8 @@ You'll need the following:
 - `apiRoot`
 
 ```javascript
+import ZumoKit from 'react-native-zumo-kit';
+
 ZumoKit.init({
 	appId: '12a3456-92de-45gh-0000-2d451a54111',
 	apiKey: 'abc123456789defhij',
@@ -71,9 +73,35 @@ ZumoKit.init({
 
 The `ZKUtility` class offers a few helpful methods that will help fully integrate ZumoKit into your app.
 
-### `ZKAPI`
+#### `getExchangeRates()`
 
-You'll need to interface with the Zumo API to fully integrate ZumoKit. There are a few methods that the `ZKAPI` class offer that can help with this.
+Loads live exchange rates for ETH and BTC to Fiat prices. Currently this returns EUR and USD.
+
+```js
+import { ZKUtility } from 'react-native-zumo-kit';
+
+await ZKUtility.getExchangeRates();
+```
+
+#### `getFiat(eth)`
+
+Converts a given ETH value into GBP. This will later be expanded to support exchange into a variety of fiat currencies.
+
+```js
+import { ZKUtility } from 'react-native-zumo-kit';
+
+await ZKUtility.getFiat(1.5);
+```
+
+#### `isValidEthAddress(address)`
+
+Validates an etherium address.
+
+```js
+import { ZKUtility } from 'react-native-zumo-kit';
+
+await ZKUtility.isValidEthAddress('0x14d24tdws3rfsasb1356');
+```
 
 ## Models
 
