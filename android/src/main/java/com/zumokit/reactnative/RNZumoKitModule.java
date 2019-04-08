@@ -272,8 +272,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getFiat(Float eth, Promise promise) {
-    promise.resolve(eth * 120.93);
+  public void getExchangeRates(Promise promise) {
+
+    Store store = this.zumoKit.store();
+    State state = store.getState();
+
+    String rates = state.getExchangeRates();
+
+    promise.resolve(rates);
+
   }
 
   @ReactMethod
