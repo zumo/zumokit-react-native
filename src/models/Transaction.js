@@ -1,3 +1,4 @@
+import Moment from 'moment-timezone';
 import ZKUtility from "../ZKUtility";
 
 /**
@@ -35,6 +36,17 @@ export default class Transaction {
      * @memberof Transaction
      */
     timestamp;
+
+    /**
+     * A `Moment` instance of the time that the transaction was created.
+     * Use `.tz()` to localise it to a timezone. 
+     *
+     * @readonly
+     * @memberof Transaction
+     */
+    get time() {
+        return new Moment(this.timestamp);
+    }
 
     /**
      * The status of the transaction.
