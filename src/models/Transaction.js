@@ -1,5 +1,4 @@
 import Moment from 'moment-timezone';
-import ZKUtility from "../ZKUtility";
 
 /**
  * Represents a transaction on the blockchain.
