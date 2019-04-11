@@ -43,9 +43,7 @@ export default class Transaction {
      * @readonly
      * @memberof Transaction
      */
-    get time() {
-        return new Moment(this.timestamp);
-    }
+    time;
 
     /**
      * The status of the transaction.
@@ -114,7 +112,10 @@ export default class Transaction {
         if(json.from) this.fromAddress = json.from;
         if(json.to) this.toAddress = json.to;
         if(json.hash) this.hash = json.hash;
-        if(json.timestamp) this.timestamp = json.timeStamp;
+        if(json.timestamp) {
+            this.timestamp = json.timestamp;
+            this.time = new Moment(json.timestamp);
+        }
         if(json.status) this.status = json.status;
         if(json.value) this.value = parseFloat(json.value);
         if(json.type) this.type = json.type;
