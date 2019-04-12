@@ -42,13 +42,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void init(String apiKey, String appId, String apiRoot) {
+  public void init(String apiKey, String appId, String apiRoot, String txServiceUrl) {
 
     String dbPath = this.reactContext
       .getFilesDir()
       .getAbsolutePath();
-
-    String txServiceUrl = "wss://tx.kit.staging.zumopay.com/";
 
     this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, appId, apiRoot);
     
@@ -199,10 +197,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     // Loop through the transactions looking for address matches
     for (Transaction txn : transactions) {
-      // if((txn.getFromAddress().toLowerCase().equals(address) || txn.getToAddress().toLowerCase().equals(address)) && (txn.getHash().length() > 1)) {
-        WritableMap map = this.getMap(txn, address);
-        response.pushMap(map);
-      // }
+      WritableMap map = this.getMap(txn, address);
+      response.pushMap(map);
     }
 
     // Resolve the promise with our response array
@@ -224,7 +220,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String type = (incoming) ? "INCOMING" : "OUTGOING";
 
     map.putString("value", txn.getAmount());
-    map.putString("hash", txn.getHash());
+    map.putString("hash", txn.getTxHash());
     map.putString("status", txn.getStatus().name());
     map.putString("to", txn.getToAddress());
     map.putString("from", txn.getFromAddress());
