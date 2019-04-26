@@ -6,13 +6,12 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                   RNZumoKit
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://github.com/dlabs/zumokit-react-native"
   s.license      = "MIT"
-  # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
-  s.author             = { "author" => "author@domain.cn" }
+  s.author       = { "author" => "Blockstar" }
   s.platform     = :ios, "7.0"
-  s.source       = { :git => "https://github.com/author/RNZumoKit.git", :tag => "master" }
-  s.source_files  = "RNZumoKit/**/*.{h,m}"
+  s.source       = { :git => "ssh://github.com/dlabs/zumokit-react-native.git", :tag => "master" }
+  s.source_files  = "ios/RNZumoKit/**/*.{h,m}"
   s.requires_arc = true
 
 
@@ -20,5 +19,3 @@ Pod::Spec.new do |s|
   #s.dependency "others"
 
 end
-
-  
