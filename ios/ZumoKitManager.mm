@@ -62,15 +62,21 @@ NSException *zumoKitNotInitializedException = [NSException
     
     NSString *mnemonicPhrase = [walletManagement generateMnemonic:mnemonicCount];
     
+    NSLog(@"%@", password);
+    NSLog(@"%@", mnemonicPhrase);
+    
     CPKeystore *keystore = [walletManagement
                             createWallet:CPCurrencyETH
                             password:password
                             mnemonic:mnemonicPhrase];
     
     return @{ @"mnemonic": mnemonicPhrase,
-              @"id": [keystore id],
-              @"address": [keystore address],
-              @"unlocked": @([keystore unlocked]) };
+              @"keystore": @{
+                      @"id": [keystore id],
+                      @"address": [keystore address],
+                      @"unlocked": @([keystore unlocked])
+                    }
+              };
 }
 
 
