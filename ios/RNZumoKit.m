@@ -1,6 +1,7 @@
 
 #import "RNZumoKit.h"
 #import "ZumoKitManager.h"
+#import <ZumoKitSDK/CPKeystore.h>
 
 @implementation RNZumoKit
 
@@ -54,8 +55,27 @@ RCT_EXPORT_METHOD(auth:(NSString *)email resolver:(RCTPromiseResolveBlock)resolv
 
 # pragma mark - Wallet Management
 
-RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(NSInteger *)mnemonicCount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicCount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
+    
+    @try {
+        
+//        CPKeystore *keystore = [[ZumoKitManager sharedManager]
+//                                createWalletWithPassword:password
+//                                mnemonicCount:mnemonicCount];
+        
+        // TODO: Resolve with a dictionary
+        
+//        ksMap.putString("id", keystore.getId());
+//        ksMap.putString("address", keystore.getAddress());
+//        ksMap.putBoolean("unlocked", keystore.getUnlocked());
+        
+        
+    } @catch (NSException *exception) {
+        
+        reject([exception name], [exception reason], NULL);
+        
+    }
     
 }
 

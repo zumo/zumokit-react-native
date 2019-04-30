@@ -29,6 +29,8 @@ NSException *zumoKitNotInitializedException = [NSException
     return manager;
 }
 
+# pragma mark - Initialization
+
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot {
     
     NSArray *appFolderPath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
@@ -50,5 +52,24 @@ NSException *zumoKitNotInitializedException = [NSException
     
     [[_zumoKit zumoCore] auth:email callback:callback];
 }
+
+# pragma mark - Wallet Management
+
+- (CPKeystore *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    CPWalletManagement *walletManagement = [_zumoKit walletManagement];
+    
+    NSString *mnemonicPhrase = [walletManagement generateMnemonic:mnemonicCount];
+    
+    CPKeystore *keystore = [walletManagement
+                            createWallet:CPCurrencyETH
+                            password:password
+                            mnemonic:mnemonicPhrase];
+    
+    return keystore;
+}
+
+
 
 @end
