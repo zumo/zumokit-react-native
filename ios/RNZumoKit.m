@@ -1,5 +1,6 @@
 
 #import "RNZumoKit.h"
+#import "ZumoKitManager.h"
 
 @implementation RNZumoKit
 
@@ -15,19 +16,47 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Initialise ZumoKit
+    
+    [[ZumoKitManager sharedManager]
+     initializeWithTxServiceUrl:txServiceUrl
+     apiKey:apiKey
+     appId:appId
+     apiRoot:apiRoot
+     ];
+    
+    resolve(@"true");
+    
 }
 
 RCT_EXPORT_METHOD(auth:(NSString *)email resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Authenticate with ZumoKit
+    
+    @try {
+        
+        [[ZumoKitManager sharedManager] authenticateWithEmail:email completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
+            
+            if(success) {
+                resolve(@"true");
+                return;
+            }
+            
+            reject([NSString stringWithFormat:@"%d", errorCode], data, NULL);
+            
+        }];
+        
+    } @catch (NSException *exception) {
+     
+        reject([exception name], [exception reason], NULL);
+        
+    }
+    
 }
 
 # pragma mark - Wallet Management
 
 RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(NSInteger *)mnemonicCount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Create a new a wallet
+    
 }
 
 RCT_EXPORT_METHOD(getWallet:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
