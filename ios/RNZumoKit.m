@@ -60,16 +60,11 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
     
     @try {
         
-//        CPKeystore *keystore = [[ZumoKitManager sharedManager]
-//                                createWalletWithPassword:password
-//                                mnemonicCount:mnemonicCount];
+        NSDictionary *response = [[ZumoKitManager sharedManager]
+                                createWalletWithPassword:password
+                                mnemonicCount:mnemonicCount];
         
-        // TODO: Resolve with a dictionary
-        
-//        ksMap.putString("id", keystore.getId());
-//        ksMap.putString("address", keystore.getAddress());
-//        ksMap.putBoolean("unlocked", keystore.getUnlocked());
-        
+        resolve(response);
         
     } @catch (NSException *exception) {
         

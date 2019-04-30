@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authenticateWithEmail:(NSString *)email completionHandler:(AuthCompletionBlock)completionHandler;
 
-- (CPKeystore *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount;
+- (NSDictionary *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount;
 
 @end
 

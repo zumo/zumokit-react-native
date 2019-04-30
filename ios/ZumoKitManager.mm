@@ -55,7 +55,7 @@ NSException *zumoKitNotInitializedException = [NSException
 
 # pragma mark - Wallet Management
 
-- (CPKeystore *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount {
+- (NSDictionary *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     CPWalletManagement *walletManagement = [_zumoKit walletManagement];
@@ -67,7 +67,10 @@ NSException *zumoKitNotInitializedException = [NSException
                             password:password
                             mnemonic:mnemonicPhrase];
     
-    return keystore;
+    return @{ @"mnemonic": mnemonicPhrase,
+              @"id": [keystore id],
+              @"address": [keystore address],
+              @"unlocked": @([keystore unlocked]) };
 }
 
 
