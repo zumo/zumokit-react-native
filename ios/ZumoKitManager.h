@@ -9,6 +9,7 @@
 
 #import <ZumoKitSDK/ZumoKit.h>
 #import <ZumoKitSDK/iOSAuthCallback.h>
+#import <ZumoKitSDK/iOSSendTransactionCallback.h>
 #import <ZumoKitSDK/CPWalletManagement.h>
 #import <ZumoKitSDK/CPKeystore.h>
 #import <ZumoKitSDK/CPCurrency.h>
@@ -40,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isValidEthAddress:(NSString *)address;
 
 - (NSArray<NSDictionary *> *)getTransactionsForWalletId:(NSString *)walletId;
+
+- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount completionHandler:(SendTransactionCompletionBlock)completionHandler;
 
 @end
 

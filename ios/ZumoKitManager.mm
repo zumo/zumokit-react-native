@@ -127,7 +127,6 @@ NSException *zumoKitNotInitializedException = [NSException
         
         NSString *type = ([[obj toAddress] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
         
-        
         [mapped addObject:@{
                             @"value": [obj amount],
                             @"hash": @([obj hash]),
@@ -142,6 +141,21 @@ NSException *zumoKitNotInitializedException = [NSException
     }];
     
     return mapped;
+}
+
+- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount completionHandler:(SendTransactionCompletionBlock)completionHandler {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    CPStore *store = [_zumoKit store];
+    CPKeystore *keystore = [store getKeystore:walletId];
+    
+    [[_zumoKit walletManagement]
+     sendTransaction:keystore
+     toAddress:address
+     amount:amount
+     payload:@""
+     callback:[[iOSSendTransactionCallback alloc]
+               initWithCompletionHandler:completionHandler]];
 }
 
 # pragma mark - Utility

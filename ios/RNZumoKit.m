@@ -113,15 +113,54 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)walletId password:(NSString *)passwor
 
 RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)address amount:(NSString *)amount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Send a new transaction
+    
+    @try {
+        
+        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount completionHandler:^(bool success, NSString * _Nullable errorMessage, CPTransaction * _Nonnull transaction) {
+            
+            if(success) {
+                NSDictionary *response = @{
+                                           @"value": [transaction amount],
+                                           @"hash": @([transaction hash]),
+                                           @"status": @([transaction status]),
+                                           @"to": [transaction toAddress],
+                                           @"from": [transaction fromAddress],
+                                           @"timestamp": @([transaction timestamp]),
+                                           @"gas_price": [transaction gasPrice],
+                                           @"type": @"OUTGOING"
+                                           };
+                
+                resolve(response);
+                return;
+            }
+            
+            reject(@"ErrorSendingTransaction", errorMessage, NULL);
+            
+        }];
+        
+    } @catch (NSException *exception) {
+        
+        reject([exception name], [exception reason], NULL);
+        
+    }
+    
 }
 
 RCT_EXPORT_METHOD(getTransactions:(NSString *)walletId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSArray *transactions = [[ZumoKitManager sharedManager]
-                             getTransactionsForWalletId:walletId];
+    @try {
+        
+        NSArray *transactions = [[ZumoKitManager sharedManager]
+                                 getTransactionsForWalletId:walletId];
+        
+        resolve(transactions);
+        
+    } @catch (NSException *exception) {
+        
+        reject([exception name], [exception reason], NULL);
+        
+    }
     
-    resolve(transactions);
 }
 
 # pragma mark - Utility & Helpers
