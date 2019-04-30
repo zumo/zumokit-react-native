@@ -25,7 +25,7 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSStr
      apiRoot:apiRoot
      ];
     
-    resolve(@"true");
+    resolve(@(YES));
     
 }
 
@@ -76,12 +76,37 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
 
 RCT_EXPORT_METHOD(getWallet:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Load the wallet from the C++ lib
+
+    @try {
+        
+        NSDictionary *response = [[ZumoKitManager sharedManager] getWallet];
+        resolve(response);
+        
+    } @catch (NSException *exception) {
+        
+        reject([exception name], [exception reason], NULL);
+        
+    }
+    
 }
 
 RCT_EXPORT_METHOD(unlockWallet:(NSString *)walletId password:(NSString *)password resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Load the wallet from the C++ lib and unlock it
+    
+    @try {
+        
+        BOOL status = [[ZumoKitManager sharedManager]
+                       unlockWalletWithId:walletId
+                       password:password];
+        
+        resolve(@(status));
+        
+    } @catch (NSException *exception) {
+        
+        reject([exception name], [exception reason], NULL);
+        
+    }
+    
 }
 
 # pragma mark - Transactions
@@ -93,24 +118,40 @@ RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)addre
 
 RCT_EXPORT_METHOD(getTransactions:(NSString *)walletId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Load transactions from C++ lib
+    NSArray *transactions = [[ZumoKitManager sharedManager]
+                             getTransactionsForWalletId:walletId];
+    
+    resolve(transactions);
 }
 
 # pragma mark - Utility & Helpers
 
 RCT_EXPORT_METHOD(getBalance:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Get the balance for the wallet provided
+    @try {
+        
+        NSString *balance = [[ZumoKitManager sharedManager]
+                             getBalanceForAddress:address];
+        resolve(balance);
+        
+    } @catch (NSException *exception) {
+        
+        reject([exception name], [exception reason], NULL);
+        
+    }
+    
 }
 
 RCT_EXPORT_METHOD(getExchangeRates:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Load the exchange rates from ZumoKit
+    NSString *rates = [[ZumoKitManager sharedManager] getExchangeRates];
+    resolve(rates);
 }
 
 RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    // TODO: Validate the address with ZumoKit
+    BOOL isValid = [[ZumoKitManager sharedManager] isValidEthAddress:address];
+    resolve(@(isValid));
 }
 
 @end

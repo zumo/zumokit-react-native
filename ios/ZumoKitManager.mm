@@ -62,9 +62,6 @@ NSException *zumoKitNotInitializedException = [NSException
     
     NSString *mnemonicPhrase = [walletManagement generateMnemonic:mnemonicCount];
     
-    NSLog(@"%@", password);
-    NSLog(@"%@", mnemonicPhrase);
-    
     CPKeystore *keystore = [walletManagement
                             createWallet:CPCurrencyETH
                             password:password
@@ -79,6 +76,95 @@ NSException *zumoKitNotInitializedException = [NSException
               };
 }
 
+- (NSDictionary *)getWallet {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    CPState *state = [[_zumoKit store] getState];
+    NSArray<CPKeystore *> *keystores = [state keystores];
+    
+    if([keystores count] < 1) {
+        @throw [NSException
+                exceptionWithName:@"noKeystoresFound"
+                reason:@"No keystores found."
+                userInfo:NULL];
+    }
+    
+    CPKeystore *keystore = [keystores objectAtIndex:0];
+    
+    return @{
+             @"id": [keystore id],
+             @"address": [keystore address],
+             @"unlocked": @([keystore unlocked])
+             };
+}
 
+- (BOOL)unlockWalletWithId:(NSString *)keystoreId password:(NSString *)password {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    CPStore *store = [_zumoKit store];
+    CPKeystore *keystore = [store getKeystore:keystoreId];
+    
+    BOOL status = [[_zumoKit walletManagement]
+     unlockWallet:keystore
+     password:password];
+    
+    return status;
+}
+
+- (NSArray<NSDictionary *> *)getTransactionsForWalletId:(NSString *)walletId {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+
+    CPStore *store = [_zumoKit store];
+    CPKeystore *keystore = [store getKeystore:walletId];
+    NSString *address = [[keystore address] lowercaseString];
+    
+    CPState *state = [store getState];
+    NSArray<CPTransaction *> *transactions = [state transactions];
+    
+    NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+    
+    [transactions enumerateObjectsUsingBlock:^(CPTransaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        NSString *type = ([[obj toAddress] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
+        
+        
+        [mapped addObject:@{
+                            @"value": [obj amount],
+                            @"hash": @([obj hash]),
+                            @"status": @([obj status]),
+                            @"to": [obj toAddress],
+                            @"from": [obj fromAddress],
+                            @"timestamp": @([obj timestamp]),
+                            @"gas_price": [obj gasPrice],
+                            @"type": type
+                            }];
+        
+    }];
+    
+    return mapped;
+}
+
+# pragma mark - Utility
+
+- (NSString *)getBalanceForAddress:(NSString *)address {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    NSString *balance = [[_zumoKit utils] ethGetBalance:address];
+    
+    return balance;
+}
+
+- (NSString *)getExchangeRates {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    CPState *state = [[_zumoKit store] getState];
+    return [state exchangeRates];
+}
+
+- (BOOL)isValidEthAddress:(NSString *)address {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] isValidEthAddress:address];
+}
 
 @end
