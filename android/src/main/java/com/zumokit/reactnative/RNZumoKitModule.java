@@ -151,7 +151,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   // - Transactions
 
   @ReactMethod
-  public void sendTransaction(String walletId, String address, String amount, Promise promise) {
+  public void sendTransaction(String walletId, String address, String amount, String gasPrice, String gasLimit, Promise promise) {
 
     // Fetch the keystore from the store
     Store store = this.zumoKit.store();
@@ -163,7 +163,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // Get a timestamp for when the transaction was sent
     RNZumoKitModule module = this;
 
-    wm.sendTransaction(keystore, address, amount, "", new SendTransactionCallback() {
+    wm.sendTransaction(keystore, address, amount, gasPrice, gasLimit, "", new SendTransactionCallback() {
       
       @Override
       public void onError(String message, Transaction txn) {
