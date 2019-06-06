@@ -85,10 +85,16 @@ export default class Wallet {
      * @param {number} amount
      * @memberof Wallet
      */
-    async sendTransaction(address, amount) {
+    async sendTransaction(address, amount, gasPrice, gasLimit) {
         if(!this.unlocked) throw 'Wallet not unlocked.';
         
-        const response = await RNZumoKit.sendTransaction(this.id, address, `${amount}`);
+        const response = await RNZumoKit.sendTransaction(
+            this.id, address,
+            '' + amount,
+            '' + gasPrice,
+            '' + gasLimit
+        );
+        
         return new Transaction(response);
     }
 

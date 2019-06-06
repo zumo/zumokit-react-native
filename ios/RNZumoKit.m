@@ -111,12 +111,12 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)walletId password:(NSString *)passwor
 
 # pragma mark - Transactions
 
-RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)address amount:(NSString *)amount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)address amount:(NSString *)amount gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
     @try {
         
-        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount completionHandler:^(bool success, NSString * _Nullable errorMessage, CPTransaction * _Nonnull transaction) {
+        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount gasPrice:gasPrice gasLimit:gasLimit completionHandler:^(bool success, NSString * _Nullable errorMessage, CPTransaction * _Nonnull transaction) {
             
             if(success) {
                 NSDictionary *response = @{
