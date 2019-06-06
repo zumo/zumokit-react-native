@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<NSDictionary *> *)getTransactionsForWalletId:(NSString *)walletId;
 
-- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount completionHandler:(SendTransactionCompletionBlock)completionHandler;
+- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit completionHandler:(SendTransactionCompletionBlock)completionHandler;
 
 @end
 

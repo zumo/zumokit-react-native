@@ -143,7 +143,7 @@ NSException *zumoKitNotInitializedException = [NSException
     return mapped;
 }
 
-- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount completionHandler:(SendTransactionCompletionBlock)completionHandler {
+- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit completionHandler:(SendTransactionCompletionBlock)completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     CPStore *store = [_zumoKit store];
@@ -153,6 +153,8 @@ NSException *zumoKitNotInitializedException = [NSException
      sendTransaction:keystore
      toAddress:address
      amount:amount
+     gasPrice:gasPrice
+     gasLimit:gasLimit
      payload:@""
      callback:[[iOSSendTransactionCallback alloc]
                initWithCompletionHandler:completionHandler]];
