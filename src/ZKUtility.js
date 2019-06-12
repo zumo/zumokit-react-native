@@ -36,6 +36,22 @@ class ZKUtility {
      */
     isValidEthAddress = RNZumoKit.isValidEthAddress;
 
+    ethToGwei(eth) {
+        return eth * 1000000000;
+    }
+
+    gweiToEth(gwei) {
+        return gwei / 1000000000;
+    }
+
+    ethToWei(eth) {
+        return eth / 1000000000000000000;
+    }
+
+    weiToEth(wei) {
+        return wei * 1000000000000000000;
+    }
+
 }
 
 export default new ZKUtility();
