@@ -36,6 +36,54 @@ class ZKUtility {
      */
     isValidEthAddress = RNZumoKit.isValidEthAddress;
 
+    /**
+     * Converts Ethereum to Gwei
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    ethToGwei(eth) {
+        return RNZumoKit
+            .ethToGwei("" + eth);
+    }
+
+    /**
+     * Converts Gwei to Ethereum
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    gweiToEth(gwei) {
+        return RNZumoKit
+            .gweiToEth("" + gwei);
+    }
+
+    /**
+     * Converts Ethereum to Wei
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    ethToWei(eth) {
+        return RNZumoKit
+            .ethToWei("" + eth);
+    }
+
+    /**
+     * Converts Wei to Ethereum
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    weiToEth(wei) {
+        return RNZumoKit
+            .weiToEth("" + wei);
+    }
+
 }
 
 export default new ZKUtility();
