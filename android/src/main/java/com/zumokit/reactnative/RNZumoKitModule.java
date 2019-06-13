@@ -311,7 +311,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void ethToWei(String eth) {
+  public void ethToWei(String eth, Promise promise) {
 
     String wei = this.zumoKit.utils()
       .ethToWei(eth);
@@ -321,7 +321,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void weiToEth(String wei) {
+  public void weiToEth(String wei, Promise promise) {
 
     String eth = this.zumoKit.utils()
       .weiToEth(wei);
