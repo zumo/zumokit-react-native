@@ -183,4 +183,28 @@ NSException *zumoKitNotInitializedException = [NSException
     return [[_zumoKit utils] isValidEthAddress:address];
 }
 
+- (NSString *)ethToGwei:(NSString *)eth {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] ethToGwei:eth];
+}
+
+- (NSString *)gweiToEth:(NSString *)gwei {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] gweiToEth:gwei];
+}
+
+- (NSString *)ethToWei:(NSString *)eth {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] ethToWei:eth];
+}
+
+- (NSString *)weiToEth:(NSString *)wei {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] weiToEth:wei];
+}
+
 @end

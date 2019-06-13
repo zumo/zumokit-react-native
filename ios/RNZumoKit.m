@@ -193,4 +193,28 @@ RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseReso
     resolve(@(isValid));
 }
 
+RCT_EXPORT_METHOD(ethToGwei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *gwei = [[ZumoKitManager sharedManager] ethToGwei:eth];
+    resolve(gwei);
+}
+
+RCT_EXPORT_METHOD(gweiToEth:(NSString *)gwei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *eth = [[ZumoKitManager sharedManager] gweiToEth:gwei];
+    resolve(eth);
+}
+
+RCT_EXPORT_METHOD(ethToWei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *wei = [[ZumoKitManager sharedManager] ethToWei:eth];
+    resolve(wei);
+}
+
+RCT_EXPORT_METHOD(weiToEth:(NSString *)wei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *eth = [[ZumoKitManager sharedManager] weiToEth:wei];
+    resolve(eth);
+}
+
 @end
