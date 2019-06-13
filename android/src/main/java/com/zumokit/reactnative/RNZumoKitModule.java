@@ -23,6 +23,7 @@ import com.blockstar.zumokit.SendTransactionCallback;
 import com.blockstar.zumokit.Transaction;
 import com.blockstar.zumokit.StoreObserver;
 import com.blockstar.zumokit.AuthCallback;
+import com.blockstar.zumokit.Utils;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -286,6 +287,46 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .isValidEthAddress(address);
 
     promise.resolve(valid);
+
+  }
+
+  @ReactMethod
+  public void ethToGwei(String eth, Promise promise) {
+
+    String gwei = this.zumoKit.utils()
+      .ethToGwei(eth);
+
+    promise.resolve(gwei);
+
+  }
+
+  @ReactMethod
+  public void gweiToEth(String gwei, Promise promise) {
+    
+    String eth = this.zumoKit.utils()
+      .gweiToEth(gwei);
+
+    promise.resolve(eth);
+
+  }
+
+  @ReactMethod
+  public void ethToWei(String eth) {
+
+    String wei = this.zumoKit.utils()
+      .ethToWei(eth);
+
+    promise.resolve(wei);
+
+  }
+
+  @ReactMethod
+  public void weiToEth(String wei) {
+
+    String eth = this.zumoKit.utils()
+      .weiToEth(wei);
+
+    promise.resolve(eth);
 
   }
 

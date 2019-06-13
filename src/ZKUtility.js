@@ -36,21 +36,41 @@ class ZKUtility {
      */
     isValidEthAddress = RNZumoKit.isValidEthAddress;
 
-    ethToGwei(eth) {
-        return eth * 1000000000;
-    }
+    /**
+     * Converts Ethereum to Gwei
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    ethToGwei = RNZumoKit.ethToGwei;
 
-    gweiToEth(gwei) {
-        return gwei / 1000000000;
-    }
+    /**
+     * Converts Gwei to Ethereum
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    gweiToEth = RNZumoKit.gweiToEth;
 
-    ethToWei(eth) {
-        return eth / 1000000000000000000;
-    }
+    /**
+     * Converts Ethereum to Wei
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    ethToWei = RNZumoKit.ethToWei;
 
-    weiToEth(wei) {
-        return wei * 1000000000000000000;
-    }
+    /**
+     * Converts Wei to Ethereum
+     * 
+     * @param {string} eth
+     * @returns
+     * @memberof ZKUtility
+     */
+    weiToEth = RNZumoKit.weiToEth;
 
 }
 
