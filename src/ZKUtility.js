@@ -43,7 +43,10 @@ class ZKUtility {
      * @returns
      * @memberof ZKUtility
      */
-    ethToGwei = RNZumoKit.ethToGwei;
+    ethToGwei(eth) {
+        return RNZumoKit
+            .ethToGwei("" + eth);
+    }
 
     /**
      * Converts Gwei to Ethereum
@@ -52,7 +55,10 @@ class ZKUtility {
      * @returns
      * @memberof ZKUtility
      */
-    gweiToEth = RNZumoKit.gweiToEth;
+    gweiToEth(gwei) {
+        return RNZumoKit
+            .gweiToEth("" + gwei);
+    }
 
     /**
      * Converts Ethereum to Wei
@@ -61,7 +67,10 @@ class ZKUtility {
      * @returns
      * @memberof ZKUtility
      */
-    ethToWei = RNZumoKit.ethToWei;
+    ethToWei(eth) {
+        return RNZumoKit
+            .ethToWei("" + eth);
+    }
 
     /**
      * Converts Wei to Ethereum
@@ -70,7 +79,10 @@ class ZKUtility {
      * @returns
      * @memberof ZKUtility
      */
-    weiToEth = RNZumoKit.weiToEth;
+    weiToEth(wei) {
+        return RNZumoKit
+            .weiToEth("" + wei);
+    }
 
 }
 
