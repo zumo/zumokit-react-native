@@ -60,9 +60,20 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
     
     @try {
         
-        NSDictionary *response = [[ZumoKitManager sharedManager]
-                                createWalletWithPassword:password
-                                mnemonicCount:mnemonicCount];
+        [[ZumoKitManager sharedManager]
+        createWalletWithPassword:password
+        mnemonicCount:mnemonicCount
+        completionHandler:^(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage) {
+            
+            if(success) {
+                resolve(response);
+            } else {
+                reject(errorName, errorMessage);
+            }
+            
+        }];
+        
+        return
         
         resolve(response);
         
