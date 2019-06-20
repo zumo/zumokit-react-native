@@ -19,6 +19,7 @@ import money.zumo.zumokit.Keystore;
 import money.zumo.zumokit.AndroidHttp;
 import money.zumo.zumokit.HttpImpl;
 import money.zumo.zumokit.WalletManagement;
+import money.zumo.zumokit.CreateWalletCallback;
 import money.zumo.zumokit.SendTransactionCallback;
 import money.zumo.zumokit.Transaction;
 import money.zumo.zumokit.StoreObserver;
@@ -79,24 +80,39 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WalletManagement wm = this.zumoKit.walletManagement();
     String mnemonic = wm.generateMnemonic(mnemonicCount);
     
-    // Create the keystore and instantly unlock it so it can be used.
-    Keystore keystore = wm.createWallet(Currency.ETH, password, mnemonic);
-    boolean unlockedStatus = wm.unlockWallet(keystore, password);
+    wm.createWallet(Currency.ETH, password, mnemonic, new CreateWalletCallback() {
+      
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        
+        // If there was a problem creating the wallet then we reject the promise.
+        promise.reject(errorName, errorMessage);
 
-    // Create a map to resolve the promise
-    WritableMap map = Arguments.createMap();
-    map.putString("mnemonic", mnemonic);
+      }
 
-    // Add some idems from the keystore to a writeable map.
-    // The map is automatically translated into a JS object.
-    WritableMap ksMap = Arguments.createMap();
-    ksMap.putString("id", keystore.getId());
-    ksMap.putString("address", keystore.getAddress());
-    ksMap.putBoolean("unlocked", keystore.getUnlocked());
-    map.putMap("keystore", ksMap);
+      @Override
+      public void onSuccess(Keystore keystore) {
+        
+        boolean unlockedStatus = wm.unlockWallet(keystore, password);
 
-    // Resolve the promise if everything was okay.
-    promise.resolve(map);
+        // Create a map to resolve the promise
+        WritableMap map = Arguments.createMap();
+        map.putString("mnemonic", mnemonic);
+
+        // Add some idems from the keystore to a writeable map.
+        // The map is automatically translated into a JS object.
+        WritableMap ksMap = Arguments.createMap();
+        ksMap.putString("id", keystore.getId());
+        ksMap.putString("address", keystore.getAddress());
+        ksMap.putBoolean("unlocked", keystore.getUnlocked());
+        map.putMap("keystore", ksMap);
+
+        // Resolve the promise if everything was okay.
+        promise.resolve(map);
+
+      }
+
+    });
 
   }
 
