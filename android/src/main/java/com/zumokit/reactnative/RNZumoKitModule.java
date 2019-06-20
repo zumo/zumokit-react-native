@@ -183,8 +183,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     wm.sendTransaction(keystore, address, amount, gasPrice, gasLimit, "", new SendTransactionCallback() {
       
       @Override
-      public void onError(String message, Transaction txn) {
-        promise.reject(message);
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorName, errorMessage);
       }
 
       @Override
