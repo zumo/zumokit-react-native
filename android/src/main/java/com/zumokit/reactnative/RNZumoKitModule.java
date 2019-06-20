@@ -11,19 +11,19 @@ import com.facebook.react.bridge.WritableArray;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import com.blockstar.zumokit.ZumoKit;
-import com.blockstar.zumokit.Store;
-import com.blockstar.zumokit.State;
-import com.blockstar.zumokit.Currency;
-import com.blockstar.zumokit.Keystore;
-import com.blockstar.zumokit.AndroidHttp;
-import com.blockstar.zumokit.HttpImpl;
-import com.blockstar.zumokit.WalletManagement;
-import com.blockstar.zumokit.SendTransactionCallback;
-import com.blockstar.zumokit.Transaction;
-import com.blockstar.zumokit.StoreObserver;
-import com.blockstar.zumokit.AuthCallback;
-import com.blockstar.zumokit.Utils;
+import money.zumo.zumokit.ZumoKit;
+import money.zumo.zumokit.Store;
+import money.zumo.zumokit.State;
+import money.zumo.zumokit.Currency;
+import money.zumo.zumokit.Keystore;
+import money.zumo.zumokit.AndroidHttp;
+import money.zumo.zumokit.HttpImpl;
+import money.zumo.zumokit.WalletManagement;
+import money.zumo.zumokit.SendTransactionCallback;
+import money.zumo.zumokit.Transaction;
+import money.zumo.zumokit.StoreObserver;
+import money.zumo.zumokit.AuthCallback;
+import money.zumo.zumokit.Utils;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
