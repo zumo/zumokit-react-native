@@ -68,14 +68,10 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
             if(success) {
                 resolve(response);
             } else {
-                reject(errorName, errorMessage);
+                reject(errorName, errorMessage, NULL);
             }
             
         }];
-        
-        return
-        
-        resolve(response);
         
     } @catch (NSException *exception) {
         
@@ -127,7 +123,7 @@ RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)addre
     
     @try {
         
-        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount gasPrice:gasPrice gasLimit:gasLimit completionHandler:^(bool success, NSString * _Nullable errorMessage, CPTransaction * _Nonnull transaction) {
+        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount gasPrice:gasPrice gasLimit:gasLimit completionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, CPTransaction * _Nullable transaction) {
             
             if(success) {
                 NSDictionary *response = @{
@@ -145,7 +141,7 @@ RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)addre
                 return;
             }
             
-            reject(@"ErrorSendingTransaction", errorMessage, NULL);
+            reject(errorName, errorMessage, NULL);
             
         }];
         

@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authenticateWithEmail:(NSString *)email completionHandler:(AuthCompletionBlock)completionHandler;
 
-- (void)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount completionHandler:(CreateWalletCompletionBlock)completionHandler;
+- (void)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount completionHandler:(void (^)(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage))completionHandler;
 
 - (NSDictionary *)getWallet;
 
@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<NSDictionary *> *)getTransactionsForWalletId:(NSString *)walletId;
 
-- (void)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount completionHandler:(void (^)(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage))completionHandler;
+- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit completionHandler:(SendTransactionCompletionBlock)completionHandler;
 
 - (NSString *)ethToGwei:(NSString *)eth;
 
