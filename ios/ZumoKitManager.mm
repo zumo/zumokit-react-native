@@ -55,25 +55,34 @@ NSException *zumoKitNotInitializedException = [NSException
 
 # pragma mark - Wallet Management
 
-- (NSDictionary *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount {
+- (void)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount completionHandler:(void (^)(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage))completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     CPWalletManagement *walletManagement = [_zumoKit walletManagement];
     
     NSString *mnemonicPhrase = [walletManagement generateMnemonic:mnemonicCount];
-    
-    CPKeystore *keystore = [walletManagement
-                            createWallet:CPCurrencyETH
-                            password:password
-                            mnemonic:mnemonicPhrase];
-    
-    return @{ @"mnemonic": mnemonicPhrase,
-              @"keystore": @{
-                      @"id": [keystore id],
-                      @"address": [keystore address],
-                      @"unlocked": @([keystore unlocked])
-                    }
-              };
+  
+    [walletManagement
+     createWallet: CPCurrencyETH
+     password:password
+     mnemonic:mnemonicPhrase
+     callback: [[iOSCreateWalletCallback alloc] initWithCompletionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, CPKeystore * _Nullable keystore) {
+        
+        if(success) {
+            
+            NSDictionary *response = @{ @"mnemonic": mnemonicPhrase,
+                                        @"keystore": @{
+                                                @"id": [keystore id],
+                                                @"address": [keystore address],
+                                                @"unlocked": @([keystore unlocked])
+                                                }
+                                        };
+            
+            completionHandler(YES, response, NULL, NULL);
+        } else {
+            completionHandler(NO, NULL, errorName, errorMessage);
+        }
+    }]];
 }
 
 - (NSDictionary *)getWallet {

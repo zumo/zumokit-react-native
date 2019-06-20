@@ -11,19 +11,20 @@ import com.facebook.react.bridge.WritableArray;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import com.blockstar.zumokit.ZumoKit;
-import com.blockstar.zumokit.Store;
-import com.blockstar.zumokit.State;
-import com.blockstar.zumokit.Currency;
-import com.blockstar.zumokit.Keystore;
-import com.blockstar.zumokit.AndroidHttp;
-import com.blockstar.zumokit.HttpImpl;
-import com.blockstar.zumokit.WalletManagement;
-import com.blockstar.zumokit.SendTransactionCallback;
-import com.blockstar.zumokit.Transaction;
-import com.blockstar.zumokit.StoreObserver;
-import com.blockstar.zumokit.AuthCallback;
-import com.blockstar.zumokit.Utils;
+import money.zumo.zumokit.ZumoKit;
+import money.zumo.zumokit.Store;
+import money.zumo.zumokit.State;
+import money.zumo.zumokit.Currency;
+import money.zumo.zumokit.Keystore;
+import money.zumo.zumokit.AndroidHttp;
+import money.zumo.zumokit.HttpImpl;
+import money.zumo.zumokit.WalletManagement;
+import money.zumo.zumokit.CreateWalletCallback;
+import money.zumo.zumokit.SendTransactionCallback;
+import money.zumo.zumokit.Transaction;
+import money.zumo.zumokit.StoreObserver;
+import money.zumo.zumokit.AuthCallback;
+import money.zumo.zumokit.Utils;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -79,24 +80,39 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WalletManagement wm = this.zumoKit.walletManagement();
     String mnemonic = wm.generateMnemonic(mnemonicCount);
     
-    // Create the keystore and instantly unlock it so it can be used.
-    Keystore keystore = wm.createWallet(Currency.ETH, password, mnemonic);
-    boolean unlockedStatus = wm.unlockWallet(keystore, password);
+    wm.createWallet(Currency.ETH, password, mnemonic, new CreateWalletCallback() {
+      
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        
+        // If there was a problem creating the wallet then we reject the promise.
+        promise.reject(errorName, errorMessage);
 
-    // Create a map to resolve the promise
-    WritableMap map = Arguments.createMap();
-    map.putString("mnemonic", mnemonic);
+      }
 
-    // Add some idems from the keystore to a writeable map.
-    // The map is automatically translated into a JS object.
-    WritableMap ksMap = Arguments.createMap();
-    ksMap.putString("id", keystore.getId());
-    ksMap.putString("address", keystore.getAddress());
-    ksMap.putBoolean("unlocked", keystore.getUnlocked());
-    map.putMap("keystore", ksMap);
+      @Override
+      public void onSuccess(Keystore keystore) {
+        
+        boolean unlockedStatus = wm.unlockWallet(keystore, password);
 
-    // Resolve the promise if everything was okay.
-    promise.resolve(map);
+        // Create a map to resolve the promise
+        WritableMap map = Arguments.createMap();
+        map.putString("mnemonic", mnemonic);
+
+        // Add some idems from the keystore to a writeable map.
+        // The map is automatically translated into a JS object.
+        WritableMap ksMap = Arguments.createMap();
+        ksMap.putString("id", keystore.getId());
+        ksMap.putString("address", keystore.getAddress());
+        ksMap.putBoolean("unlocked", keystore.getUnlocked());
+        map.putMap("keystore", ksMap);
+
+        // Resolve the promise if everything was okay.
+        promise.resolve(map);
+
+      }
+
+    });
 
   }
 
@@ -167,8 +183,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     wm.sendTransaction(keystore, address, amount, gasPrice, gasLimit, "", new SendTransactionCallback() {
       
       @Override
-      public void onError(String message, Transaction txn) {
-        promise.reject(message);
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorName, errorMessage);
       }
 
       @Override

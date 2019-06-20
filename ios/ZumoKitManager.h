@@ -10,6 +10,7 @@
 #import <ZumoKitSDK/ZumoKit.h>
 #import <ZumoKitSDK/iOSAuthCallback.h>
 #import <ZumoKitSDK/iOSSendTransactionCallback.h>
+#import <ZumoKitSDK/iOSCreateWalletCallback.h>
 #import <ZumoKitSDK/CPWalletManagement.h>
 #import <ZumoKitSDK/CPKeystore.h>
 #import <ZumoKitSDK/CPCurrency.h>
@@ -28,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authenticateWithEmail:(NSString *)email completionHandler:(AuthCompletionBlock)completionHandler;
 
-- (NSDictionary *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount;
+- (void)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount completionHandler:(void (^)(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage))completionHandler;
 
 - (NSDictionary *)getWallet;
 
