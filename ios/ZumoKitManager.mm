@@ -134,7 +134,7 @@ NSException *zumoKitNotInitializedException = [NSException
     
     [transactions enumerateObjectsUsingBlock:^(CPTransaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        NSString *type = ([[obj toAddress] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
+        NSString *type = ([[[obj toAddress] lowercaseString] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
         
         [mapped addObject:@{
                             @"value": [obj amount],
