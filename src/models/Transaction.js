@@ -119,10 +119,8 @@ export default class Transaction {
         if(json.status) this.status = json.status;
         if(json.value) this.value = parseFloat(json.value);
         if(json.type) this.type = json.type;
+        if(json.gas_price) this.gasPrice = parseFloat(json.gas_price);
 
-        // Not currently implemented!
-        if(json.gas_price) this.gasPrice = json.gas_price;
-        if(json.gas_used) this.gasUsed = json.gas_used;
     }
 
 }
