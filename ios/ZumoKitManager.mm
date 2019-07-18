@@ -31,7 +31,7 @@ NSException *zumoKitNotInitializedException = [NSException
 
 # pragma mark - Initialization
 
-- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot {
+- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
     
     NSArray *appFolderPath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *dbPath = [appFolderPath objectAtIndex:0];
@@ -41,16 +41,17 @@ NSException *zumoKitNotInitializedException = [NSException
                                         apiKey:apiKey
                                          appId:appId
                                        apiRoot:apiRoot
+                                       myRoot:myRoot
             ];
 }
 
-- (void)authenticateWithEmail:(NSString *)email completionHandler:(AuthCompletionBlock)completionHandler {
+- (void)authenticateWithToken:(NSString *)token completionHandler:(AuthCompletionBlock)completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     iOSAuthCallback *callback = [[iOSAuthCallback alloc]
                                  initWithCompletionHandler:completionHandler];
     
-    [[_zumoKit zumoCore] auth:email callback:callback];
+    [[_zumoKit zumoCore] auth:token callback:callback];
 }
 
 # pragma mark - Wallet Management
