@@ -15,7 +15,7 @@ RCT_EXPORT_MODULE()
 
 # pragma mark - Initialisation
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
     [[ZumoKitManager sharedManager]
@@ -23,18 +23,19 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSStr
      apiKey:apiKey
      appId:appId
      apiRoot:apiRoot
-     ];
+     myRoot:myRoot
+    ];
     
     resolve(@(YES));
     
 }
 
-RCT_EXPORT_METHOD(auth:(NSString *)email resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(auth:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
     @try {
         
-        [[ZumoKitManager sharedManager] authenticateWithEmail:email completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
+        [[ZumoKitManager sharedManager] authenticateWithToken:token completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
             
             if(success) {
                 resolve(@"true");
