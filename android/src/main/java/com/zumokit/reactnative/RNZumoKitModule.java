@@ -44,13 +44,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void init(String apiKey, String appId, String apiRoot, String txServiceUrl) {
+  public void init(String apiKey, String appId, String apiRoot, String txServiceUrl, String myRoot) {
 
     String dbPath = this.reactContext
       .getFilesDir()
       .getAbsolutePath();
 
-    this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, appId, apiRoot);
+    this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, appId, apiRoot, myRoot);
     
     this.subscribeToEvents();
 
@@ -251,14 +251,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   // API
 
   @ReactMethod
-  public void auth(String email, Promise promise) {
+  public void auth(String token, Promise promise) {
 
     if(this.zumoKit == null) {
       promise.reject("ZumoKit not initialized.");
       return;
     }
 
-    this.zumoKit.auth(email, new AuthCallback() {
+    this.zumoKit.auth(token, new AuthCallback() {
       @Override
       public void onError(short httpCode, String data) {
         promise.reject(data);
