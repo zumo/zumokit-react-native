@@ -28,6 +28,16 @@ class ZumoKit {
     }
 
     /**
+     * Clears the ZumoKit cache.
+     * This should be called when a user logs out.
+     *
+     * @memberof ZumoKit
+     */
+    clear() {
+        this._cachedWallet = undefined;
+    }
+
+    /**
      * Creates a new ETH wallet.
      *
      * @param {string} password
