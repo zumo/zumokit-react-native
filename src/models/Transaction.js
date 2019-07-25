@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import { Platform } from 'react-native'
 
 /**
  * Represents a transaction on the blockchain.
@@ -113,8 +114,11 @@ export default class Transaction {
         if(json.to) this.toAddress = json.to;
         if(json.hash) this.hash = json.hash;
         if(json.timestamp) {
-            this.timestamp = json.timestamp;
-            this.time = moment.utc(json.timestamp);
+            // This is a workaround
+            // Currently iOS returns unix timestamp and Android returns ISO string.
+            // iOS should be changed on the native side to return ISO string.
+            this.timestamp = (Platform.OS == "ios") ? json.timestamp * 1000 : json.timestamp;
+            this.time = moment.utc(this.timestamp);
         }
         if(json.status) this.status = json.status;
         if(json.value) this.value = parseFloat(json.value);
