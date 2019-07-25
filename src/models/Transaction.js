@@ -1,4 +1,4 @@
-import Moment from 'moment-timezone';
+import moment from 'moment-timezone';
 
 /**
  * Represents a transaction on the blockchain.
@@ -114,7 +114,7 @@ export default class Transaction {
         if(json.hash) this.hash = json.hash;
         if(json.timestamp) {
             this.timestamp = json.timestamp;
-            this.time = new Moment(json.timestamp, 'X');
+            this.time = moment.utc(json.timestamp);
         }
         if(json.status) this.status = json.status;
         if(json.value) this.value = parseFloat(json.value);
