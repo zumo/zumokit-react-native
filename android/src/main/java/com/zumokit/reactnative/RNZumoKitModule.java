@@ -8,6 +8,8 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Date;
+import java.util.HashMap;
 
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
@@ -248,17 +251,41 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     return map;
   }
 
+  public static HashMap<String, String> toHashMap(ReadableMap readableMap) {
+
+    HashMap<String, String> result = new HashMap<String, String>();
+
+    if (readableMap == null) {
+      return result;
+    }
+
+    ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+    
+    if (!iterator.hasNextKey()) {
+      return result;
+    }
+
+    while (iterator.hasNextKey()) {
+      String key = iterator.nextKey();
+      result.put(key, readableMap.getString(key));
+    }
+
+    return result;
+  }
+
   // API
 
   @ReactMethod
-  public void auth(String token, Promise promise) {
+  public void auth(String token, ReadableMap headers, Promise promise) {
 
     if(this.zumoKit == null) {
       promise.reject("ZumoKit not initialized.");
       return;
     }
 
-    this.zumoKit.auth(token, new AuthCallback() {
+    HashMap<String, String> headerMap = this.toHashMap(headers);
+
+    this.zumoKit.auth(token, headerMap, new AuthCallback() {
       @Override
       public void onError(short httpCode, String data) {
         promise.reject(data);
@@ -345,6 +372,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     promise.resolve(eth);
 
   }
+  
 
   @Override
   public String getName() {

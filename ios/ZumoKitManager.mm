@@ -45,13 +45,13 @@ NSException *zumoKitNotInitializedException = [NSException
             ];
 }
 
-- (void)authenticateWithToken:(NSString *)token completionHandler:(AuthCompletionBlock)completionHandler {
+- (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     iOSAuthCallback *callback = [[iOSAuthCallback alloc]
                                  initWithCompletionHandler:completionHandler];
     
-    [[_zumoKit zumoCore] auth:token callback:callback];
+    [[_zumoKit zumoCore] auth:token headers:headers callback:callback];
 }
 
 # pragma mark - Wallet Management
