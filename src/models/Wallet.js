@@ -75,7 +75,8 @@ export default class Wallet {
      */
     async getTransactions() {
         const response = await RNZumoKit.getTransactions(this.id);
-        return response.map((json) => new Transaction(json));
+        return response.map((json) => new Transaction(json))
+            .reverse();
     }
 
     /**

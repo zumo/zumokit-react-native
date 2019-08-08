@@ -228,11 +228,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   // HELPERS
 
-  private String getTimestamp(Long epoch) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
-    return sdf.format(new Date(epoch * 1000));
-  }
-
   private WritableMap getMap(Transaction txn, String address) {
     WritableMap map = Arguments.createMap();
 
@@ -244,7 +239,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("status", txn.getStatus().name());
     map.putString("to", txn.getToAddress());
     map.putString("from", txn.getFromAddress());
-    map.putString("timestamp", this.getTimestamp(txn.getTimestamp()));
+    map.putDouble("timestamp", txn.getTimestamp());
     map.putString("gas_price", txn.getGasPrice());
     map.putString("type", type);
 
