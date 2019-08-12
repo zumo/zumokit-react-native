@@ -37,12 +37,12 @@ NSException *zumoKitNotInitializedException = [NSException
     NSString *dbPath = [appFolderPath objectAtIndex:0];
     
     _zumoKit = [[ZumoKitImpl alloc] initWithDbPath:dbPath
-                                  txServiceUrl:txServiceUrl
-                                        apiKey:apiKey
-                                         appId:appId
-                                       apiRoot:apiRoot
-                                       myRoot:myRoot
-            ];
+                                      txServiceUrl:txServiceUrl
+                                            apiKey:apiKey
+                                             appId:appId
+                                           apiRoot:apiRoot
+                                            myRoot:myRoot
+                ];
 }
 
 - (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler {
@@ -62,7 +62,7 @@ NSException *zumoKitNotInitializedException = [NSException
     CPWalletManagement *walletManagement = [_zumoKit walletManagement];
     
     NSString *mnemonicPhrase = [walletManagement generateMnemonic:mnemonicCount];
-  
+    
     [walletManagement
      createWallet: CPCurrencyETH
      password:password
@@ -115,15 +115,15 @@ NSException *zumoKitNotInitializedException = [NSException
     CPKeystore *keystore = [store getKeystore:keystoreId];
     
     BOOL status = [[_zumoKit walletManagement]
-     unlockWallet:keystore
-     password:password];
+                   unlockWallet:keystore
+                   password:password];
     
     return status;
 }
 
 - (NSArray<NSDictionary *> *)getTransactionsForWalletId:(NSString *)walletId {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
-
+    
     CPStore *store = [_zumoKit store];
     CPKeystore *keystore = [store getKeystore:walletId];
     NSString *address = [[keystore address] lowercaseString];
@@ -145,7 +145,9 @@ NSException *zumoKitNotInitializedException = [NSException
                             @"from": [obj fromAddress],
                             @"timestamp": @([obj timestamp]),
                             @"gas_price": [obj gasPrice],
-                            @"type": type
+                            @"type": type,
+                            @"from_user_id": ([obj fromUserId]) ? [obj fromUserId] : @"",
+                            @"to_user_id": ([obj toUserId]) ? [obj toUserId] : @"",
                             }];
         
     }];

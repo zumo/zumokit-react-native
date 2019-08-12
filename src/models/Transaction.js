@@ -23,6 +23,21 @@ export default class Transaction {
     toAddress;
 
     /**
+     * The ID of the user that sent the transaction.
+     *
+     * @memberof Transaction
+     */
+    fromUserId;
+
+
+    /**
+     * The ID of the user that received the transaction.
+     *
+     * @memberof Transaction
+     */
+    toUserId;
+
+    /**
      * The blockchain hash of the transaction.
      *
      * @memberof Transaction
@@ -106,11 +121,23 @@ export default class Transaction {
         return (this.type == 'INCOMING') ? this.fromAddress : this.toAddress;
     }
 
+    /**
+     * The user ID to be displayed dependant on the type of transaction.
+     *
+     * @readonly
+     * @memberof Transaction
+     */
+    get userId() {
+        return (this.type == 'INCOMING') ? this.fromUserId : this.toUserId;
+    }
+
     constructor(json) {
         if(!json) throw 'JSON required to construct a Transaction.';
 
         if(json.from) this.fromAddress = json.from;
         if(json.to) this.toAddress = json.to;
+        if(json.to_user_id.length > 0) this.toUserId = json.to_user_id;
+        if(json.from_user_id.length > 0) this.fromUserId = json.from_user_id;
         if(json.hash) this.hash = json.hash;
         if(json.timestamp) {
             this.timestamp = json.timestamp;
@@ -120,7 +147,6 @@ export default class Transaction {
         if(json.value) this.value = parseFloat(json.value);
         if(json.type) this.type = json.type;
         if(json.gas_price) this.gasPrice = parseFloat(json.gas_price);
-
     }
 
 }
