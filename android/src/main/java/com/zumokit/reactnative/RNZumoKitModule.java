@@ -8,26 +8,31 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import com.blockstar.zumokit.ZumoKit;
-import com.blockstar.zumokit.Store;
-import com.blockstar.zumokit.State;
-import com.blockstar.zumokit.Currency;
-import com.blockstar.zumokit.Keystore;
-import com.blockstar.zumokit.AndroidHttp;
-import com.blockstar.zumokit.HttpImpl;
-import com.blockstar.zumokit.WalletManagement;
-import com.blockstar.zumokit.SendTransactionCallback;
-import com.blockstar.zumokit.Transaction;
-import com.blockstar.zumokit.StoreObserver;
-import com.blockstar.zumokit.AuthCallback;
+import money.zumo.zumokit.ZumoKit;
+import money.zumo.zumokit.Store;
+import money.zumo.zumokit.State;
+import money.zumo.zumokit.Currency;
+import money.zumo.zumokit.Keystore;
+import money.zumo.zumokit.AndroidHttp;
+import money.zumo.zumokit.HttpImpl;
+import money.zumo.zumokit.WalletManagement;
+import money.zumo.zumokit.CreateWalletCallback;
+import money.zumo.zumokit.SendTransactionCallback;
+import money.zumo.zumokit.Transaction;
+import money.zumo.zumokit.StoreObserver;
+import money.zumo.zumokit.AuthCallback;
+import money.zumo.zumokit.Utils;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Date;
+import java.util.HashMap;
 
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
@@ -42,13 +47,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void init(String apiKey, String appId, String apiRoot, String txServiceUrl) {
+  public void init(String apiKey, String appId, String apiRoot, String myRoot, String txServiceUrl) {
 
     String dbPath = this.reactContext
       .getFilesDir()
       .getAbsolutePath();
 
-    this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, appId, apiRoot);
+    this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, appId, apiRoot, myRoot);
     
     this.subscribeToEvents();
 
@@ -78,24 +83,39 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WalletManagement wm = this.zumoKit.walletManagement();
     String mnemonic = wm.generateMnemonic(mnemonicCount);
     
-    // Create the keystore and instantly unlock it so it can be used.
-    Keystore keystore = wm.createWallet(Currency.ETH, password, mnemonic);
-    boolean unlockedStatus = wm.unlockWallet(keystore, password);
+    wm.createWallet(Currency.ETH, password, mnemonic, new CreateWalletCallback() {
+      
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        
+        // If there was a problem creating the wallet then we reject the promise.
+        promise.reject(errorName, errorMessage);
 
-    // Create a map to resolve the promise
-    WritableMap map = Arguments.createMap();
-    map.putString("mnemonic", mnemonic);
+      }
 
-    // Add some idems from the keystore to a writeable map.
-    // The map is automatically translated into a JS object.
-    WritableMap ksMap = Arguments.createMap();
-    ksMap.putString("id", keystore.getId());
-    ksMap.putString("address", keystore.getAddress());
-    ksMap.putBoolean("unlocked", keystore.getUnlocked());
-    map.putMap("keystore", ksMap);
+      @Override
+      public void onSuccess(Keystore keystore) {
+        
+        boolean unlockedStatus = wm.unlockWallet(keystore, password);
 
-    // Resolve the promise if everything was okay.
-    promise.resolve(map);
+        // Create a map to resolve the promise
+        WritableMap map = Arguments.createMap();
+        map.putString("mnemonic", mnemonic);
+
+        // Add some idems from the keystore to a writeable map.
+        // The map is automatically translated into a JS object.
+        WritableMap ksMap = Arguments.createMap();
+        ksMap.putString("id", keystore.getId());
+        ksMap.putString("address", keystore.getAddress());
+        ksMap.putBoolean("unlocked", keystore.getUnlocked());
+        map.putMap("keystore", ksMap);
+
+        // Resolve the promise if everything was okay.
+        promise.resolve(map);
+
+      }
+
+    });
 
   }
 
@@ -166,8 +186,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     wm.sendTransaction(keystore, address, amount, gasPrice, gasLimit, "", new SendTransactionCallback() {
       
       @Override
-      public void onError(String message, Transaction txn) {
-        promise.reject(message);
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorName, errorMessage);
       }
 
       @Override
@@ -208,11 +228,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   // HELPERS
 
-  private String getTimestamp(Long epoch) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.UK);
-    return sdf.format(new Date(epoch * 1000));
-  }
-
   private WritableMap getMap(Transaction txn, String address) {
     WritableMap map = Arguments.createMap();
 
@@ -224,24 +239,48 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("status", txn.getStatus().name());
     map.putString("to", txn.getToAddress());
     map.putString("from", txn.getFromAddress());
-    map.putString("timestamp", this.getTimestamp(txn.getTimestamp()));
+    map.putDouble("timestamp", txn.getTimestamp());
     map.putString("gas_price", txn.getGasPrice());
     map.putString("type", type);
 
     return map;
   }
 
+  public static HashMap<String, String> toHashMap(ReadableMap readableMap) {
+
+    HashMap<String, String> result = new HashMap<String, String>();
+
+    if (readableMap == null) {
+      return result;
+    }
+
+    ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+    
+    if (!iterator.hasNextKey()) {
+      return result;
+    }
+
+    while (iterator.hasNextKey()) {
+      String key = iterator.nextKey();
+      result.put(key, readableMap.getString(key));
+    }
+
+    return result;
+  }
+
   // API
 
   @ReactMethod
-  public void auth(String email, Promise promise) {
+  public void auth(String token, ReadableMap headers, Promise promise) {
 
     if(this.zumoKit == null) {
       promise.reject("ZumoKit not initialized.");
       return;
     }
 
-    this.zumoKit.auth(email, new AuthCallback() {
+    HashMap<String, String> headerMap = this.toHashMap(headers);
+
+    this.zumoKit.auth(token, headerMap, new AuthCallback() {
       @Override
       public void onError(short httpCode, String data) {
         promise.reject(data);
@@ -288,6 +327,47 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     promise.resolve(valid);
 
   }
+
+  @ReactMethod
+  public void ethToGwei(String eth, Promise promise) {
+
+    String gwei = this.zumoKit.utils()
+      .ethToGwei(eth);
+
+    promise.resolve(gwei);
+
+  }
+
+  @ReactMethod
+  public void gweiToEth(String gwei, Promise promise) {
+    
+    String eth = this.zumoKit.utils()
+      .gweiToEth(gwei);
+
+    promise.resolve(eth);
+
+  }
+
+  @ReactMethod
+  public void ethToWei(String eth, Promise promise) {
+
+    String wei = this.zumoKit.utils()
+      .ethToWei(eth);
+
+    promise.resolve(wei);
+
+  }
+
+  @ReactMethod
+  public void weiToEth(String wei, Promise promise) {
+
+    String eth = this.zumoKit.utils()
+      .weiToEth(wei);
+
+    promise.resolve(eth);
+
+  }
+  
 
   @Override
   public String getName() {

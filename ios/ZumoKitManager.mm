@@ -31,7 +31,7 @@ NSException *zumoKitNotInitializedException = [NSException
 
 # pragma mark - Initialization
 
-- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot {
+- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
     
     NSArray *appFolderPath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *dbPath = [appFolderPath objectAtIndex:0];
@@ -41,39 +41,49 @@ NSException *zumoKitNotInitializedException = [NSException
                                         apiKey:apiKey
                                          appId:appId
                                        apiRoot:apiRoot
+                                       myRoot:myRoot
             ];
 }
 
-- (void)authenticateWithEmail:(NSString *)email completionHandler:(AuthCompletionBlock)completionHandler {
+- (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     iOSAuthCallback *callback = [[iOSAuthCallback alloc]
                                  initWithCompletionHandler:completionHandler];
     
-    [[_zumoKit zumoCore] auth:email callback:callback];
+    [[_zumoKit zumoCore] auth:token headers:headers callback:callback];
 }
 
 # pragma mark - Wallet Management
 
-- (NSDictionary *)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount {
+- (void)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount completionHandler:(void (^)(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage))completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     CPWalletManagement *walletManagement = [_zumoKit walletManagement];
     
     NSString *mnemonicPhrase = [walletManagement generateMnemonic:mnemonicCount];
-    
-    CPKeystore *keystore = [walletManagement
-                            createWallet:CPCurrencyETH
-                            password:password
-                            mnemonic:mnemonicPhrase];
-    
-    return @{ @"mnemonic": mnemonicPhrase,
-              @"keystore": @{
-                      @"id": [keystore id],
-                      @"address": [keystore address],
-                      @"unlocked": @([keystore unlocked])
-                    }
-              };
+  
+    [walletManagement
+     createWallet: CPCurrencyETH
+     password:password
+     mnemonic:mnemonicPhrase
+     callback: [[iOSCreateWalletCallback alloc] initWithCompletionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, CPKeystore * _Nullable keystore) {
+        
+        if(success) {
+            
+            NSDictionary *response = @{ @"mnemonic": mnemonicPhrase,
+                                        @"keystore": @{
+                                                @"id": [keystore id],
+                                                @"address": [keystore address],
+                                                @"unlocked": @([keystore unlocked])
+                                                }
+                                        };
+            
+            completionHandler(YES, response, NULL, NULL);
+        } else {
+            completionHandler(NO, NULL, errorName, errorMessage);
+        }
+    }]];
 }
 
 - (NSDictionary *)getWallet {
@@ -125,7 +135,7 @@ NSException *zumoKitNotInitializedException = [NSException
     
     [transactions enumerateObjectsUsingBlock:^(CPTransaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        NSString *type = ([[obj toAddress] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
+        NSString *type = ([[[obj toAddress] lowercaseString] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
         
         [mapped addObject:@{
                             @"value": [obj amount],
@@ -181,6 +191,30 @@ NSException *zumoKitNotInitializedException = [NSException
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     return [[_zumoKit utils] isValidEthAddress:address];
+}
+
+- (NSString *)ethToGwei:(NSString *)eth {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] ethToGwei:eth];
+}
+
+- (NSString *)gweiToEth:(NSString *)gwei {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] gweiToEth:gwei];
+}
+
+- (NSString *)ethToWei:(NSString *)eth {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] ethToWei:eth];
+}
+
+- (NSString *)weiToEth:(NSString *)wei {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] weiToEth:wei];
 }
 
 @end

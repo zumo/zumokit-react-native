@@ -15,7 +15,7 @@ RCT_EXPORT_MODULE()
 
 # pragma mark - Initialisation
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
     [[ZumoKitManager sharedManager]
@@ -23,18 +23,19 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSStr
      apiKey:apiKey
      appId:appId
      apiRoot:apiRoot
-     ];
+     myRoot:myRoot
+    ];
     
     resolve(@(YES));
     
 }
 
-RCT_EXPORT_METHOD(auth:(NSString *)email resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
     @try {
         
-        [[ZumoKitManager sharedManager] authenticateWithEmail:email completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
+        [[ZumoKitManager sharedManager] authenticateWithToken:token headers:headers completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
             
             if(success) {
                 resolve(@"true");
@@ -60,11 +61,18 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
     
     @try {
         
-        NSDictionary *response = [[ZumoKitManager sharedManager]
-                                createWalletWithPassword:password
-                                mnemonicCount:mnemonicCount];
-        
-        resolve(response);
+        [[ZumoKitManager sharedManager]
+        createWalletWithPassword:password
+        mnemonicCount:mnemonicCount
+        completionHandler:^(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage) {
+            
+            if(success) {
+                resolve(response);
+            } else {
+                reject(errorName, errorMessage, NULL);
+            }
+            
+        }];
         
     } @catch (NSException *exception) {
         
@@ -116,7 +124,7 @@ RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)addre
     
     @try {
         
-        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount gasPrice:gasPrice gasLimit:gasLimit completionHandler:^(bool success, NSString * _Nullable errorMessage, CPTransaction * _Nonnull transaction) {
+        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount gasPrice:gasPrice gasLimit:gasLimit completionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, CPTransaction * _Nullable transaction) {
             
             if(success) {
                 NSDictionary *response = @{
@@ -134,7 +142,7 @@ RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)addre
                 return;
             }
             
-            reject(@"ErrorSendingTransaction", errorMessage, NULL);
+            reject(errorName, errorMessage, NULL);
             
         }];
         
@@ -191,6 +199,30 @@ RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseReso
 {
     BOOL isValid = [[ZumoKitManager sharedManager] isValidEthAddress:address];
     resolve(@(isValid));
+}
+
+RCT_EXPORT_METHOD(ethToGwei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *gwei = [[ZumoKitManager sharedManager] ethToGwei:eth];
+    resolve(gwei);
+}
+
+RCT_EXPORT_METHOD(gweiToEth:(NSString *)gwei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *eth = [[ZumoKitManager sharedManager] gweiToEth:gwei];
+    resolve(eth);
+}
+
+RCT_EXPORT_METHOD(ethToWei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *wei = [[ZumoKitManager sharedManager] ethToWei:eth];
+    resolve(wei);
+}
+
+RCT_EXPORT_METHOD(weiToEth:(NSString *)wei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *eth = [[ZumoKitManager sharedManager] weiToEth:wei];
+    resolve(eth);
 }
 
 @end

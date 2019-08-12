@@ -23,8 +23,18 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     init(config) {
-        const { apiKey, appId, apiRoot, txServiceUrl } = config;
-        RNZumoKit.init(apiKey, appId, apiRoot, txServiceUrl);
+        const { apiKey, appId, apiRoot, myRoot, txServiceUrl } = config;
+        RNZumoKit.init(apiKey, appId, apiRoot, myRoot, txServiceUrl);
+    }
+
+    /**
+     * Clears the ZumoKit cache.
+     * This should be called when a user logs out.
+     *
+     * @memberof ZumoKit
+     */
+    clear() {
+        this._cachedWallet = undefined;
     }
 
     /**
