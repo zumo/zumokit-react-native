@@ -136,8 +136,8 @@ export default class Transaction {
 
         if(json.from) this.fromAddress = json.from;
         if(json.to) this.toAddress = json.to;
-        if(json.to_user_id.length > 0) this.toUserId = json.to_user_id;
-        if(json.from_user_id.length > 0) this.fromUserId = json.from_user_id;
+        if(json.to_user_id && json.to_user_id.length > 0) this.toUserId = json.to_user_id;
+        if(json.from_user_id && json.from_user_id.length > 0) this.fromUserId = json.from_user_id;
         if(json.hash) this.hash = json.hash;
         if(json.timestamp) {
             this.timestamp = json.timestamp;
