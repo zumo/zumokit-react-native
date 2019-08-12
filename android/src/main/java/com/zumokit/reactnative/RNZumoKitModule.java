@@ -242,6 +242,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putDouble("timestamp", txn.getTimestamp());
     map.putString("gas_price", txn.getGasPrice());
     map.putString("type", type);
+    map.putString("to_user_id", txn.getToUserId());
+    map.putString("from_user_id", txn.getFromUserId());
 
     return map;
   }
