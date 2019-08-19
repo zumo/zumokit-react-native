@@ -18,6 +18,7 @@
 #import <ZumoKitSDK/CPState.h>
 #import <ZumoKitSDK/CPUtils.h>
 #import <ZumoKitSDK/CPTransaction.h>
+#import <ZumoKitSDK/CPActionType.h>
 #import <ZumoKitSDK/ZKStoreObserver.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot;
 
-- (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPState * state))completionHandler;
+- (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPActionType actionType, CPState * state))completionHandler;
 
 - (void)unsubscribeFromStoreObserver;
 

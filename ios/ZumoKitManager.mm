@@ -47,7 +47,7 @@ NSException *zumoKitNotInitializedException = [NSException
                 ];
 }
 
-- (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPState * _Nonnull))completionHandler {
+- (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPActionType actionType, CPState * _Nonnull))completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     _storeObserver = [[ZKStoreObserver alloc] initWithCompletionHandler:completionHandler];
