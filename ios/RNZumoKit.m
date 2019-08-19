@@ -5,6 +5,8 @@
 
 @implementation RNZumoKit
 
+bool hasListeners;
+
 // Let's run the methods in a separate queue!
 - (dispatch_queue_t)methodQueue
 {
@@ -13,8 +15,24 @@
 
 RCT_EXPORT_MODULE()
 
+# pragma mark - Events
+
 - (NSArray<NSString *> *)supportedEvents {
     return @[@"StoreUpdated"];
+}
+
+- (void)startObserving {
+    hasListeners = YES;
+    
+    [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPState * _Nonnull state) {
+        [self sendEventWithName:@"StoreUpdated" body:NULL];
+    }];
+}
+
+- (void)stopObserving {
+    hasListeners = NO;
+    
+    [[ZumoKitManager sharedManager] unsubscribeFromStoreObserver];
 }
 
 # pragma mark - Initialisation
@@ -22,13 +40,15 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
+    // Boot the ZumoKitManager to handle the native C++ code
     [[ZumoKitManager sharedManager]
      initializeWithTxServiceUrl:txServiceUrl
      apiKey:apiKey
      appId:appId
      apiRoot:apiRoot
      myRoot:myRoot
-    ];
+     ];
+    
     
     resolve(@(YES));
     
@@ -51,7 +71,7 @@ RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolve
         }];
         
     } @catch (NSException *exception) {
-     
+        
         reject([exception name], [exception reason], NULL);
         
     }
@@ -66,17 +86,17 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
     @try {
         
         [[ZumoKitManager sharedManager]
-        createWalletWithPassword:password
-        mnemonicCount:mnemonicCount
-        completionHandler:^(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage) {
-            
-            if(success) {
-                resolve(response);
-            } else {
-                reject(errorName, errorMessage, NULL);
-            }
-            
-        }];
+         createWalletWithPassword:password
+         mnemonicCount:mnemonicCount
+         completionHandler:^(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage) {
+             
+             if(success) {
+                 resolve(response);
+             } else {
+                 reject(errorName, errorMessage, NULL);
+             }
+             
+         }];
         
     } @catch (NSException *exception) {
         
@@ -88,7 +108,7 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
 
 RCT_EXPORT_METHOD(getWallet:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-
+    
     @try {
         
         NSDictionary *response = [[ZumoKitManager sharedManager] getWallet];
