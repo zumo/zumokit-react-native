@@ -24,7 +24,7 @@ RCT_EXPORT_MODULE()
 - (void)startObserving {
     hasListeners = YES;
     
-    [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPActionType actionType, CPState * _Nonnull state) {
+    [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPState * _Nonnull state) {
         [self sendEventWithName:@"StoreUpdated" body:NULL];
     }];
 }
@@ -48,7 +48,6 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSStr
      apiRoot:apiRoot
      myRoot:myRoot
      ];
-    
     
     resolve(@(YES));
     
