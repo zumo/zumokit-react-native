@@ -1,5 +1,5 @@
 import Wallet from './models/Wallet';
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 const { RNZumoKit } = NativeModules;
 
 /**
@@ -15,6 +15,13 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     _cachedWallet;
+
+    /**
+     * The emitter that bubbles events from the native side.
+     *
+     * @memberof ZumoKit
+     */
+    _emitter = new NativeEventEmitter(RNZumoKit);
 
     /**
      * Initialise ZumoKit with the provided JSON config.
@@ -100,6 +107,17 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     auth = RNZumoKit.auth;
+
+    /**
+     * Add a listener for native events.
+     *
+     * @param {function} callback
+     * @returns
+     * @memberof ZumoKit
+     */
+    addListener(callback) {
+        return this._emitter.addListener('StoreUpdated', callback);
+    }
 
 }
 

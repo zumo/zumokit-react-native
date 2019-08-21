@@ -11,6 +11,8 @@
 
 @property (strong, nonatomic) ZumoKitImpl *zumoKit;
 
+@property (strong, nonatomic) ZKStoreObserver *storeObserver;
+
 @end
 
 @implementation ZumoKitManager
@@ -43,6 +45,20 @@ NSException *zumoKitNotInitializedException = [NSException
                                            apiRoot:apiRoot
                                             myRoot:myRoot
                 ];
+}
+
+- (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPState * _Nonnull))completionHandler {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    _storeObserver = [[ZKStoreObserver alloc] initWithCompletionHandler:completionHandler];
+    [[_zumoKit store] subscribe:_storeObserver];
+}
+
+- (void)unsubscribeFromStoreObserver {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    [[_zumoKit store] unsubscribe:_storeObserver];
+    _storeObserver = NULL;
 }
 
 - (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler {
