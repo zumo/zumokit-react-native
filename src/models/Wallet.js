@@ -1,6 +1,7 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
 import ZKUtility from '../ZKUtility';
+const { RNZumoKit } = NativeModules;
 
 /**
  * Represents a wallet on the blockchain/Zumo network.
