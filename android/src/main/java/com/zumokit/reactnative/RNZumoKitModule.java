@@ -108,6 +108,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         ksMap.putString("id", keystore.getId());
         ksMap.putString("address", keystore.getAddress());
         ksMap.putBoolean("unlocked", keystore.getUnlocked());
+        ksMap.putString("balance", keystore.getBalance());
         map.putMap("keystore", ksMap);
 
         // Resolve the promise if everything was okay.
@@ -135,6 +136,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("id", keystore.getId());
       map.putString("address", keystore.getAddress());
       map.putBoolean("unlocked", keystore.getUnlocked());
+      map.putString("balance", keystore.getBalance());
 
       // Resolve the promise with the map
       promise.resolve(map);
