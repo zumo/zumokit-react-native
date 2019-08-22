@@ -1,6 +1,6 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
-import ZumoKit from 'react-native-zumo-kit/src/ZumoKit';
+import ZKUtility from '../ZKUtility';
 
 /**
  * Represents a wallet on the blockchain/Zumo network.
@@ -32,11 +32,23 @@ export default class Wallet {
     unlocked;
 
     /**
-     * The current balance of the wallet.
+     * The current balance of the wallet in wei.
      *
      * @memberof Wallet
      */
     balance;
+
+
+    /**
+     * The balance of the wallet in ETH.
+     *
+     * @readonly
+     * @memberof Wallet
+     */
+    async eth() {
+        if(!this.balance) return 0;
+        return ZKUtility.weiToEth(this.balance);
+    }
 
     /**
      * Subscription that listens for balance changes.
