@@ -1,6 +1,6 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
-const { RNZumoKit } = NativeModules;
+import ZumoKit from 'react-native-zumo-kit/src/ZumoKit';
 
 /**
  * Represents a wallet on the blockchain/Zumo network.
@@ -31,12 +31,27 @@ export default class Wallet {
      */
     unlocked;
 
+    /**
+     * The current balance of the wallet.
+     *
+     * @memberof Wallet
+     */
+    balance;
+
+    /**
+     * Subscription that listens for balance changes.
+     *
+     * @memberof Wallet
+     */
+    _subscription;
+
     constructor(json) {
         if(!json) throw 'JSON required to construct a Wallet.';
 
         this.address = json.address;
         this.id = json.id;
         this.unlocked = json.unlocked;
+        this.balance = parseInt(json.balance);
     }
 
     /**

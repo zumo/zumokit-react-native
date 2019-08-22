@@ -11,6 +11,8 @@
 
 @property (strong, nonatomic) ZumoKitImpl *zumoKit;
 
+@property (strong, nonatomic) ZKStoreObserver *storeObserver;
+
 @end
 
 @implementation ZumoKitManager
@@ -45,6 +47,20 @@ NSException *zumoKitNotInitializedException = [NSException
                 ];
 }
 
+- (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPState * _Nonnull))completionHandler {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    _storeObserver = [[ZKStoreObserver alloc] initWithCompletionHandler:completionHandler];
+    [[_zumoKit store] subscribe:_storeObserver];
+}
+
+- (void)unsubscribeFromStoreObserver {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    [[_zumoKit store] unsubscribe:_storeObserver];
+    _storeObserver = NULL;
+}
+
 - (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
@@ -75,7 +91,8 @@ NSException *zumoKitNotInitializedException = [NSException
                                         @"keystore": @{
                                                 @"id": [keystore id],
                                                 @"address": [keystore address],
-                                                @"unlocked": @([keystore unlocked])
+                                                @"unlocked": @([keystore unlocked]),
+                                                @"balance": [keystore balance]
                                                 }
                                         };
             
@@ -104,7 +121,8 @@ NSException *zumoKitNotInitializedException = [NSException
     return @{
              @"id": [keystore id],
              @"address": [keystore address],
-             @"unlocked": @([keystore unlocked])
+             @"unlocked": @([keystore unlocked]),
+             @"balance": [keystore balance]
              };
 }
 
