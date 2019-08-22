@@ -1,6 +1,7 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
 import ZKUtility from '../ZKUtility';
+import ZumoKit from '../ZumoKit';
 const { RNZumoKit } = NativeModules;
 
 /**
@@ -65,6 +66,30 @@ export default class Wallet {
         this.id = json.id;
         this.unlocked = json.unlocked;
         this.balance = parseInt(json.balance);
+
+        this._addListener();
+    }
+
+    /**
+     * Private method to add a listener for when the balance gets updated.
+     *
+     * @memberof Wallet
+     */
+    _addListener() {
+        this._subscription = ZumoKit.addListener((state) => {
+            this.balance = state.wallet.balance;
+        });
+    }
+
+    /**
+     * Private method to remove a listener for when the balance gets updated.
+     *
+     * @returns
+     * @memberof Wallet
+     */
+    _removeListener() {
+        if(!this._subscription) return;
+        this._subscription.remove();
     }
 
     /**
