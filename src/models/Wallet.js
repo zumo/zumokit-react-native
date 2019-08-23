@@ -47,7 +47,7 @@ export default class Wallet {
      * @readonly
      * @memberof Wallet
      */
-    async eth() {
+    async ethBalance() {
         if(!this.balance) return 0;
         return ZKUtility.weiToEth(this.balance);
     }
