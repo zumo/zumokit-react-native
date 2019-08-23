@@ -91,7 +91,8 @@ NSException *zumoKitNotInitializedException = [NSException
                                         @"keystore": @{
                                                 @"id": [keystore id],
                                                 @"address": [keystore address],
-                                                @"unlocked": @([keystore unlocked])
+                                                @"unlocked": @([keystore unlocked]),
+                                                @"balance": [keystore balance]
                                                 }
                                         };
             
@@ -120,7 +121,8 @@ NSException *zumoKitNotInitializedException = [NSException
     return @{
              @"id": [keystore id],
              @"address": [keystore address],
-             @"unlocked": @([keystore unlocked])
+             @"unlocked": @([keystore unlocked]),
+             @"balance": [keystore balance]
              };
 }
 

@@ -41,6 +41,9 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     clear() {
+        if(!this._cachedWallet) return;
+
+        this._cachedWallet._removeListener();
         this._cachedWallet = undefined;
     }
 

@@ -1,5 +1,7 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
+import ZKUtility from '../ZKUtility';
+import ZumoKit from '../ZumoKit';
 const { RNZumoKit } = NativeModules;
 
 /**
@@ -31,12 +33,63 @@ export default class Wallet {
      */
     unlocked;
 
+    /**
+     * The current balance of the wallet in wei.
+     *
+     * @memberof Wallet
+     */
+    balance;
+
+
+    /**
+     * The balance of the wallet in ETH.
+     *
+     * @readonly
+     * @memberof Wallet
+     */
+    async ethBalance() {
+        if(!this.balance) return 0;
+        return ZKUtility.weiToEth(this.balance);
+    }
+
+    /**
+     * Subscription that listens for balance changes.
+     *
+     * @memberof Wallet
+     */
+    _subscription;
+
     constructor(json) {
         if(!json) throw 'JSON required to construct a Wallet.';
 
         this.address = json.address;
         this.id = json.id;
         this.unlocked = json.unlocked;
+        this.balance = parseInt(json.balance);
+
+        this._addListener();
+    }
+
+    /**
+     * Private method to add a listener for when the balance gets updated.
+     *
+     * @memberof Wallet
+     */
+    _addListener() {
+        this._subscription = ZumoKit.addListener((state) => {
+            this.balance = state.wallet.balance;
+        });
+    }
+
+    /**
+     * Private method to remove a listener for when the balance gets updated.
+     *
+     * @returns
+     * @memberof Wallet
+     */
+    _removeListener() {
+        if(!this._subscription) return;
+        this._subscription.remove();
     }
 
     /**
