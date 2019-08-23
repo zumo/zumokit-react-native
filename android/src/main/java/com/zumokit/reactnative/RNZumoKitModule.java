@@ -67,8 +67,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       public void update(State state) {
         
         module.reactContext
-        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-        .emit("onZumoKitUpdated", "hello");
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit("StoreUpdated", null);
 
       }
     });

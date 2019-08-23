@@ -25,6 +25,7 @@ RCT_EXPORT_MODULE()
     hasListeners = YES;
     
     [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPState * _Nonnull state) {
+
         [self sendEventWithName:@"StoreUpdated" body:@{
                                                        @"wallet": [[ZumoKitManager sharedManager] getWallet]
                                                        }];
