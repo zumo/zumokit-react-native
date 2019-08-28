@@ -59,10 +59,10 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSStr
 RCT_EXPORT_METHOD(sync:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
-    [[ZumoKitManager sharedManager] completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
+    [[ZumoKitManager sharedManager] syncWithCompletionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
 
         if(success) {
-            resolve(YES);
+            resolve(@(YES));
         } else {
             reject(@"Error syncing", @"An unexpected error occured", NULL);
         }
@@ -108,7 +108,7 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
          completionHandler:^(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage) {
              
              if(success) {
-                 resolve(success);
+                 resolve(NULL);
              } else {
                  reject(errorName, errorMessage, NULL);
              }
