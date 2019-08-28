@@ -19,6 +19,7 @@
 #import <ZumoKitSDK/CPUtils.h>
 #import <ZumoKitSDK/CPTransaction.h>
 #import <ZumoKitSDK/ZKStoreObserver.h>
+#import <ZumoKitSDK/iOSSyncCallback.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (ZumoKitManager *)sharedManager;
 
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot;
+
+- (void)syncWithCompletionHandler:(void (^)(bool success, short errorCode, NSString * _Nullable data))completionHandler;
 
 - (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPState * state))completionHandler;
 

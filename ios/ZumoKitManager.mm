@@ -47,6 +47,12 @@ NSException *zumoKitNotInitializedException = [NSException
                 ];
 }
 
+- (void)syncWithCompletionHandler:(void (^)(bool success, short errorCode, NSString * _Nullable data))completionHandler {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    [[_zumoKit zumoCore] sync:[[iOSSyncCallback alloc] initWithCompletionHandler:completionHandler]];
+}
+
 - (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPState * _Nonnull))completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
