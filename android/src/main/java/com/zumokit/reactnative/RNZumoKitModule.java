@@ -27,6 +27,7 @@ import money.zumo.zumokit.Transaction;
 import money.zumo.zumokit.StoreObserver;
 import money.zumo.zumokit.AuthCallback;
 import money.zumo.zumokit.Utils;
+import money.zumo.zumokit.SyncCallback;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -72,6 +73,23 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       }
     });
+  }
+
+  @ReactMethod
+  public void sync(Promise promise) {
+
+    this.zumoKit.sync(new SyncCallback() {
+      @Override
+      public void onError(short httpCode, String data) {
+        promise.reject("Error syncing", "An unexpected error occured");
+      }
+
+      @Override
+      public void onSuccess() {
+        promise.resolve(true);
+      }
+    });
+
   }
 
   // - Wallet Management
