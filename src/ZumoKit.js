@@ -35,6 +35,14 @@ class ZumoKit {
     }
 
     /**
+     * Manually syncs with the ZumoKit server
+     *
+     * @returns
+     * @memberof ZumoKit
+     */
+    sync = RNZumoKit.sync;
+
+    /**
      * Clears the ZumoKit cache.
      * This should be called when a user logs out.
      *
