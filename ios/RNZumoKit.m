@@ -79,7 +79,7 @@ RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolve
         [[ZumoKitManager sharedManager] authenticateWithToken:token headers:headers completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
             
             if(success) {
-                resolve(@"true");
+                resolve(@(YES));
                 return;
             }
             
@@ -108,7 +108,7 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicC
          completionHandler:^(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage) {
              
              if(success) {
-                 resolve(NULL);
+                 resolve(response);
              } else {
                  reject(errorName, errorMessage, NULL);
              }
