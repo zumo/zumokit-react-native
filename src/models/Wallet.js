@@ -62,10 +62,10 @@ export default class Wallet {
     constructor(json) {
         if(!json) throw 'JSON required to construct a Wallet.';
 
-        this.address = json.address;
-        this.id = json.id;
-        this.unlocked = json.unlocked;
-        this.balance = parseInt(json.balance);
+        if(json.address) this.address = json.address;
+        if(json.id) this.id = json.id;
+        if(json.unlocked) this.unlocked = json.unlocked;
+        if(json.balance) this.balance = parseInt(json.balance);
 
         this._addListener();
     }
@@ -77,6 +77,7 @@ export default class Wallet {
      */
     _addListener() {
         this._subscription = ZumoKit.addListener((state) => {
+            if(!state.wallet) return;
             this.balance = state.wallet.balance;
         });
     }

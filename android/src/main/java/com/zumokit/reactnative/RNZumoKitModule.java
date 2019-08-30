@@ -67,9 +67,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       @Override
       public void update(State state) {
         
-        module.reactContext
-          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-          .emit("StoreUpdated", null);
+        try {
+          WritableMap map = module.getWalletMapFromState(state);
+          
+          module.reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit("StoreUpdated", map);
+        } catch(Exception e) {
+          // No wallet was found on the state
+        }
 
       }
     });
@@ -138,25 +144,30 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  private WritableMap getWalletMapFromState(State state) {
+
+    ArrayList<Keystore> keystores = state.getKeystores();
+    
+    Keystore keystore = keystores.get(0);
+
+    WritableMap map = Arguments.createMap();
+    map.putString("id", keystore.getId());
+    map.putString("address", keystore.getAddress());
+    map.putBoolean("unlocked", keystore.getUnlocked());
+    map.putString("balance", keystore.getBalance());
+
+    return map;
+
+  }
+
   @ReactMethod
   public void getWallet(Promise promise) {
-    
-    // Fetch the keystores from the state
-    State state = this.zumoKit.store().getState();
-    ArrayList<Keystore> keystores = state.getKeystores();
-
+ 
     try {
       
-      Keystore keystore = keystores.get(0);
-
-      // Create a map to resolve the promise
-      WritableMap map = Arguments.createMap();
-      map.putString("id", keystore.getId());
-      map.putString("address", keystore.getAddress());
-      map.putBoolean("unlocked", keystore.getUnlocked());
-      map.putString("balance", keystore.getBalance());
-
-      // Resolve the promise with the map
+      State state = this.zumoKit.store().getState();
+      WritableMap map = this.getWalletMapFromState(state);
+      
       promise.resolve(map);
 
     } catch(Exception e) {
