@@ -68,7 +68,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       public void update(State state) {
         
         try {
-          WritableMap map = module.getWalletMapFromState(state);
+          WritableMap map = Arguments.createMap();
+          
+          WritableMap walletMap = module.getWalletMapFromState(state);
+          map.putMap("wallet", walletMap);
           
           module.reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
