@@ -50,6 +50,14 @@ NSException *zumoKitNotInitializedException = [NSException
 - (void)syncWithCompletionHandler:(void (^)(bool success, short errorCode, NSString * _Nullable data))completionHandler {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
+    // If there's no active user then thrown an exeption
+    CPState *state = [[_zumoKit store] getState];
+    if(! [state activeUser]) {
+        @throw [NSException exceptionWithName:@"ZumoKitUserNotAuthenticated"
+        reason:@"There's currently no active user."
+        userInfo:nil];
+    }
+
     [[_zumoKit zumoCore] sync:[[iOSSyncCallback alloc] initWithCompletionHandler:completionHandler]];
 }
 

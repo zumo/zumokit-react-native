@@ -58,16 +58,23 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSStr
 
 RCT_EXPORT_METHOD(sync:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
+    @try {
 
-    [[ZumoKitManager sharedManager] syncWithCompletionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
+        [[ZumoKitManager sharedManager] syncWithCompletionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
 
-        if(success) {
-            resolve(@(YES));
-        } else {
-            reject(@"Error syncing", @"An unexpected error occured", NULL);
-        }
+            if(success) {
+                resolve(@(YES));
+            } else {
+                reject(@"Error syncing", @"An unexpected error occured", NULL);
+            }
 
-    }];
+        }];
+
+    } @catch (NSException *exception) {
+        
+        reject([exception name], [exception reason], NULL);
+        
+    }
 
 }
 
