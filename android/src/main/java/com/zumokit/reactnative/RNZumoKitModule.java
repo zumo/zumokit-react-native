@@ -87,6 +87,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void sync(Promise promise) {
 
+    if(this.zumoKit.store().getActiveUser() == null) {
+      promise.reject("User not authenticated", "There's currently no active user.");
+      return;
+    }
+
     this.zumoKit.sync(new SyncCallback() {
       @Override
       public void onError(short httpCode, String data) {
