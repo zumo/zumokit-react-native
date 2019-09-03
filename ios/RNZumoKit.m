@@ -25,10 +25,17 @@ RCT_EXPORT_MODULE()
     hasListeners = YES;
     
     [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPState * _Nonnull state) {
-
-        [self sendEventWithName:@"StoreUpdated" body:@{
-                                                       @"wallet": [[ZumoKitManager sharedManager] getWallet]
-                                                       }];
+        @try {
+            
+            [self sendEventWithName:@"StoreUpdated" body:@{
+                                                           @"wallet": [[ZumoKitManager sharedManager] getWallet]
+                                                           }];
+            
+        } @catch (NSException *exception) {
+            
+            //
+            
+        }
     }];
 }
 
@@ -75,7 +82,6 @@ RCT_EXPORT_METHOD(sync:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejec
         reject([exception name], [exception reason], NULL);
         
     }
-
 }
 
 RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
