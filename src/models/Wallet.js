@@ -145,7 +145,9 @@ export default class Wallet {
         
         const response = await RNZumoKit.sendTransaction(
             this.id, address,
-            '' + amount,
+            amount.toLocaleString('fullwide', {
+                maximumFractionDigits: 20
+            }),
             '' + gasPrice,
             '' + gasLimit
         );
