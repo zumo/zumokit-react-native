@@ -121,6 +121,10 @@ NSException *zumoKitNotInitializedException = [NSException
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     CPState *state = [[_zumoKit store] getState];
+    return [self getWalletFromState:state];
+}
+
+- (NSDictionary *)getWalletFromState:(CPState *)state {
     NSArray<CPKeystore *> *keystores = [state keystores];
     
     if([keystores count] < 1) {

@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary *)getWallet;
 
+- (NSDictionary *)getWalletFromState:(CPState *)state;
+
 - (BOOL)unlockWalletWithId:(NSString *)keystoreId password:(NSString *)password;
 
 - (NSString *)getExchangeRates;
