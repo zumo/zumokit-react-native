@@ -28,7 +28,7 @@ RCT_EXPORT_MODULE()
         @try {
             
             [self sendEventWithName:@"StoreUpdated" body:@{
-                                                           @"wallet": [[ZumoKitManager sharedManager] getWallet]
+                                                           @"wallet": [[ZumoKitManager sharedManager] getWalletFromState:state]
                                                            }];
             
         } @catch (NSException *exception) {
