@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (ZumoKitManager *)sharedManager;
 
-- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot;
+- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot;
 
 - (void)syncWithCompletionHandler:(void (^)(bool success, short errorCode, NSString * _Nullable data))completionHandler;
 

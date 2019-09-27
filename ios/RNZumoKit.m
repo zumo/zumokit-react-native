@@ -47,14 +47,13 @@ RCT_EXPORT_MODULE()
 
 # pragma mark - Initialisation
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
     // Boot the ZumoKitManager to handle the native C++ code
     [[ZumoKitManager sharedManager]
      initializeWithTxServiceUrl:txServiceUrl
      apiKey:apiKey
-     appId:appId
      apiRoot:apiRoot
      myRoot:myRoot
      ];

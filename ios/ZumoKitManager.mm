@@ -33,7 +33,7 @@ NSException *zumoKitNotInitializedException = [NSException
 
 # pragma mark - Initialization
 
-- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey appId:(NSString *)appId apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
+- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
     
     NSArray *appFolderPath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *dbPath = [appFolderPath objectAtIndex:0];
@@ -41,7 +41,6 @@ NSException *zumoKitNotInitializedException = [NSException
     _zumoKit = [[ZumoKitImpl alloc] initWithDbPath:dbPath
                                       txServiceUrl:txServiceUrl
                                             apiKey:apiKey
-                                             appId:appId
                                            apiRoot:apiRoot
                                             myRoot:myRoot
                 ];
