@@ -30,8 +30,8 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     init(config) {
-        const { apiKey, appId, apiRoot, myRoot, txServiceUrl } = config;
-        RNZumoKit.init(apiKey, appId, apiRoot, myRoot, txServiceUrl);
+        const { apiKey, apiRoot, myRoot, txServiceUrl } = config;
+        RNZumoKit.init(apiKey, apiRoot, myRoot, txServiceUrl);
     }
 
     /**

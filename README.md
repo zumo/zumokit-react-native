@@ -54,14 +54,12 @@ The first step in getting ZumoKit integrated into your app is initialising it. U
 You'll need the following:
 
 - `apiKey`
-- `appId`
 - `apiRoot`
 
 ```js
 import ZumoKit from 'react-native-zumo-kit';
 
 ZumoKit.init({
-	appId: '12a3456-92de-45gh-0000-2d451a54111',
 	apiKey: 'abc123456789defhij',
 	apiRoot: 'https://zumokit.provider.com'
 });
