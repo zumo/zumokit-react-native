@@ -53,10 +53,10 @@ NSException *zumoKitNotInitializedException = [NSException
     CPState *state = [[_zumoKit store] getState];
     if(! [state activeUser]) {
         @throw [NSException exceptionWithName:@"ZumoKitUserNotAuthenticated"
-        reason:@"There's currently no active user."
-        userInfo:nil];
+                                       reason:@"There's currently no active user."
+                                     userInfo:nil];
     }
-
+    
     [[_zumoKit zumoCore] sync:[[iOSSyncCallback alloc] initWithCompletionHandler:completionHandler]];
 }
 
@@ -173,22 +173,22 @@ NSException *zumoKitNotInitializedException = [NSException
         NSString *type = ([[[obj toAddress] lowercaseString] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
         
         NSString *status;
-
+        
         switch ([obj status]) {
-            case 1:
+            case CPTransactionStatusCONFIRMED:
                 status = @"CONFIRMED";
                 break;
-
-            case 2:
+                
+            case CPTransactionStatusFAILED:
                 status = @"FAILED";
                 break;
-
+                
             default:
                 status = @"PENDING";
                 break;
-
+                
         }
-
+        
         [mapped addObject:@{
                             @"value": [obj amount],
                             @"hash": @([obj hash]),
