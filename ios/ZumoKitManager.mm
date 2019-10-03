@@ -172,10 +172,27 @@ NSException *zumoKitNotInitializedException = [NSException
         
         NSString *type = ([[[obj toAddress] lowercaseString] isEqualToString:address]) ? @"INCOMING" : @"OUTGOING";
         
+        NSString *status;
+
+        switch ([obj status]) {
+            case 1:
+                status = @"CONFIRMED";
+                break;
+
+            case 2:
+                status = @"FAILED";
+                break;
+
+            default:
+                status = @"PENDING";
+                break;
+
+        }
+
         [mapped addObject:@{
                             @"value": [obj amount],
                             @"hash": @([obj hash]),
-                            @"status": @([obj status]),
+                            @"status": status,
                             @"to": [obj toAddress],
                             @"from": [obj fromAddress],
                             @"timestamp": @([obj timestamp]),
