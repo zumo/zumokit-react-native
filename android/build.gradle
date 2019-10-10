@@ -38,6 +38,5 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation "com.android.support:appcompat-v7:21.0.0"
-    implementation 'org.web3j:core:4.2.0-android'
 }
   
