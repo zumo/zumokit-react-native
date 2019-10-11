@@ -4,6 +4,15 @@ const { RNZumoKit } = NativeModules;
 class ZKUtility {
 
     /**
+     * Generates and returns a new mnemonic for use with wallet creation.
+     *
+     * @param {string} wordCount
+     * @returns
+     * @memberof ZKUtility
+     */
+    generateMnemonic = RNZumoKit.generateMnemonic;
+
+    /**
      * Converts the given ETH value into Fiat.
      * 
      * @param {number} eth
@@ -83,7 +92,7 @@ class ZKUtility {
         return RNZumoKit
             .weiToEth("" + wei);
     }
-
+   
 }
 
 export default new ZKUtility();
