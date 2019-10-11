@@ -2,6 +2,7 @@ import { NativeModules } from 'react-native';
 const { RNZumoKit } = NativeModules;
 import Wallet from './Wallet';
 import Account from './Account';
+import Transaction from './Transaction';
 
 export default class User {
 
@@ -68,6 +69,11 @@ export default class User {
     async getAccounts() {
         const array = await RNZumoKit.getAccounts();
         return array.map((json) => new Account(json));
+    }
+
+    async getTransactions() {
+        const array = await RNZumoKit.getTransactions();
+        return array.map((json) => new Transaction(json));
     }
 
 }
