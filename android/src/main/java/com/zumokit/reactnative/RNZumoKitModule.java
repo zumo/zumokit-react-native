@@ -216,6 +216,21 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   // - Transactions
 
   @ReactMethod
+  public void getTransactions(Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    // TODO: user.getTransactions
+
+    WritableArray response = Arguments.createArray();
+    promise.resolve(response);
+
+  }
+
+  @ReactMethod
   public void sendEthTransaction(String gasPrice, String gasLimit, String to, String value, String data, int chainId, int nonce, Promise promise) {
 
     if(this.wallet == null) {
