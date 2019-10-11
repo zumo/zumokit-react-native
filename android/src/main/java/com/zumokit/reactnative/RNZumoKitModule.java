@@ -14,20 +14,16 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import money.zumo.zumokit.ZumoKit;
+import money.zumo.zumokit.User;
+import money.zumo.zumokit.Wallet;
+import money.zumo.zumokit.WalletCallback;
+import money.zumo.zumokit.MnemonicCallback;
+import money.zumo.zumokit.AuthCallback;
 import money.zumo.zumokit.Store;
 import money.zumo.zumokit.State;
-import money.zumo.zumokit.Currency;
-import money.zumo.zumokit.Keystore;
-import money.zumo.zumokit.AndroidHttp;
-import money.zumo.zumokit.HttpImpl;
-import money.zumo.zumokit.WalletManagement;
-import money.zumo.zumokit.CreateWalletCallback;
-import money.zumo.zumokit.SendTransactionCallback;
+import money.zumo.zumokit.Account;
 import money.zumo.zumokit.Transaction;
-import money.zumo.zumokit.StoreObserver;
-import money.zumo.zumokit.AuthCallback;
-import money.zumo.zumokit.Utils;
-import money.zumo.zumokit.SyncCallback;
+import money.zumo.zumokit.SendTransactionCallback;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -40,6 +36,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   private final ReactApplicationContext reactContext;
 
   private ZumoKit zumoKit;
+
+  private User user;
+
+  private Wallet wallet;
+
+  private State state;
 
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -55,261 +57,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .getAbsolutePath();
 
     this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, apiRoot, myRoot);
-    
-    this.subscribeToEvents();
 
   }
 
-  private void subscribeToEvents() {
-    RNZumoKitModule module = this;
-
-    this.zumoKit.store().subscribe(new StoreObserver() {
-      @Override
-      public void update(State state) {
-        
-        try {
-          WritableMap map = Arguments.createMap();
-          
-          WritableMap walletMap = module.getWalletMapFromState(state);
-          map.putMap("wallet", walletMap);
-          
-          module.reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit("StoreUpdated", map);
-        } catch(Exception e) {
-          // No wallet was found on the state
-        }
-
-      }
-    });
-  }
-
-  @ReactMethod
-  public void sync(Promise promise) {
-
-    if(this.zumoKit.store().getState().getActiveUser() == null) {
-      promise.reject("User not authenticated", "There's currently no active user.");
-      return;
-    }
-
-    this.zumoKit.sync(new SyncCallback() {
-      @Override
-      public void onError(short httpCode, String data) {
-        promise.reject("Error syncing", "An unexpected error occured");
-      }
-
-      @Override
-      public void onSuccess() {
-        promise.resolve(true);
-      }
-    });
-
-  }
-
-  // - Wallet Management
-
-  @ReactMethod
-  public void createWallet(String password, Integer mnemonicCount, Promise promise) {
-    
-    // Generate a mnemonic phrase.
-    WalletManagement wm = this.zumoKit.walletManagement();
-    String mnemonic = wm.generateMnemonic(mnemonicCount);
-    
-    wm.createWallet(Currency.ETH, password, mnemonic, new CreateWalletCallback() {
-      
-      @Override
-      public void onError(String errorName, String errorMessage) {
-        
-        // If there was a problem creating the wallet then we reject the promise.
-        promise.reject(errorName, errorMessage);
-
-      }
-
-      @Override
-      public void onSuccess(Keystore keystore) {
-        
-        boolean unlockedStatus = wm.unlockWallet(keystore, password);
-
-        // Create a map to resolve the promise
-        WritableMap map = Arguments.createMap();
-        map.putString("mnemonic", mnemonic);
-
-        // Add some idems from the keystore to a writeable map.
-        // The map is automatically translated into a JS object.
-        WritableMap ksMap = Arguments.createMap();
-        ksMap.putString("id", keystore.getId());
-        ksMap.putString("address", keystore.getAddress());
-        ksMap.putBoolean("unlocked", keystore.getUnlocked());
-        ksMap.putString("balance", keystore.getBalance());
-        map.putMap("keystore", ksMap);
-
-        // Resolve the promise if everything was okay.
-        promise.resolve(map);
-
-      }
-
-    });
-
-  }
-
-  private WritableMap getWalletMapFromState(State state) {
-
-    ArrayList<Keystore> keystores = state.getKeystores();
-    
-    Keystore keystore = keystores.get(0);
-
-    WritableMap map = Arguments.createMap();
-    map.putString("id", keystore.getId());
-    map.putString("address", keystore.getAddress());
-    map.putBoolean("unlocked", keystore.getUnlocked());
-    map.putString("balance", keystore.getBalance());
-
-    return map;
-
-  }
-
-  @ReactMethod
-  public void getWallet(Promise promise) {
- 
-    try {
-      
-      State state = this.zumoKit.store().getState();
-      WritableMap map = this.getWalletMapFromState(state);
-      
-      promise.resolve(map);
-
-    } catch(Exception e) {
-
-      promise.reject("No wallet found.");
-
-    }
-
-  }
-
-  @ReactMethod
-  public void unlockWallet(String walletId, String password, Promise promise) {
-    
-    // Fetch the keystore from the store
-    Store store = this.zumoKit.store();
-    Keystore keystore = store.getKeystore(walletId);
-
-    if(keystore == null) {
-      promise.reject("A wallet with that ID was not found.");
-      return;
-    }
-
-    boolean unlockedStatus = this
-      .zumoKit
-      .walletManagement()
-      .unlockWallet(keystore, password);
-
-    promise.resolve(unlockedStatus);
-
-  }
-
-  // - Transactions
-
-  @ReactMethod
-  public void sendTransaction(String walletId, String address, String amount, String gasPrice, String gasLimit, Promise promise) {
-
-    // Fetch the keystore from the store
-    Store store = this.zumoKit.store();
-    Keystore keystore = store.getKeystore(walletId);
-
-    // Get the wallet management instance
-    WalletManagement wm = this.zumoKit.walletManagement();
-
-    // Get a timestamp for when the transaction was sent
-    RNZumoKitModule module = this;
-
-    wm.sendTransaction(keystore, address, amount, gasPrice, gasLimit, "", new SendTransactionCallback() {
-      
-      @Override
-      public void onError(String errorName, String errorMessage) {
-        promise.reject(errorName, errorMessage);
-      }
-
-      @Override
-      public void onSuccess(Transaction txn) {
-        WritableMap map = module.getMap(txn, keystore.getAddress());
-        promise.resolve(map);
-      }
-
-    });
-
-  }
-
-  @ReactMethod
-  public void getTransactions(String walletId, Promise promise) {
-
-    // Load the wallet from the store
-    Store store = this.zumoKit.store();
-    Keystore keystore = store.getKeystore(walletId);
-    String address = keystore.getAddress().toLowerCase();
-    
-    // Load the the transactions from the state
-    State state = store.getState();
-    ArrayList<Transaction> transactions = state.getTransactions();
-
-    // Create an array for the response
-    WritableArray response = Arguments.createArray();
-
-    // Loop through the transactions looking for address matches
-    for (Transaction txn : transactions) {
-      WritableMap map = this.getMap(txn, address);
-      response.pushMap(map);
-    }
-
-    // Resolve the promise with our response array
-    promise.resolve(response);
-
-  }
-
-  // HELPERS
-
-  private WritableMap getMap(Transaction txn, String address) {
-    WritableMap map = Arguments.createMap();
-
-    Boolean incoming = txn.getToAddress().toLowerCase().equals(address);
-    String type = (incoming) ? "INCOMING" : "OUTGOING";
-
-    map.putString("value", txn.getAmount());
-    map.putString("hash", txn.getTxHash());
-    map.putString("status", txn.getStatus().name());
-    map.putString("to", txn.getToAddress());
-    map.putString("from", txn.getFromAddress());
-    map.putDouble("timestamp", txn.getTimestamp());
-    map.putString("gas_price", txn.getGasPrice());
-    map.putString("type", type);
-    map.putString("to_user_id", txn.getToUserId());
-    map.putString("from_user_id", txn.getFromUserId());
-
-    return map;
-  }
-
-  public static HashMap<String, String> toHashMap(ReadableMap readableMap) {
-
-    HashMap<String, String> result = new HashMap<String, String>();
-
-    if (readableMap == null) {
-      return result;
-    }
-
-    ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
-    
-    if (!iterator.hasNextKey()) {
-      return result;
-    }
-
-    while (iterator.hasNextKey()) {
-      String key = iterator.nextKey();
-      result.put(key, readableMap.getString(key));
-    }
-
-    return result;
-  }
-
-  // API
+  // - Authentication
 
   @ReactMethod
   public void auth(String token, ReadableMap headers, Promise promise) {
@@ -319,40 +70,195 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
+    RNZumoKitModule module = this;
+
     HashMap<String, String> headerMap = this.toHashMap(headers);
 
     this.zumoKit.auth(token, headerMap, new AuthCallback() {
+      
       @Override
-      public void onError(short httpCode, String data) {
-        promise.reject(data);
+      public void onError(short errorCode, String errorMessage) {
+        promise.reject(errorMessage);
       }
 
       @Override
-      public void onSuccess() {
+      public void onSuccess(User user) {
+
+        module.user = user;
+
+        WritableMap map = Arguments.createMap();
+
+        map.putString("id", user.getId());
+        map.putBoolean("hasWallet", user.hasWallet());
+
+        promise.resolve(map);
+      }
+
+    });
+
+  }
+  
+  // - Wallet Management
+
+  @ReactMethod
+  public void createWallet(String mnemonic, String password, Promise promise) {
+    
+    if(this.zumoKit == null) {
+      promise.reject("ZumoKit not initialized.");
+      return;
+    }
+
+    RNZumoKitModule module = this;
+
+    this.user.createWallet(mnemonic, password, new WalletCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Wallet wallet) {
+
+        module.wallet = wallet;
         promise.resolve(true);
+
+      }
+
+    });
+
+  }
+
+  @ReactMethod
+  public void unlockWallet(String password, Promise promise) {
+
+    if(this.zumoKit == null) {
+      promise.reject("ZumoKit not initialized.");
+      return;
+    }
+
+    RNZumoKitModule module = this;
+
+    this.user.unlockWallet(password, new WalletCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Wallet wallet) {
+
+        module.wallet = wallet;
+        promise.resolve(true);
+
+      }
+
+    });
+
+  }
+
+  @ReactMethod
+  public void revealMnemonic(String password, Promise promise) {
+
+    if(this.zumoKit == null) {
+      promise.reject("ZumoKit not initialized.");
+      return;
+    }
+
+    this.user.revealMnemonic(password, new MnemonicCallback() {
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(String mnemonic) {
+        promise.resolve(mnemonic);
       }
     });
 
   }
 
-  // UTILITY
+  // - Account Management
 
   @ReactMethod
-  public void getBalance(String address, Promise promise) {
+  public void getAccounts(Promise promise) {
 
-    String balance = this.zumoKit.utils()
-      .ethGetBalance(address);
+    if(this.zumoKit == null) {
+      promise.reject("ZumoKit not initialized.");
+      return;
+    }
 
-    promise.resolve(balance);
+    ArrayList<Account> accounts = this.zumoKit.store().getState().getAccounts();
+
+    WritableArray response = Arguments.createArray();
+
+    for (Account account : accounts) {
+      WritableMap map = Arguments.createMap();
+
+      map.putString("id", account.getId());
+      map.putString("path", account.getPath());
+      map.putString("symbol", account.getSymbol());
+      map.putString("coin", account.getCoin());
+      map.putString("address", account.getAddress());
+      map.putString("balance", account.getBalance());
+      map.putInt("chainId", (account.getChainId() != null) ? account.getChainId() : 0);
+
+      response.pushMap(map);
+    }
+
+    // Resolve the promise with our response array
+    promise.resolve(response);
+
+  }
+
+  // - Transactions
+
+  @ReactMethod
+  public void sendEthTransaction(String gasPrice, String gasLimit, String to, String value, String data, int chainId, int nonce, Promise promise) {
+
+    if(this.wallet == null) {
+      promise.reject("Wallet not found.");
+      return;
+    }
+
+    this.wallet.sendEthTransaction(nonce, gasPrice, gasLimit, to, value, data, chainId, new SendTransactionCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Transaction transaction) {
+        promise.resolve(true);
+      }
+
+    });
+
+  }
+
+  // - Utility
+
+  @ReactMethod
+  public void generateMnemonic(int wordLength, Promise promise) {
+
+    if(this.zumoKit == null) {
+      promise.reject("ZumoKit not initialized.");
+      return;
+    }
+
+    String mnemonic = this.zumoKit.utils().generateMnemonic(wordLength);
+
+    promise.resolve(mnemonic);
 
   }
 
   @ReactMethod
   public void getExchangeRates(Promise promise) {
 
-    Store store = this.zumoKit.store();
-    State state = store.getState();
-
+    State store = this.zumoKit.store().getState();
     String rates = state.getExchangeRates();
 
     promise.resolve(rates);
@@ -408,7 +314,30 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     promise.resolve(eth);
 
   }
-  
+
+  // - Helpers
+
+  public static HashMap<String, String> toHashMap(ReadableMap readableMap) {
+
+    HashMap<String, String> result = new HashMap<String, String>();
+
+    if (readableMap == null) {
+      return result;
+    }
+
+    ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+    
+    if (!iterator.hasNextKey()) {
+      return result;
+    }
+
+    while (iterator.hasNextKey()) {
+      String key = iterator.nextKey();
+      result.put(key, readableMap.getString(key));
+    }
+
+    return result;
+  }
 
   @Override
   public String getName() {

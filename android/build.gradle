@@ -37,6 +37,7 @@ repositories {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation "com.android.support:appcompat-v7:21.0.0"
+    implementation 'com.android.support:appcompat-v7:21.0.0'
+    implementation 'org.java-websocket:Java-WebSocket:1.4.0'
 }
   
