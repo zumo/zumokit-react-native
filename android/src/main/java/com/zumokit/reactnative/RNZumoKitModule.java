@@ -9,6 +9,7 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -19,11 +20,11 @@ import money.zumo.zumokit.Wallet;
 import money.zumo.zumokit.WalletCallback;
 import money.zumo.zumokit.MnemonicCallback;
 import money.zumo.zumokit.AuthCallback;
-import money.zumo.zumokit.Store;
 import money.zumo.zumokit.State;
 import money.zumo.zumokit.Account;
 import money.zumo.zumokit.Transaction;
 import money.zumo.zumokit.SendTransactionCallback;
+import money.zumo.zumokit.StateListener;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -191,7 +192,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     ArrayList<Account> accounts = this.zumoKit.getState().getAccounts();
-    WriteableArray response = RNZumoKitModule.mapAccounts(accounts);
+    WritableArray response = RNZumoKitModule.mapAccounts(accounts);
 
     // Resolve the promise with our response array
     promise.resolve(response);
@@ -208,7 +209,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    ArrayList<Transaction> transactions = this.zumoKit.state.getTransactions();
+    ArrayList<Transaction> transactions = this.zumoKit.getState().getTransactions();
     WritableArray response = RNZumoKitModule.mapTransactions(transactions);
 
     promise.resolve(response);
@@ -216,14 +217,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void sendEthTransaction(String gasPrice, String gasLimit, String to, String value, String data, int chainId, int nonce, Promise promise) {
+  public void sendEthTransaction(String accountId, String gasPrice, String gasLimit, String to, String value, String data, int nonce, Promise promise) {
 
     if(this.wallet == null) {
       promise.reject("Wallet not found.");
       return;
     }
 
-    this.wallet.sendEthTransaction(nonce, gasPrice, gasLimit, to, value, data, chainId, new SendTransactionCallback() {
+    this.wallet.sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, new Long(nonce), new SendTransactionCallback() {
 
       @Override
       public void onError(String errorName, String errorMessage) {
@@ -249,7 +250,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         @Override
         public void update(State state) {
           
-          WriteableMap map = RNZumoKitModule.mapState(state);
+          WritableMap map = RNZumoKitModule.mapState(state);
 
           module.reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
@@ -291,10 +292,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void getExchangeRates(Promise promise) {
 
-    State store = this.zumoKit.store().getState();
-    String rates = state.getExchangeRates();
+    // State store = this.zumoKit.getState();
+    // String rates = state.getExchangeRates();
 
-    promise.resolve(rates);
+    // promise.resolve(rates);
 
   }
 
@@ -416,8 +417,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("accountId", transaction.getAccountId());
     map.putString("symbol", transaction.getSymbol());
     map.putString("coin", transaction.getCoin());
-    map.putString("chainId", transaction.getChainId());
-    map.putInt("nonce", transaction.getNonce());
+    map.putInt("chainId", transaction.getChainId());
+    map.putInt("nonce", transaction.getNonce().intValue());
     map.putString("status", transaction.getStatus().toString());
     map.putString("fromAddress", transaction.getFromAddress());
     map.putString("fromUserId", transaction.getFromUserId());
@@ -427,10 +428,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("data", transaction.getData());
     map.putString("gasPrice", transaction.getGasPrice());
     map.putString("gasLimit", transaction.getGasLimit());
-    map.putstring("txCost", transaction.getTxCost());
-    map.putInt("submittedAt", transaction.getSubmittedAt());
-    map.putInt("confirmedAt", transaction.getConfirmedAt());
-    map.putInt("timestamp", transaction.getTimestamp());
+    map.putString("txCost", transaction.getTxCost());
+    map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
+    map.putInt("confirmedAt", transaction.getConfirmedAt().intValue());
+    map.putInt("timestamp", new Long(transaction.getTimestamp()).intValue());
 
     return map;
 
@@ -441,10 +442,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       WritableMap map = Arguments.createMap();
 
       WritableArray accounts = RNZumoKitModule.mapAccounts(state.getAccounts());
-      map.putArray(accounts);
+      map.putArray("accounts", accounts);
 
       WritableArray transactions = RNZumoKitModule.mapTransactions(state.getTransactions());
-      map.putArray(transactions);
+      map.putArray("transactions", transactions);
 
       return map;
 
