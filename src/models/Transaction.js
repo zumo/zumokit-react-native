@@ -138,6 +138,8 @@ export default class Transaction {
 
     constructor(json) {
 
+        console.log(json);
+
         if(json.id) this.id = json.id;
         if(json.txHash) this.txHash = json.txHash;
         if(json.coin) this.coin = json.coin;
