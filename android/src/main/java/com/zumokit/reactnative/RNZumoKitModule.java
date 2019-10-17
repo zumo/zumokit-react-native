@@ -25,6 +25,9 @@ import money.zumo.zumokit.Account;
 import money.zumo.zumokit.Transaction;
 import money.zumo.zumokit.SendTransactionCallback;
 import money.zumo.zumokit.StateListener;
+import money.zumo.zumokit.UserListener;
+import money.zumo.zumokit.AccountListener;
+import money.zumo.zumokit.TransactionListener;
 
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
@@ -86,6 +89,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       public void onSuccess(User user) {
 
         module.user = user;
+        module.addUserListener();
 
         WritableMap map = Arguments.createMap();
 
@@ -260,18 +264,35 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     });
   }
 
-  private void addUserListeners() {
+  private void addUserListener() {
 
-    // TODO: add user listeners if one exists
+    if(this.user == null) {
+      promise.reject("User not authenticated.");
+      return;
+    }
+
+    RNZumoKitModule module = this;
+
+    this.user.addListener(new UserListener() {
+      @Override
+        public void update(ArrayList<Account> accounts, ArrayList<Transaction> transactions) {
+
+          WritableMap map = Arguments.createMap();
+
+          WritableArray accs = RNZumoKitModule.mapAccounts(accounts);
+          map.putArray("accounts", accs);
+
+          WritableArray txns = RNZumoKitModule.mapTransactions(transactions);
+          map.putArray("transactions", txns);
+
+          module.reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit("StateChanged", map);
+
+        }
+    });
 
   }
-
-  private void removeAllListeners() {
-
-    // Remove the state listener here
-
-  }
-
 
   // - Utility
 
