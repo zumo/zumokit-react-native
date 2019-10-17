@@ -41,8 +41,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private Wallet wallet;
 
-  private State state;
-
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
 
@@ -57,6 +55,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .getAbsolutePath();
 
     this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, apiRoot, myRoot);
+
+    this.addStateListener();
 
   }
 
@@ -190,23 +190,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    ArrayList<Account> accounts = this.zumoKit.store().getState().getAccounts();
-
-    WritableArray response = Arguments.createArray();
-
-    for (Account account : accounts) {
-      WritableMap map = Arguments.createMap();
-
-      map.putString("id", account.getId());
-      map.putString("path", account.getPath());
-      map.putString("symbol", account.getSymbol());
-      map.putString("coin", account.getCoin());
-      map.putString("address", account.getAddress());
-      map.putString("balance", account.getBalance());
-      map.putInt("chainId", (account.getChainId() != null) ? account.getChainId() : 0);
-
-      response.pushMap(map);
-    }
+    ArrayList<Account> accounts = this.zumoKit.getState().getAccounts();
+    WriteableArray response = RNZumoKitModule.mapAccounts(accounts);
 
     // Resolve the promise with our response array
     promise.resolve(response);
@@ -223,9 +208,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    // TODO: user.getTransactions
+    ArrayList<Transaction> transactions = this.zumoKit.state.getTransactions();
+    WritableArray response = RNZumoKitModule.mapTransactions(transactions);
 
-    WritableArray response = Arguments.createArray();
     promise.resolve(response);
 
   }
@@ -247,12 +232,45 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       @Override
       public void onSuccess(Transaction transaction) {
-        promise.resolve(true);
+        WritableMap map = RNZumoKitModule.mapTransaction(transaction);
+        promise.resolve(map);
       }
 
     });
 
   }
+
+  // - Listeners
+
+  private void addStateListener() {
+    RNZumoKitModule module = this;
+
+    this.zumoKit.addStateListener(new StateListener() {
+        @Override
+        public void update(State state) {
+          
+          WriteableMap map = RNZumoKitModule.mapState(state);
+
+          module.reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit("StateChanged", map);
+
+        }
+    });
+  }
+
+  private void addUserListeners() {
+
+    // TODO: add user listeners if one exists
+
+  }
+
+  private void removeAllListeners() {
+
+    // Remove the state listener here
+
+  }
+
 
   // - Utility
 
@@ -352,6 +370,84 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     return result;
+  }
+
+  public static WritableArray mapAccounts(ArrayList<Account> accounts) {
+    
+    WritableArray response = Arguments.createArray();
+
+    for (Account account : accounts) {
+      WritableMap map = Arguments.createMap();
+
+      map.putString("id", account.getId());
+      map.putString("path", account.getPath());
+      map.putString("symbol", account.getSymbol());
+      map.putString("coin", account.getCoin());
+      map.putString("address", account.getAddress());
+      map.putString("balance", account.getBalance());
+      map.putInt("chainId", (account.getChainId() != null) ? account.getChainId() : 0);
+
+      response.pushMap(map);
+    }
+
+    return response;
+
+  }
+
+  public static WritableArray mapTransactions(ArrayList<Transaction> transactions) {
+
+    WritableArray response = Arguments.createArray();
+
+    for (Transaction transaction : transactions) {
+      WritableMap map = RNZumoKitModule.mapTransaction(transaction);
+      response.pushMap(map);
+    }
+
+    return response;
+
+  }
+
+  public static WritableMap mapTransaction(Transaction transaction) {
+
+    WritableMap map = Arguments.createMap();
+
+    map.putString("id", transaction.getId());
+    map.putString("txHash", transaction.getTxHash());
+    map.putString("accountId", transaction.getAccountId());
+    map.putString("symbol", transaction.getSymbol());
+    map.putString("coin", transaction.getCoin());
+    map.putString("chainId", transaction.getChainId());
+    map.putInt("nonce", transaction.getNonce());
+    map.putString("status", transaction.getStatus().toString());
+    map.putString("fromAddress", transaction.getFromAddress());
+    map.putString("fromUserId", transaction.getFromUserId());
+    map.putString("toAddress", transaction.getToAddress());
+    map.putString("toUserId", transaction.getToUserId());
+    map.putString("value", transaction.getValue());
+    map.putString("data", transaction.getData());
+    map.putString("gasPrice", transaction.getGasPrice());
+    map.putString("gasLimit", transaction.getGasLimit());
+    map.putstring("txCost", transaction.getTxCost());
+    map.putInt("submittedAt", transaction.getSubmittedAt());
+    map.putInt("confirmedAt", transaction.getConfirmedAt());
+    map.putInt("timestamp", transaction.getTimestamp());
+
+    return map;
+
+  }
+
+  public static WritableMap mapState(State state) {
+
+      WritableMap map = Arguments.createMap();
+
+      WritableArray accounts = RNZumoKitModule.mapAccounts(state.getAccounts());
+      map.putArray(accounts);
+
+      WritableArray transactions = RNZumoKitModule.mapTransactions(state.getTransactions());
+      map.putArray(transactions);
+
+      return map;
+
   }
 
   @Override
