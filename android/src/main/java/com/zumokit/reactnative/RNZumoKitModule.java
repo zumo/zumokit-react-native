@@ -294,6 +294,29 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  @ReactMethod
+  public void addAccountListener(String accountId, Promise promise) {
+
+    // - check if a user exists
+    // - add a listener to the account
+    // - bubble up events to JS
+    // - remove the listener when it's all done
+
+  }
+
+  @ReactMethod
+  public void remove
+
+  @ReactMethod
+  public void addTransactionListener(String transactionId, Promise promise) {
+
+    // - check if a user exists
+    // - add a listener to a specific transaction
+    // - bubble up events to JS
+    // - remove the listener when it's all done
+
+  }
+
   // - Utility
 
   @ReactMethod
