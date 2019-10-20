@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import User from './models/User';
 
 const { RNZumoKit } = NativeModules;
@@ -11,11 +11,37 @@ const { RNZumoKit } = NativeModules;
 class ZumoKit {
 
     /**
-     * The currently authenticated user.
+     * The current state of ZumoKit.
+     * Automatically updates when a change is made on the native side.
      *
      * @memberof ZumoKit
      */
-    _cachedUser;
+    state = {
+        authenticatedUser: null,
+        accounts: [],
+        transactions: []
+    };
+
+    /**
+     * The emitter that bubbles events from the native side.
+     *
+     * @memberof ZumoKit
+     */
+    _emitter = new NativeEventEmitter(RNZumoKit);
+
+    /**
+     * The listener that updates the internal ZumoKit state.
+     *
+     * @memberof ZumoKit
+     */
+    _stateListener;
+
+    /**
+     * Internal JS listeners for state changes.
+     *
+     * @memberof ZumoKit
+     */
+    _listeners = [];
 
     /**
      * Initialise ZumoKit with the provided JSON config.
@@ -26,6 +52,10 @@ class ZumoKit {
     init(config) {
         const { apiKey, apiRoot, myRoot, txServiceUrl } = config;
         RNZumoKit.init(apiKey, apiRoot, myRoot, txServiceUrl);
+
+        this._stateListener = this._emitter.addListener('StateChange', (state) => {
+            console.log(state);
+        });
     }
 
     /**
@@ -38,8 +68,37 @@ class ZumoKit {
      */
     async auth(token, headers) {
         const json = await RNZumoKit.auth(token, headers);
-        this._cachedUser = new User(json);
-        return this._cachedUser;
+        const user = new User(json);
+
+        this.state.authenticatedUser = user;
+
+        return user;
+    }
+
+    /**
+     * Adds a new listener for state updates.
+     *
+     * @param {function} callback
+     * @returns
+     * @memberof ZumoKit
+     */
+    addStateListener(callback) {
+        if(this._listeners.includes(callback)) return;
+        this._listeners.push(callback);
+        callback(this.state);
+    }
+
+    /**
+     * Removes a state listener.
+     *
+     * @param {function} callback
+     * @returns
+     * @memberof ZumoKit
+     */
+    removeStateListener(callback) {
+        if(!this._listeners.includes(callback)) return;
+        const index = this._listeners.indexOf(callback);
+        this._listeners.splice(index, 1);
     }
 
 }
