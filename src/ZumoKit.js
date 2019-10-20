@@ -53,8 +53,12 @@ class ZumoKit {
         const { apiKey, apiRoot, myRoot, txServiceUrl } = config;
         RNZumoKit.init(apiKey, apiRoot, myRoot, txServiceUrl);
 
-        this._stateListener = this._emitter.addListener('StateChange', (state) => {
-            console.log(state);
+        this._stateListener = this._emitter.addListener('StateChanged', (state) => {
+            this.state = {
+                authenticatedUser: this.state.authenticatedUser,
+                accounts: state.accounts,
+                transactions: state.transactions
+            };
         });
     }
 
@@ -71,6 +75,8 @@ class ZumoKit {
         const user = new User(json);
 
         this.state.authenticatedUser = user;
+
+        this._notifyStateListeners();
 
         return user;
     }
@@ -99,6 +105,17 @@ class ZumoKit {
         if(!this._listeners.includes(callback)) return;
         const index = this._listeners.indexOf(callback);
         this._listeners.splice(index, 1);
+    }
+
+    /**
+     * Notify all the listeners that the state has changed.
+     *
+     * @memberof ZumoKit
+     */
+    _notifyStateListeners() {
+        for (const listener of this._listeners) {
+            listener(this.state);
+        }
     }
 
 }
