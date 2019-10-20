@@ -267,7 +267,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   private void addUserListener() {
 
     if(this.user == null) {
-      promise.reject("User not authenticated.");
       return;
     }
 
@@ -304,8 +303,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
-  @ReactMethod
-  public void remove
+  // @ReactMethod
+  // public void remove
 
   @ReactMethod
   public void addTransactionListener(String transactionId, Promise promise) {
