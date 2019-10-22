@@ -57,7 +57,7 @@ class ZumoKit {
 
             if(state.accounts) this.state.accounts = state.accounts;
             if(state.transactions) this.state.transactions = state.transactions;
-            if(state.exchangeRates) this.state.exchangeRates = state.exchangeRates;
+            if(state.exchangeRates) this.state.exchangeRates = JSON.parse(state.exchangeRates);
 
         });
     }
