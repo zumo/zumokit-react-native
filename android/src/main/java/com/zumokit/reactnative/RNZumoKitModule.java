@@ -451,7 +451,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("symbol", transaction.getSymbol());
     map.putString("coin", transaction.getCoin());
     map.putInt("chainId", transaction.getChainId());
-    map.putInt("nonce", transaction.getNonce().intValue());
+    // map.putInt("nonce", transaction.getNonce().intValue());
     map.putString("status", transaction.getStatus().toString());
     map.putString("fromAddress", transaction.getFromAddress());
     map.putString("fromUserId", transaction.getFromUserId());
@@ -462,9 +462,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("gasPrice", transaction.getGasPrice());
     map.putString("gasLimit", transaction.getGasLimit());
     map.putString("txCost", transaction.getTxCost());
-    map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
-    map.putInt("confirmedAt", transaction.getConfirmedAt().intValue());
-    map.putInt("timestamp", new Long(transaction.getTimestamp()).intValue());
+    // map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
+    // map.putInt("confirmedAt", transaction.getConfirmedAt().intValue());
+    // map.putInt("timestamp", new Long(transaction.getTimestamp()).intValue());
 
     return map;
 
