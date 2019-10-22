@@ -54,11 +54,11 @@ class ZumoKit {
         RNZumoKit.init(apiKey, apiRoot, myRoot, txServiceUrl);
 
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
-            this.state = {
-                authenticatedUser: this.state.authenticatedUser,
-                accounts: state.accounts,
-                transactions: state.transactions
-            };
+
+            if(state.accounts) this.state.accounts = state.accounts;
+            if(state.transactions) this.state.transactions = state.transactions;
+            if(state.exchangeRates) this.state.exchangeRates = state.exchangeRates;
+
         });
     }
 

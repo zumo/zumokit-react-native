@@ -333,16 +333,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getExchangeRates(Promise promise) {
-
-    // State store = this.zumoKit.getState();
-    // String rates = state.getExchangeRates();
-
-    // promise.resolve(rates);
-
-  }
-
-  @ReactMethod
   public void isValidEthAddress(String address, Promise promise) {
 
     Boolean valid = this.zumoKit.utils()
@@ -489,6 +479,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       WritableArray transactions = RNZumoKitModule.mapTransactions(state.getTransactions());
       map.putArray("transactions", transactions);
+
+      map.putString("exchangeRates", state.getExchangeRates());
 
       return map;
 
