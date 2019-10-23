@@ -228,7 +228,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    this.wallet.sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, new Long(nonce), new SendTransactionCallback() {
+    Long nonceValue = (nonce != null) ? new Long(nonce) : null;
+
+    this.wallet.sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonceValue, new SendTransactionCallback() {
 
       @Override
       public void onError(String errorName, String errorMessage) {
@@ -444,13 +446,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public static WritableMap mapTransaction(Transaction transaction) {
 
     WritableMap map = Arguments.createMap();
-
+    
     map.putString("id", transaction.getId());
     map.putString("txHash", transaction.getTxHash());
     map.putString("accountId", transaction.getAccountId());
     map.putString("symbol", transaction.getSymbol());
     map.putString("coin", transaction.getCoin());
-    map.putInt("chainId", transaction.getChainId());
+
+    if(transaction.getChainId() != null) {
+      map.putInt("chainId", transaction.getChainId());
+    }
+    
     // map.putInt("nonce", transaction.getNonce().intValue());
     map.putString("status", transaction.getStatus().toString());
     map.putString("fromAddress", transaction.getFromAddress());
