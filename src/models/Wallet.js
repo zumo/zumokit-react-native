@@ -7,7 +7,7 @@ export default class Wallet {
     /**
      * Sends a new transaction on the Ethereum blockchain.
      *
-     * @param {number} accountId
+     * @param {string} accountId
      * @param {string} gasPrice
      * @param {string} gasLimit
      * @param {string} to
@@ -18,7 +18,16 @@ export default class Wallet {
      * @memberof Wallet
      */
     async sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonce) {
-        const json = await RNZumoKit.sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonce);
+        const json = await RNZumoKit.sendEthTransaction(
+            accountId,
+            '' + gasPrice,
+            '' + gasLimit,
+            to,
+            '' + value,
+            data,
+            nonce
+        );
+
         return new Transaction(json);
     }
 
