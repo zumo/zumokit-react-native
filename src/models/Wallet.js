@@ -25,7 +25,7 @@ export default class Wallet {
             to,
             '' + value,
             data,
-            nonce
+            (nonce) ? '' + nonce : null
         );
 
         return new Transaction(json);

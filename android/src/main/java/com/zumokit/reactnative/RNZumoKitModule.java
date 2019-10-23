@@ -29,6 +29,8 @@ import money.zumo.zumokit.UserListener;
 import money.zumo.zumokit.AccountListener;
 import money.zumo.zumokit.TransactionListener;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -221,14 +223,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void sendEthTransaction(String accountId, String gasPrice, String gasLimit, String to, String value, String data, int nonce, Promise promise) {
+  public void sendEthTransaction(String accountId, String gasPrice, String gasLimit, String to, String value, String data, String nonce, Promise promise) {
 
     if(this.wallet == null) {
       promise.reject("Wallet not found.");
       return;
     }
 
-    Long nonceValue = (nonce != null) ? new Long(nonce) : null;
+    Long nonceValue = null;
+    if(nonce != null) {
+      nonceValue = Long.parseLong(nonce);
+    }
 
     this.wallet.sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonceValue, new SendTransactionCallback() {
 
