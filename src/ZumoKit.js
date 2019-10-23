@@ -1,5 +1,6 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import User from './models/User';
+import Transaction from './models/Transaction';
 
 const { RNZumoKit } = NativeModules;
 
@@ -56,7 +57,7 @@ class ZumoKit {
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
             if(state.accounts) this.state.accounts = state.accounts;
-            if(state.transactions) this.state.transactions = state.transactions;
+            if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
             if(state.exchangeRates) this.state.exchangeRates = JSON.parse(state.exchangeRates);
 
         });

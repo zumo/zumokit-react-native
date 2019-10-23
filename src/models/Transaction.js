@@ -1,3 +1,5 @@
+import ZumoKit from '../ZumoKit';
+
 export default class Transaction {
 
     /**
@@ -89,7 +91,7 @@ export default class Transaction {
      *
      * @memberof Transaction
      */
-    amount;
+    value;
 
     /**
      * The status of the transaction
@@ -151,10 +153,25 @@ export default class Transaction {
         if(json.gasPrice) this.gasPrice = json.gasPrice;
         if(json.gasLimit) this.gasLimit = json.gasLimit;
         if(json.gasUsed) this.gasUsed = json.gasUsed;
-        if(json.amount) this.amount = json.amount;
+        if(json.value) this.value = json.value;
         if(json.status) this.status = json.status;
         if(json.payload) this.payload = json.payload;
-        if(json.type) this.type = json.type;
+        
+
+        console.log(ZumoKit.state.accounts);
+
+        // Check whether the transaction is incoming or outgoing
+        const filtered = ZumoKit.state.accounts
+            .filter((a) => a.address == json.fromAddress);
+
+        console.log(filtered);
+
+        this.type = (filtered.length > 0) ? 'OUTGOING' : 'INCOMING';
+
+        console.log(this.type);
+
+        console.log('----');
+
 
     }
 
