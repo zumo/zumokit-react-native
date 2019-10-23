@@ -140,8 +140,6 @@ export default class Transaction {
 
     constructor(json) {
 
-        console.log(json);
-
         if(json.id) this.id = json.id;
         if(json.txHash) this.txHash = json.txHash;
         if(json.coin) this.coin = json.coin;
@@ -157,21 +155,11 @@ export default class Transaction {
         if(json.status) this.status = json.status;
         if(json.payload) this.payload = json.payload;
         
-
-        console.log(ZumoKit.state.accounts);
-
         // Check whether the transaction is incoming or outgoing
         const filtered = ZumoKit.state.accounts
-            .filter((a) => a.address == json.fromAddress);
-
-        console.log(filtered);
+            .filter((a) => a.address.toLowerCase() == json.fromAddress.toLowerCase());
 
         this.type = (filtered.length > 0) ? 'OUTGOING' : 'INCOMING';
-
-        console.log(this.type);
-
-        console.log('----');
-
 
     }
 
