@@ -1,4 +1,5 @@
 import ZumoKit from '../ZumoKit';
+import Moment from 'moment-timezone';
 
 export default class Transaction {
 
@@ -36,6 +37,15 @@ export default class Transaction {
      * @memberof Transaction
      */
     timestamp;
+
+    /**
+     * A `Moment` instance of the time that the transaction was created.
+     * Use `.tz()` to localise it to a timezone. 
+     *
+     * @readonly
+     * @memberof Transaction
+     */
+    time;
 
     /**
      * The address that sent the transaction
@@ -143,7 +153,6 @@ export default class Transaction {
         if(json.id) this.id = json.id;
         if(json.txHash) this.txHash = json.txHash;
         if(json.coin) this.coin = json.coin;
-        if(json.timestamp) this.timestamp = json.timestamp;
         if(json.fromAddress) this.fromAddress = json.fromAddress;
         if(json.toAddress) this.toAddress = json.toAddress;
         if(json.fromUserId) this.fromUserId = json.fromUserId;
@@ -154,6 +163,19 @@ export default class Transaction {
         if(json.value) this.value = json.value;
         if(json.status) this.status = json.status;
         if(json.payload) this.payload = json.payload;
+
+        if(json.timestamp) {
+            this.timestamp = json.timestamp
+            this.time = new Moment(json.timestamp, 'X');;
+        }
+
+        if(json.submittedAt) {
+            this.submittedAt = new Moment(json.submittedAt, 'X');;
+        }
+
+        if(json.confirmedAt) {
+            this.confirmedAt = new Moment(json.confirmedAt, 'X');;
+        }
         
         // Check whether the transaction is incoming or outgoing
         const filtered = ZumoKit.state.accounts
