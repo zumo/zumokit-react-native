@@ -119,6 +119,13 @@ class ZumoKit {
         }
     }
 
+    /**
+     * Clears the wallet and user.
+     *
+     * @memberof ZumoKit
+     */
+    clear = RNZumoKit.clear;
+
 }
 
 export default new ZumoKit();
