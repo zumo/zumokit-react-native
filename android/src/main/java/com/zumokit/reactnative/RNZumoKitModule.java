@@ -389,6 +389,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  @ReactMethod
+  public void clear(Promise promise) {
+
+    this.user = null;
+    this.wallet = null;
+
+    promise.resolve(true);
+
+  }
+
   // - Helpers
 
   public static HashMap<String, String> toHashMap(ReadableMap readableMap) {
