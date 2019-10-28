@@ -60,6 +60,8 @@ class ZumoKit {
             if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
             if(state.exchangeRates) this.state.exchangeRates = JSON.parse(state.exchangeRates);
 
+            this._notifyStateListeners();
+
         });
     }
 
