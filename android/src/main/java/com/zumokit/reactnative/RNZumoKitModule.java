@@ -31,6 +31,7 @@ import money.zumo.zumokit.TransactionListener;
 
 import android.util.Log;
 
+import java.util.Map;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -515,6 +516,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       return map;
 
+  }
+
+  @Override
+  public Map<String, Object> getConstants() {
+    final Map<String, Object> constants = new HashMap<>();
+    constants.put("VERSION", ZumoKit.getVersion());
+    return constants;
   }
 
   @Override
