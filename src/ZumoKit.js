@@ -45,6 +45,13 @@ class ZumoKit {
     _listeners = [];
 
     /**
+     * The version of the native SDK.
+     *
+     * @memberof ZumoKit
+     */
+    VERSION = RNZumoKit.VERSION;
+
+    /**
      * Initialise ZumoKit with the provided JSON config.
      *
      * @param {object} config
