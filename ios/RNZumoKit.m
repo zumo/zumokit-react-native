@@ -22,32 +22,28 @@ RCT_EXPORT_MODULE()
 
 - (void)startObserving {
     hasListeners = YES;
-    
-//    [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPState * _Nonnull state) {
-//        @try {
-//
-//            [self sendEventWithName:@"StoreUpdated" body:@{
-//                                                           @"wallet": [[ZumoKitManager sharedManager] getWalletFromState:state]
-//                                                           }];
-//
-//        } @catch (NSException *exception) {
-//
-//            //
-//
-//        }
-//    }];
 }
 
 - (void)stopObserving {
     hasListeners = NO;
-    
-//    [[ZumoKitManager sharedManager] unsubscribeFromStoreObserver];
 }
+
+
+- (void)update:(nonnull ZKState *)state {
+    
+    if(!hasListeners) return;
+        
+    [self sendEventWithName:@"StateChanged" body:[self mapState:state]];
+    
+}
+
 
 # pragma mark - Initialization + Authentication
 
 RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl)
 {
+    
+    [[ZumoKitManager sharedManager] setStateListener:self];
     
     [[ZumoKitManager sharedManager]
      initializeWithTxServiceUrl:txServiceUrl
@@ -199,5 +195,102 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSString *mnemonic = [[ZumoKitManager sharedManager] generateMnemonic:wordLength];
     resolve(mnemonic);
 }
+
+
+#pragma mark - Mapping
+
+- (NSDictionary *)mapState:(ZKState *)state {
+
+    return @{
+        @"accounts": [self mapAccounts:[state accounts]],
+        @"transactions": [self mapTransactions:[state transactions]],
+        @"exchangeRates": [state exchangeRates]
+    };
+    
+}
+
+- (NSArray<NSDictionary *> *)mapAccounts:(NSArray<ZKAccount *>*)accounts {
+ 
+    NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+    
+    [accounts enumerateObjectsUsingBlock:^(ZKAccount * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        [mapped addObject:@{
+            @"id": [obj id],
+            @"path": [obj path],
+            @"symbol": [obj symbol] ? [obj symbol] : @"",
+            @"coin": [obj coin],
+            @"address": [obj address],
+            @"balance": [obj balance],
+            @"chainId": [obj chainId] ? [obj chainId] : @0
+        }];
+
+    }];
+    
+    return mapped;
+    
+}
+
+- (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions {
+    
+    
+    NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+    
+    [transactions enumerateObjectsUsingBlock:^(ZKTransaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+       
+        NSString *status;
+               
+        switch ([obj status]) {
+           case ZKTransactionStatusCONFIRMED:
+               status = @"CONFIRMED";
+               break;
+               
+           case ZKTransactionStatusFAILED:
+               status = @"FAILED";
+               break;
+                
+            case ZKTransactionStatusRESUBMITTED:
+                status = @"RESUBMITTED";
+                break;
+                
+            case ZKTransactionStatusCANCELLED:
+                status = @"CANCELLED";
+                break;
+               
+           default:
+               status = @"PENDING";
+               break;
+               
+        }
+        
+        [[mapped addObject:@{
+            @"id": [obj id],
+            @"txHash": [obj txHash],
+            @"accountId": [obj accountId],
+            @"symbol": [obj symbol],
+            @"coin": [obj coin],
+            @"chainId": [obj chainId] ? [obj chainId] : NULL,
+            @"nonce": [obj nonce] ? [obj nonce] : NULL,
+            @"status": status,
+            @"fromAddress": [obj fromAddress],
+            @"fromUserId": [obj fromUserId],
+            @"toAddress": [obj toAddress],
+            @"toUserId": [obj toUserId],
+            @"value": [obj value],
+            @"data": [obj data],
+            @"gasPrice": [obj gasPrice],
+            @"gasLimit": [obj gasLimit],
+            @"txCost": [obj txCost],
+            @"submittedAt": [obj submittedAt] ? [obj submittedAt] : NULL,
+            @"confirmedAt": [obj confirmedAt] ? [obj confirmedAt] : NULL,
+            @"timestamp": @([obj timestamp])
+        }];
+        
+    }];
+    
+    return mapped;
+    
+}
+
 
 @end

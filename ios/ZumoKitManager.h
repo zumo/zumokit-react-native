@@ -7,10 +7,13 @@
 
 #import <Foundation/Foundation.h>
 #import <ZumoKitSDK/ZumoKit.h>
+#import <ZumoKitSDK/ZKStateListener.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZumoKitManager : NSObject
+
+@property (weak) id <ZKStateListener> stateListener;
 
 + (ZumoKitManager *)sharedManager;
 
@@ -27,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)revealMnemonic:(NSString *)password completionHandler:(_Nonnull MnemonicCompletionBlock)completionHandler;
 
+// TODO: Send transactions
 
 # pragma mark - Utility
 
