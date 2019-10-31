@@ -1,6 +1,7 @@
 
 #import "RNZumoKit.h"
 #import "ZumoKitManager.h"
+#import <ZumoKitSDK/ZumoKit.h>
 
 @implementation RNZumoKit
 
@@ -10,6 +11,15 @@ bool hasListeners;
 - (dispatch_queue_t)methodQueue
 {
     return dispatch_queue_create("com.zumopay.walletqueue", DISPATCH_QUEUE_SERIAL);
+}
+
+- (NSDictionary *)constantsToExport
+{
+    return @{ @"VERSION": [ZumoKit version] };
+}
+
++ (BOOL)requiresMainQueueSetup {
+    return NO;
 }
 
 RCT_EXPORT_MODULE()
