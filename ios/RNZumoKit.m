@@ -263,7 +263,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
                
         }
         
-        [[mapped addObject:@{
+        [mapped addObject:@{
             @"id": [obj id],
             @"txHash": [obj txHash],
             @"accountId": [obj accountId],
