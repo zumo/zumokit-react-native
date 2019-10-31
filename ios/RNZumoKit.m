@@ -1,7 +1,6 @@
 
 #import "RNZumoKit.h"
 #import "ZumoKitManager.h"
-#import <ZumoKitSDK/CPKeystore.h>
 
 @implementation RNZumoKit
 
@@ -18,69 +17,44 @@ RCT_EXPORT_MODULE()
 # pragma mark - Events
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[@"StoreUpdated"];
+    return @[@"StateChanged"];
 }
 
 - (void)startObserving {
     hasListeners = YES;
     
-    [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPState * _Nonnull state) {
-        @try {
-            
-            [self sendEventWithName:@"StoreUpdated" body:@{
-                                                           @"wallet": [[ZumoKitManager sharedManager] getWalletFromState:state]
-                                                           }];
-            
-        } @catch (NSException *exception) {
-            
-            //
-            
-        }
-    }];
+//    [[ZumoKitManager sharedManager] subscribeToStoreObserverWithCompletionHandler:^(CPState * _Nonnull state) {
+//        @try {
+//
+//            [self sendEventWithName:@"StoreUpdated" body:@{
+//                                                           @"wallet": [[ZumoKitManager sharedManager] getWalletFromState:state]
+//                                                           }];
+//
+//        } @catch (NSException *exception) {
+//
+//            //
+//
+//        }
+//    }];
 }
 
 - (void)stopObserving {
     hasListeners = NO;
     
-    [[ZumoKitManager sharedManager] unsubscribeFromStoreObserver];
+//    [[ZumoKitManager sharedManager] unsubscribeFromStoreObserver];
 }
 
-# pragma mark - Initialisation
+# pragma mark - Initialization + Authentication
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl)
 {
     
-    // Boot the ZumoKitManager to handle the native C++ code
     [[ZumoKitManager sharedManager]
      initializeWithTxServiceUrl:txServiceUrl
      apiKey:apiKey
      apiRoot:apiRoot
-     myRoot:myRoot
-     ];
+     myRoot:myRoot];
     
-    resolve(@(YES));
-    
-}
-
-RCT_EXPORT_METHOD(sync:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    @try {
-
-        [[ZumoKitManager sharedManager] syncWithCompletionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
-
-            if(success) {
-                resolve(@(YES));
-            } else {
-                reject(@"Error syncing", @"An unexpected error occured", NULL);
-            }
-
-        }];
-
-    } @catch (NSException *exception) {
-        
-        reject([exception name], [exception reason], NULL);
-        
-    }
 }
 
 RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
@@ -88,20 +62,27 @@ RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolve
     
     @try {
         
-        [[ZumoKitManager sharedManager] authenticateWithToken:token headers:headers completionHandler:^(bool success, short errorCode, NSString * _Nullable data) {
+        [[ZumoKitManager sharedManager]
+         authenticateWithToken:token
+         headers:headers
+         completionHandler:^(bool success, short errorCode, NSString * _Nullable errorMessage, ZKUser * _Nullable user) {
             
-            if(success) {
-                resolve(@(YES));
-                return;
+            if(user) {
+                
+                resolve(@{
+                    @"id": [user getId],
+                    @"hasWallet": @([user hasWallet])
+                });
+                
+            } else {
+                reject(@"error", errorMessage, NULL);
             }
-            
-            reject([NSString stringWithFormat:@"%d", errorCode], data, NULL);
             
         }];
         
     } @catch (NSException *exception) {
         
-        reject([exception name], [exception reason], NULL);
+        reject(exception.name, exception.description, NULL);
         
     }
     
@@ -109,144 +90,79 @@ RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolve
 
 # pragma mark - Wallet Management
 
-RCT_EXPORT_METHOD(createWallet:(NSString *)password mnemonicCount:(int)mnemonicCount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+
+RCT_EXPORT_METHOD(createWallet:(NSString *)mnemonic password:(NSString *)password resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     
     @try {
-        
-        [[ZumoKitManager sharedManager]
-         createWalletWithPassword:password
-         mnemonicCount:mnemonicCount
-         completionHandler:^(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage) {
-             
-             if(success) {
-                 resolve(response);
-             } else {
-                 reject(errorName, errorMessage, NULL);
-             }
-             
-         }];
-        
-    } @catch (NSException *exception) {
-        
-        reject([exception name], [exception reason], NULL);
-        
-    }
     
-}
-
-RCT_EXPORT_METHOD(getWallet:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    
-    @try {
-        
-        NSDictionary *response = [[ZumoKitManager sharedManager] getWallet];
-        resolve(response);
-        
-    } @catch (NSException *exception) {
-        
-        reject([exception name], [exception reason], NULL);
-        
-    }
-    
-}
-
-RCT_EXPORT_METHOD(unlockWallet:(NSString *)walletId password:(NSString *)password resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    
-    @try {
-        
-        BOOL status = [[ZumoKitManager sharedManager]
-                       unlockWalletWithId:walletId
-                       password:password];
-        
-        resolve(@(status));
-        
-    } @catch (NSException *exception) {
-        
-        reject([exception name], [exception reason], NULL);
-        
-    }
-    
-}
-
-# pragma mark - Transactions
-
-RCT_EXPORT_METHOD(sendTransaction:(NSString *)walletId address:(NSString *)address amount:(NSString *)amount gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    
-    @try {
-        
-        [[ZumoKitManager sharedManager] sendTransactionFromWalletWithId:walletId toAddress:address amount:amount gasPrice:gasPrice gasLimit:gasLimit completionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, CPTransaction * _Nullable transaction) {
+        [[ZumoKitManager sharedManager] createWallet:mnemonic password:password completionHandler:^(BOOL success) {
             
             if(success) {
-                NSDictionary *response = @{
-                                           @"value": [transaction amount],
-                                           @"hash": @([transaction hash]),
-                                           @"status": @([transaction status]),
-                                           @"to": [transaction toAddress],
-                                           @"from": [transaction fromAddress],
-                                           @"timestamp": @([transaction timestamp]),
-                                           @"gas_price": [transaction gasPrice],
-                                           @"type": @"OUTGOING"
-                                           };
-                
-                resolve(response);
-                return;
+                resolve(@(success));
+            } else {
+                reject(@"error", @"Could not create wallet", NULL);
             }
-            
-            reject(errorName, errorMessage, NULL);
             
         }];
         
     } @catch (NSException *exception) {
         
-        reject([exception name], [exception reason], NULL);
+        reject(exception.name, exception.description, NULL);
         
     }
     
 }
 
-RCT_EXPORT_METHOD(getTransactions:(NSString *)walletId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(revealMnemonic:(NSString *)password resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
+    
     @try {
         
-        NSArray *transactions = [[ZumoKitManager sharedManager]
-                                 getTransactionsForWalletId:walletId];
-        
-        resolve(transactions);
+        [[ZumoKitManager sharedManager] revealMnemonic:password completionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, NSString * _Nullable mnemonic) {
+            
+            if(success) {
+                resolve(mnemonic);
+            } else {
+                reject(@"error", @"Could not retrieve mnemonic", NULL);
+            }
+            
+        }];
         
     } @catch (NSException *exception) {
         
-        reject([exception name], [exception reason], NULL);
+        reject(exception.name, exception.description, NULL);
         
     }
     
 }
+
+RCT_EXPORT_METHOD(unlockWallet:(NSString *)password resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    
+    @try {
+    
+        [[ZumoKitManager sharedManager] unlockWallet:password completionHandler:^(BOOL success) {
+            
+            if(success) {
+                resolve(@(success));
+            } else {
+                reject(@"error", @"Could not unlock wallet", NULL);
+            }
+            
+        }];
+        
+    } @catch (NSException *exception) {
+        
+        reject(exception.name, exception.description, NULL);
+        
+    }
+    
+}
+
 
 # pragma mark - Utility & Helpers
 
-RCT_EXPORT_METHOD(getBalance:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    @try {
-        
-        NSString *balance = [[ZumoKitManager sharedManager]
-                             getBalanceForAddress:address];
-        resolve(balance);
-        
-    } @catch (NSException *exception) {
-        
-        reject([exception name], [exception reason], NULL);
-        
-    }
-    
-}
-
-RCT_EXPORT_METHOD(getExchangeRates:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    NSString *rates = [[ZumoKitManager sharedManager] getExchangeRates];
-    resolve(rates);
-}
 
 RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
@@ -276,6 +192,12 @@ RCT_EXPORT_METHOD(weiToEth:(NSString *)wei resolver:(RCTPromiseResolveBlock)reso
 {
     NSString *eth = [[ZumoKitManager sharedManager] weiToEth:wei];
     resolve(eth);
+}
+
+RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *mnemonic = [[ZumoKitManager sharedManager] generateMnemonic:wordLength];
+    resolve(mnemonic);
 }
 
 @end

@@ -6,20 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import <ZumoKitSDK/ZumoKit.h>
-#import <ZumoKitSDK/iOSAuthCallback.h>
-#import <ZumoKitSDK/iOSSendTransactionCallback.h>
-#import <ZumoKitSDK/iOSCreateWalletCallback.h>
-#import <ZumoKitSDK/CPWalletManagement.h>
-#import <ZumoKitSDK/CPKeystore.h>
-#import <ZumoKitSDK/CPCurrency.h>
-#import <ZumoKitSDK/CPStore.h>
-#import <ZumoKitSDK/CPState.h>
-#import <ZumoKitSDK/CPUtils.h>
-#import <ZumoKitSDK/CPTransaction.h>
-#import <ZumoKitSDK/ZKStoreObserver.h>
-#import <ZumoKitSDK/iOSSyncCallback.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,31 +16,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot;
 
-- (void)syncWithCompletionHandler:(void (^)(bool success, short errorCode, NSString * _Nullable data))completionHandler;
-
-- (void)subscribeToStoreObserverWithCompletionHandler:(void (^)(CPState * state))completionHandler;
-
-- (void)unsubscribeFromStoreObserver;
-
 - (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler;
 
-- (void)createWalletWithPassword:(NSString *)password mnemonicCount:(int)mnemonicCount completionHandler:(void (^)(bool success, NSDictionary * _Nullable response, NSString * _Nullable errorName, NSString * _Nullable errorMessage))completionHandler;
 
-- (NSDictionary *)getWallet;
+# pragma mark - Wallet Management
 
-- (NSDictionary *)getWalletFromState:(CPState *)state;
+- (void)createWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL success))completionHandler;
 
-- (BOOL)unlockWalletWithId:(NSString *)keystoreId password:(NSString *)password;
+- (void)unlockWallet:(NSString *)password completionHandler:(void (^)(BOOL success))completionHandler;
 
-- (NSString *)getExchangeRates;
+- (void)revealMnemonic:(NSString *)password completionHandler:(_Nonnull MnemonicCompletionBlock)completionHandler;
 
-- (NSString *)getBalanceForAddress:(NSString *)address;
+
+# pragma mark - Utility
 
 - (BOOL)isValidEthAddress:(NSString *)address;
-
-- (NSArray<NSDictionary *> *)getTransactionsForWalletId:(NSString *)walletId;
-
-- (void)sendTransactionFromWalletWithId:(NSString *)walletId toAddress:(NSString *)address amount:(NSString *)amount gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit completionHandler:(SendTransactionCompletionBlock)completionHandler;
 
 - (NSString *)ethToGwei:(NSString *)eth;
 
@@ -62,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)ethToWei:(NSString *)eth;
 
 - (NSString *)weiToEth:(NSString *)wei;
+
+- (NSString *)generateMnemonic:(int)wordLength;
 
 @end
 
