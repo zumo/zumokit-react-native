@@ -7,6 +7,7 @@
 
 #import "ZumoKitManager.h"
 
+
 @interface ZumoKitManager ()
 
 @property (strong, nonatomic) ZumoKit *zumoKit;
@@ -50,6 +51,8 @@ NSException *userNotAuthenticatedException = [NSException
                                        apiRoot:apiRoot
                                         myRoot:myRoot
             ];
+    
+    [_zumoKit addStateListener:_stateListener];
     
 }
 
@@ -104,6 +107,7 @@ NSException *userNotAuthenticatedException = [NSException
     [_user revealMnemonic:password completion:completionHandler];
 
 }
+
 
 # pragma mark - Utility
 
