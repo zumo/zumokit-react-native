@@ -166,6 +166,29 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)password resolver:(RCTPromiseResolveB
     
 }
 
+RCT_EXPORT_METHOD(sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(NSString *)data nonce:(NSString *)nonce resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    
+    @try {
+    
+        [[ZumoKitManager sharedManager] sendEthTransaction:accountId gasPrice:gasPrice gasLimit:gasLimit to:to value:value data:data nonce:nonce ? @([nonce integerValue]) : NULL completionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, ZKTransaction * _Nullable transaction) {
+            
+            if(transaction) {
+                resolve([self mapTransaction:transaction]);
+            } else {
+                reject(@"error", @"Problem sending transaction", NULL);
+            }
+            
+        }];
+    
+    } @catch (NSException *exception) {
+           
+       reject(exception.name, exception.description, NULL);
+       
+   }
+    
+}
+
 
 # pragma mark - Utility & Helpers
 
@@ -241,64 +264,66 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     
 }
 
-- (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions {
+- (NSDictionary *)mapTransaction:(ZKTransaction *)transaction {
     
+    NSString *status;
+           
+    switch ([transaction status]) {
+       case ZKTransactionStatusCONFIRMED:
+           status = @"CONFIRMED";
+           break;
+           
+       case ZKTransactionStatusFAILED:
+           status = @"FAILED";
+           break;
+            
+        case ZKTransactionStatusRESUBMITTED:
+            status = @"RESUBMITTED";
+            break;
+            
+        case ZKTransactionStatusCANCELLED:
+            status = @"CANCELLED";
+            break;
+           
+       default:
+           status = @"PENDING";
+           break;
+           
+    }
+    
+    NSMutableDictionary *dict = [@{
+        @"id": [transaction id],
+        @"txHash": [transaction txHash],
+        @"accountId": [transaction accountId],
+        @"symbol": [transaction symbol],
+        @"coin": [transaction coin],
+        @"status": status,
+        @"fromAddress": [transaction fromAddress],
+        @"toAddress": [transaction toAddress],
+        @"value": [transaction value],
+        @"txCost": [transaction txCost],
+        @"timestamp": @([transaction timestamp])
+    } mutableCopy];
+    
+    if([transaction chainId]) dict[@"chainId"] = [transaction chainId];
+    if([transaction nonce]) dict[@"nonce"] = [transaction nonce];
+    if([transaction fromUserId]) dict[@"fromUserId"] = [transaction fromUserId];
+    if([transaction toUserId]) dict[@"toUserId"] = [transaction toUserId];
+    if([transaction data]) dict[@"data"] = [transaction data];
+    if([transaction gasPrice]) dict[@"gasPrice"] = [transaction gasPrice];
+    if([transaction gasLimit]) dict[@"gasLimit"] = [transaction gasLimit];
+    if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
+    if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
+    
+    return dict;
+}
+
+- (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions {
     
     NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
     
     [transactions enumerateObjectsUsingBlock:^(ZKTransaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-       
-        NSString *status;
-               
-        switch ([obj status]) {
-           case ZKTransactionStatusCONFIRMED:
-               status = @"CONFIRMED";
-               break;
-               
-           case ZKTransactionStatusFAILED:
-               status = @"FAILED";
-               break;
-                
-            case ZKTransactionStatusRESUBMITTED:
-                status = @"RESUBMITTED";
-                break;
-                
-            case ZKTransactionStatusCANCELLED:
-                status = @"CANCELLED";
-                break;
-               
-           default:
-               status = @"PENDING";
-               break;
-               
-        }
-        
-        NSMutableDictionary *dict = [@{
-            @"id": [obj id],
-            @"txHash": [obj txHash],
-            @"accountId": [obj accountId],
-            @"symbol": [obj symbol],
-            @"coin": [obj coin],
-            @"status": status,
-            @"fromAddress": [obj fromAddress],
-            @"toAddress": [obj toAddress],
-            @"value": [obj value],
-            @"txCost": [obj txCost],
-            @"timestamp": @([obj timestamp])
-        } mutableCopy];
-        
-        if([obj chainId]) dict[@"chainId"] = [obj chainId];
-        if([obj nonce]) dict[@"nonce"] = [obj nonce];
-        if([obj fromUserId]) dict[@"fromUserId"] = [obj fromUserId];
-        if([obj toUserId]) dict[@"toUserId"] = [obj toUserId];
-        if([obj data]) dict[@"data"] = [obj data];
-        if([obj gasPrice]) dict[@"gasPrice"] = [obj gasPrice];
-        if([obj gasLimit]) dict[@"gasLimit"] = [obj gasLimit];
-        if([obj submittedAt]) dict[@"submittedAt"] = [obj submittedAt];
-        if([obj confirmedAt]) dict[@"confirmedAt"] = [obj confirmedAt];
-        
-        [mapped addObject:dict];
-        
+        [mapped addObject:[self mapTransaction:obj]];
     }];
     
     return mapped;

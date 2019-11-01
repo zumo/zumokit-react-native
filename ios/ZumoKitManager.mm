@@ -30,6 +30,11 @@ NSException *userNotAuthenticatedException = [NSException
                                               reason:@"A user has not been authenticated"
                                               userInfo:nil];
 
+NSException *walletNotFoundException = [NSException
+                                        exceptionWithName:@"WalletNotFound"
+                                        reason:@"The user doesn't seem to have wallet"
+                                        userInfo:nil];
+
 + (id)sharedManager {
     static ZumoKitManager *manager = nil;
     @synchronized(self) {
@@ -106,6 +111,23 @@ NSException *userNotAuthenticatedException = [NSException
     if(! _user) @throw userNotAuthenticatedException;
     [_user revealMnemonic:password completion:completionHandler];
 
+}
+
+- (void)sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(NSString *)data nonce:(NSNumber *)nonce completionHandler:(SendTransactionCompletionBlock)completionHandler {
+    
+    if(! _wallet) @throw walletNotFoundException;
+    
+    [_wallet
+     sendEthTransaction:accountId
+     gasPrice:gasPrice
+     gasLimit:gasLimit
+     to:to
+     value:value
+     data:data
+     nonce:NULL
+     completion:completionHandler
+     ];
+    
 }
 
 
