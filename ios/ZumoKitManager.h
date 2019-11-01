@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot;
 
-- (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler;
+- (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(_Nonnull AuthCompletionBlock)completionHandler;
 
 
 # pragma mark - Wallet Management
@@ -30,7 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)revealMnemonic:(NSString *)password completionHandler:(_Nonnull MnemonicCompletionBlock)completionHandler;
 
-// TODO: Send transactions
+- (void)sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(nullable NSString *)data nonce:(nullable NSNumber *)nonce completionHandler:(_Nonnull SendTransactionCompletionBlock)completionHandler;
+
 
 # pragma mark - Utility
 
@@ -45,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)weiToEth:(NSString *)wei;
 
 - (NSString *)generateMnemonic:(int)wordLength;
+
+// TODO: Add a clear method
 
 @end
 
