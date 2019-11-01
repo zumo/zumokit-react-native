@@ -273,28 +273,31 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
                
         }
         
-        [mapped addObject:@{
+        NSMutableDictionary *dict = [@{
             @"id": [obj id],
             @"txHash": [obj txHash],
             @"accountId": [obj accountId],
             @"symbol": [obj symbol],
             @"coin": [obj coin],
-            @"chainId": [obj chainId] ? [obj chainId] : NULL,
-            @"nonce": [obj nonce] ? [obj nonce] : NULL,
             @"status": status,
             @"fromAddress": [obj fromAddress],
-            @"fromUserId": [obj fromUserId],
             @"toAddress": [obj toAddress],
-            @"toUserId": [obj toUserId],
             @"value": [obj value],
-            @"data": [obj data],
-            @"gasPrice": [obj gasPrice],
-            @"gasLimit": [obj gasLimit],
             @"txCost": [obj txCost],
-            @"submittedAt": [obj submittedAt] ? [obj submittedAt] : NULL,
-            @"confirmedAt": [obj confirmedAt] ? [obj confirmedAt] : NULL,
             @"timestamp": @([obj timestamp])
-        }];
+        } mutableCopy];
+        
+        if([obj chainId]) dict[@"chainId"] = [obj chainId];
+        if([obj nonce]) dict[@"nonce"] = [obj nonce];
+        if([obj fromUserId]) dict[@"fromUserId"] = [obj fromUserId];
+        if([obj toUserId]) dict[@"toUserId"] = [obj toUserId];
+        if([obj data]) dict[@"data"] = [obj data];
+        if([obj gasPrice]) dict[@"gasPrice"] = [obj gasPrice];
+        if([obj gasLimit]) dict[@"gasLimit"] = [obj gasLimit];
+        if([obj submittedAt]) dict[@"submittedAt"] = [obj submittedAt];
+        if([obj confirmedAt]) dict[@"confirmedAt"] = [obj confirmedAt];
+        
+        [mapped addObject:dict];
         
     }];
     
