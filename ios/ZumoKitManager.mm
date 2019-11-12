@@ -163,10 +163,15 @@ NSException *walletNotFoundException = [NSException
     return [[_zumoKit utils] weiToEth:wei];
 }
 
--(NSString *)generateMnemonic:(int)wordLength {
+- (NSString *)generateMnemonic:(int)wordLength {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     return [[_zumoKit utils] generateMnemonic:wordLength];
+}
+
+- (void)clear {
+    _user = NULL;
+    _wallet = NULL;
 }
 
 @end

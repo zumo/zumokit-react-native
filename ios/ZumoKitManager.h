@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)generateMnemonic:(int)wordLength;
 
-// TODO: Add a clear method
+- (void)clear;
 
 @end
 

@@ -1,5 +1,6 @@
 import ZumoKit from '../ZumoKit';
 import Moment from 'moment-timezone';
+import { Decimal } from 'decimal.js';
 
 export default class Transaction {
 
@@ -160,7 +161,7 @@ export default class Transaction {
         if(json.gasPrice) this.gasPrice = json.gasPrice;
         if(json.gasLimit) this.gasLimit = json.gasLimit;
         if(json.gasUsed) this.gasUsed = json.gasUsed;
-        if(json.value) this.value = json.value;
+        if(json.value) this.value = new Decimal(json.value);
         if(json.status) this.status = json.status;
         if(json.payload) this.payload = json.payload;
 

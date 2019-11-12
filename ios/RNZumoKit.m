@@ -229,6 +229,11 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     resolve(mnemonic);
 }
 
+RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    [[ZumoKitManager sharedManager] clear];
+    resolve(@(YES));
+}
 
 #pragma mark - Mapping
 
