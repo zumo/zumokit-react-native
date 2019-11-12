@@ -62,7 +62,7 @@ export default class Account {
         if(json.symbol) this.symbol = json.symbol;
         if(json.coin) this.coin = json.coin;
         if(json.address) this.address = json.address;
-        if(json.balance) this.balance = json.balance;
+        if(json.balance) this.balance = new Decimal(json.balance);
         if(json.chainId) this.chainId = json.chainId;
         if(json.nonce) this.nonce = json.nonce;
     }
