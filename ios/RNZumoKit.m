@@ -306,7 +306,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"fromAddress": [transaction fromAddress],
         @"toAddress": [transaction toAddress],
         @"value": [transaction value],
-        @"txCost": [transaction txCost],
+        @"cost": [transaction cost],
         @"timestamp": @([transaction timestamp])
     } mutableCopy];
     

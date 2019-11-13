@@ -486,7 +486,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("data", transaction.getData());
     map.putString("gasPrice", transaction.getGasPrice());
     map.putString("gasLimit", transaction.getGasLimit());
-    map.putString("txCost", transaction.getTxCost());
+    map.putString("cost", transaction.getcost());
 
     if(transaction.getSubmittedAt() != null) { 
       map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
