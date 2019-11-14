@@ -1,7 +1,7 @@
 
 #import "RNZumoKit.h"
 #import "ZumoKitManager.h"
-#import <ZumoKitSDK/ZumoKit.h>
+#import <ZumoKit/ZumoKit.h>
 
 @implementation RNZumoKit
 
