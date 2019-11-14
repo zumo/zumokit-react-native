@@ -486,7 +486,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("data", transaction.getData());
     map.putString("gasPrice", transaction.getGasPrice());
     map.putString("gasLimit", transaction.getGasLimit());
-    map.putString("cost", transaction.getcost());
+    map.putString("cost", transaction.getCost());
 
     if(transaction.getSubmittedAt() != null) { 
       map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
@@ -497,6 +497,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     map.putInt("timestamp", (int) transaction.getTimestamp());
+
+    WritableMap fiatValues = Arguments.createMap();
+
+    for (HashMap.Entry entry : transaction.getFiatCost().entrySet()) {
+      fiatValues.putString(
+        (String) entry.getKey(),
+        (String) entry.getValue()
+      );
+    }
+
+    map.putMap("fiatValue", fiatValues);
 
     return map;
 

@@ -105,6 +105,13 @@ export default class Transaction {
     cost;
 
     /**
+     * The cost of the tranaction in fiat
+     *
+     * @memberof Transaction
+     */
+    fiatValue;
+
+    /**
      * The value of the transaction
      *
      * @memberof Transaction
@@ -172,6 +179,7 @@ export default class Transaction {
         if(json.status) this.status = json.status;
         if(json.payload) this.payload = json.payload;
         if(json.cost) this.cost = json.cost;
+        if(json.fiatValue) this.fiatValue = json.fiatValue;
 
         if(json.timestamp) {
             this.timestamp = json.timestamp
