@@ -6,8 +6,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ZumoKitSDK/ZumoKit.h>
-#import <ZumoKitSDK/ZKStateListener.h>
+#import <ZumoKit/ZumoKit.h>
+#import <ZumoKit/ZKStateListener.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
