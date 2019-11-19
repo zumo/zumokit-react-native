@@ -16,6 +16,6 @@ Pod::Spec.new do |s|
 
 
   s.dependency "React"
-  s.dependency "ZumoKit", :git => "https://github.com/zumo/zumokit-ios.git"
+  s.dependency "ZumoKit"
 
 end

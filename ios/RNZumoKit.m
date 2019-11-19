@@ -319,6 +319,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     if([transaction gasLimit]) dict[@"gasLimit"] = [transaction gasLimit];
     if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
     if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
+    if([transaction fiatValue]) dict[@"fiatValue"] = [transaction fiatValue];
     
     return dict;
 }

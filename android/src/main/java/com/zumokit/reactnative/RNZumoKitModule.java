@@ -500,7 +500,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     WritableMap fiatValues = Arguments.createMap();
 
-    for (HashMap.Entry entry : transaction.getFiatCost().entrySet()) {
+    for (HashMap.Entry entry : transaction.getFiatValue().entrySet()) {
       fiatValues.putString(
         (String) entry.getKey(),
         (String) entry.getValue()
