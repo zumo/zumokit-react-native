@@ -57,11 +57,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void init(String apiKey, String apiRoot, String myRoot, String txServiceUrl) {
 
-    String dbPath = this.reactContext
-      .getFilesDir()
-      .getAbsolutePath();
-
-    this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, apiRoot, myRoot);
+    this.zumoKit = new ZumoKit(txServiceUrl, apiKey, apiRoot, myRoot);
 
     this.addStateListener();
 
@@ -321,6 +317,50 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // - add a listener to a specific transaction
     // - bubble up events to JS
     // - remove the listener when it's all done
+
+  }
+
+  // - Wallet Recovery
+
+  @ReactMethod
+  public void isRecoveryMnemonic(String mnemonic, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    Bool validation = this.user.isRecoveryMnemonic(mnemonic);
+    promise.resolve(validation);
+
+  }
+
+  @ReactMethod
+  public void recoverWallet(String mnemonic, String password, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    RNZumoKitModule module = this;
+
+    this.user.recoverWallet(mnemonic, password, new WalletCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Wallet wallet) {
+
+        module.wallet = wallet;
+        promise.resolve(true);
+
+      }
+
+    });
 
   }
 

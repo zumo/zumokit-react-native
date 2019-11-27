@@ -47,14 +47,10 @@ NSException *walletNotFoundException = [NSException
 
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
     
-    NSArray *appFolderPath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *dbPath = [appFolderPath objectAtIndex:0];
-
-    _zumoKit =  [[ZumoKit alloc] initWithDbPath:dbPath
-                                  txServiceUrl:txServiceUrl
-                                        apiKey:apiKey
-                                       apiRoot:apiRoot
-                                        myRoot:myRoot
+    _zumoKit =  [[ZumoKit alloc] initWithTxServiceUrl:txServiceUrl
+                                               apiKey:apiKey
+                                              apiRoot:apiRoot
+                                               myRoot:myRoot
             ];
     
     [_zumoKit addStateListener:_stateListener];
@@ -130,6 +126,28 @@ NSException *walletNotFoundException = [NSException
     
 }
 
+# pragma mark - Wallet Recovery
+
+- (BOOL)isRecoveryMnemonic:(NSString *)mnemonic {
+    
+    if(! _user) @throw userNotAuthenticatedException;
+    return [_user isRecoveryMnemonic:mnemonic];
+    
+}
+
+- (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL))completionHandler {
+    
+    if(! _user) @throw userNotAuthenticatedException;
+    
+    [_user recoverWallet:mnemonic password:password completion:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, ZKWallet * _Nullable wallet) {
+       
+        self->_wallet = wallet;
+        
+        completionHandler(success);
+                
+    }];
+    
+}
 
 # pragma mark - Utility
 

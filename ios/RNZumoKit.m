@@ -190,6 +190,44 @@ RCT_EXPORT_METHOD(sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)
 }
 
 
+# pragma mark - Wallet Recovery
+
+
+RCT_EXPORT_METHOD(isRecoveryMnemonic:(NSString *)mnemonic resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject) {
+    
+    @try {
+        BOOL validation = [[ZumoKitManager sharedManager] isRecoveryMnemonic:mnemonic];
+        resolve(@(validation));
+    } @catch (NSException *exception) {
+        reject(exception.name, exception.description, NULL);
+    }
+    
+}
+
+RCT_EXPORT_METHOD(recoverWallet:(NSString *)mnemonic password:(NSString *)password resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    
+    @try {
+    
+        [[ZumoKitManager sharedManager] recoverWallet:mnemonic password:password completionHandler:^(BOOL success) {
+            
+            if(success) {
+                resolve(@(success));
+            } else {
+                reject(@"error", @"Could not recover wallet", NULL);
+            }
+            
+        }];
+        
+    } @catch (NSException *exception) {
+        
+        reject(exception.name, exception.description, NULL);
+        
+    }
+    
+}
+
+
 # pragma mark - Utility & Helpers
 
 
