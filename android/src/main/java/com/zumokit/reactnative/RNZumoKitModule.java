@@ -320,6 +320,21 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  // - Wallet Recovery
+
+  @ReactMethod
+  public void isRecoveryMnemonic(String mnemonic, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    Bool validation = this.user.isRecoveryMnemonic(mnemonic);
+    promise.resolve(validation);
+
+  }
+
   // - Utility
 
   @ReactMethod
