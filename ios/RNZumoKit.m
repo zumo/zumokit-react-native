@@ -197,7 +197,7 @@ RCT_EXPORT_METHOD(isRecoveryMnemonic:(NSString *)mnemonic resolver:(RCTPromiseRe
     
     @try {
         BOOL validation = [[ZumoKitManager sharedManager] isRecoveryMnemonic:mnemonic];
-        resolve(validation);
+        resolve(@(validation));
     } @catch (NSException *exception) {
         reject(exception.name, exception.description, NULL);
     }
