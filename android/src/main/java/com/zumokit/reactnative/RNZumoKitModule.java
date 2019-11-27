@@ -335,6 +335,35 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  @ReactMethod
+  public void recoverWallet(String mnemonic, String password, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    RNZumoKitModule module = this;
+
+    this.user.recoverWallet(mnemonic, password, new WalletCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Wallet wallet) {
+
+        module.wallet = wallet;
+        promise.resolve(true);
+
+      }
+
+    });
+
+  }
+
   // - Utility
 
   @ReactMethod
