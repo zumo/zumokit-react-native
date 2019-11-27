@@ -33,6 +33,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(nullable NSString *)data nonce:(nullable NSNumber *)nonce completionHandler:(_Nonnull SendTransactionCompletionBlock)completionHandler;
 
 
+# pragma mark - Wallet Recovery
+
+- (BOOL)isRecoveryMnemonic:(NSString *)mnemonic;
+
+- (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL success))completionHandler;
+
+
 # pragma mark - Utility
 
 - (BOOL)isValidEthAddress:(NSString *)address;

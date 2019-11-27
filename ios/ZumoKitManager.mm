@@ -126,6 +126,28 @@ NSException *walletNotFoundException = [NSException
     
 }
 
+# pragma mark - Wallet Recovery
+
+- (BOOL)isRecoveryMnemonic:(NSString *)mnemonic {
+    
+    if(! _user) @throw userNotAuthenticatedException;
+    return [_user isRecoveryMnemonic:mnemonic];
+    
+}
+
+- (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL))completionHandler {
+    
+    if(! _user) @throw userNotAuthenticatedException;
+    
+    [_user recoverWallet:mnemonic password:password completion:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, ZKWallet * _Nullable wallet) {
+       
+        self->_wallet = wallet;
+        
+        completionHandler(success);
+                
+    }];
+    
+}
 
 # pragma mark - Utility
 
