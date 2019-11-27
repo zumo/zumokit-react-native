@@ -70,6 +70,16 @@ export default class User {
     isRecoveryMnemonic = RNZumoKit.isRecoveryMnemonic;
 
     /**
+     * Recovers a user's wallet.
+     *
+     * @param {string} mnemonic
+     * @param {string} password
+     * @returns
+     * @memberof User
+     */
+    recoverWallet = RNZumoKit.recoverWallet;
+
+    /**
      * Loads an array of accounts the user has
      *
      * @returns
