@@ -16,6 +16,6 @@ Pod::Spec.new do |s|
 
 
   s.dependency "React"
-  s.dependency "ZumoKit"
+  s.dependency "ZumoKit", "~> 1.2.0-beta.1"
 
 end
