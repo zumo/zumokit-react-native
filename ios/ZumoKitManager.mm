@@ -47,14 +47,10 @@ NSException *walletNotFoundException = [NSException
 
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
     
-    NSArray *appFolderPath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *dbPath = [appFolderPath objectAtIndex:0];
-
-    _zumoKit =  [[ZumoKit alloc] initWithDbPath:dbPath
-                                  txServiceUrl:txServiceUrl
-                                        apiKey:apiKey
-                                       apiRoot:apiRoot
-                                        myRoot:myRoot
+    _zumoKit =  [[ZumoKit alloc] initWithTxServiceUrl:txServiceUrl
+                                               apiKey:apiKey
+                                              apiRoot:apiRoot
+                                               myRoot:myRoot
             ];
     
     [_zumoKit addStateListener:_stateListener];
