@@ -172,10 +172,10 @@ export default class Transaction {
         if(json.toAddress) this.toAddress = json.toAddress;
         if(json.fromUserId) this.fromUserId = json.fromUserId;
         if(json.toUserId) this.toUserId = json.toUserId;
-        if(json.gasPrice) this.gasPrice = new Decimal(json.gasPrice);
+        this.gasPrice = (json.gasPrice) ? new Decimal(json.gasPrice) : new Decimal(0);
         if(json.gasLimit) this.gasLimit = json.gasLimit;
         if(json.gasUsed) this.gasUsed = json.gasUsed;
-        if(json.value) this.value = new Decimal(json.value);
+        this.value = (json.value) ? new Decimal(json.value) : new Decimal(0);
         if(json.status) this.status = json.status;
         if(json.payload) this.payload = json.payload;
         if(json.cost) this.cost = json.cost;
