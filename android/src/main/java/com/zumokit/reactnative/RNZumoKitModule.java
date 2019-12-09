@@ -319,17 +319,19 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    if(this.txListener) {
+    if(this.txListener != null) {
       this.user.removeTransactionListener(this.txListener);
       this.txListener = null;
     }
+
+    RNZumoKitModule module = this;
 
     this.user.addTransactionListener(transactionId, new TransactionListener() {
 
       @Override
       public void update(Transaction transaction) {
         
-        WritableMap map = this.mapTransaction(transaction);
+        WritableMap map = module.mapTransaction(transaction);
         
         module.reactContext
           .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
