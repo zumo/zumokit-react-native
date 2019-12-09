@@ -2,6 +2,8 @@ import ZumoKit from '../ZumoKit';
 import Moment from 'moment-timezone';
 import { Decimal } from 'decimal.js';
 
+const { RNZumoKit } = NativeModules;
+
 export default class Transaction {
 
     /**
@@ -163,6 +165,20 @@ export default class Transaction {
         return (this.type == 'INCOMING') ? this.fromUserId : this.toUserId;
     }
 
+    /**
+     * The emitter that bubbles events from the native side.
+     *
+     * @memberof ZumoKit
+     */
+    _emitter = new NativeEventEmitter(RNZumoKit);
+
+    /**
+     * Transaction listener to notify when an event occurs.
+     *
+     * @memberof Transaction
+     */
+    _transactionListener;
+
     constructor(json) {
 
         if(json.id) this.id = json.id;
@@ -200,6 +216,28 @@ export default class Transaction {
 
         this.type = (filtered.length > 0) ? 'OUTGOING' : 'INCOMING';
 
+    }
+
+    async addListener(callback) {
+
+        await RNZumoKit.addTransactionListener(this.id);
+
+        this._transactionListener = this._emitter.addListener('TransactionChanged', (transaction) => {
+            if(transaction.status) this.status = transaction.status;
+            callback(this);
+        });
+
+    }
+
+    async removeListener() {
+
+        if(!this._transactionListener) return;
+
+        this._transactionListener.removeListener();
+        this._transactionListener = null;
+
+        await RNZumoKit.removeTransactionListener();
+        
     }
 
 }

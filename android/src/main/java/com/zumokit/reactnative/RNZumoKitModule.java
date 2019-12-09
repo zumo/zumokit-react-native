@@ -48,6 +48,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private Wallet wallet;
 
+  private TransactionListener txListener;
+
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
 
@@ -300,6 +302,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void addAccountListener(String accountId, Promise promise) {
 
+    
+
     // - check if a user exists
     // - add a listener to the account
     // - bubble up events to JS
@@ -307,16 +311,55 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
-  // @ReactMethod
-  // public void remove
-
   @ReactMethod
   public void addTransactionListener(String transactionId, Promise promise) {
 
-    // - check if a user exists
-    // - add a listener to a specific transaction
-    // - bubble up events to JS
-    // - remove the listener when it's all done
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    if(this.txListener) {
+      this.user.removeTransactionListener(this.txListener);
+      this.txListener = null;
+    }
+
+    this.user.addTransactionListener(transactionId, new TransactionListener() {
+
+      @Override
+      public void update(Transaction transaction) {
+        
+        WritableMap map = this.mapTransaction(transaction);
+        
+        module.reactContext
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit("TransactionChanged", map);
+
+      }
+
+    });
+
+    promise.resolve(true);
+
+  }
+
+  @ReactMethod
+  public void removeTransactionListener(String transactionId, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    if(this.txListener == null) {
+      promise.reject("Transaction listener not found.");
+      return;
+    }
+
+    this.user.removeTransactionListener(this.txListener);
+    this.txListener = null;
+    
+    promise.resolve(true);
 
   }
 
