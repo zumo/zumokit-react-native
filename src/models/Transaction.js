@@ -1,3 +1,4 @@
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import ZumoKit from '../ZumoKit';
 import Moment from 'moment-timezone';
 import { Decimal } from 'decimal.js';
@@ -237,7 +238,7 @@ export default class Transaction {
         this._transactionListener = null;
 
         await RNZumoKit.removeTransactionListener();
-        
+
     }
 
 }
