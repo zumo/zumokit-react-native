@@ -373,7 +373,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    Bool validation = this.user.isRecoveryMnemonic(mnemonic);
+    Boolean validation = this.user.isRecoveryMnemonic(mnemonic);
     promise.resolve(validation);
 
   }
