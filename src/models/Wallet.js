@@ -31,4 +31,27 @@ export default class Wallet {
         return new Transaction(json);
     }
 
+    /**
+     * Sends a new Bitcoin transaction.
+     *
+     * @param {string} accountId
+     * @param {string} changeAccountId
+     * @param {string} to
+     * @param {string} value
+     * @param {string} feeRate
+     * @returns
+     * @memberof Wallet
+     */
+    async sendBtcTransaction(accountId, changeAccountId, to, value, feeRate) {
+        const json = await RNZumoKit.sendBtcTransaction(
+            accountId,
+            changeAccountId,
+            to,
+            '' + value,
+            '' + feeRate
+        );
+
+        return new Transaction(json);
+    }
+
 }
