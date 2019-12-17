@@ -185,6 +185,7 @@ export default class Transaction {
         if(json.id) this.id = json.id;
         if(json.txHash) this.txHash = json.txHash;
         if(json.coin) this.coin = json.coin;
+        if(json.symbol) this.symbol = json.symbol;
         if(json.fromAddress) this.fromAddress = json.fromAddress;
         if(json.toAddress) this.toAddress = json.toAddress;
         if(json.fromUserId) this.fromUserId = json.fromUserId;
