@@ -251,6 +251,33 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  @ReactMethod
+  public void sendBtcTransaction(String accountId, String changeAccountId, String to, String value, String feeRate, Promise promise) {
+
+    if(this.wallet == null) {
+      promise.reject("Wallet not found.");
+      return;
+    }
+
+    Long feeRateValue = Long.parseLong(feeRate);
+
+    this.wallet.sendBtcTransaction(accountId, changeAccountId, to, value, feeRateValue, new SendTransactionCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Transaction transaction) {
+        WritableMap map = RNZumoKitModule.mapTransaction(transaction);
+        promise.resolve(map);
+      }
+
+    });
+
+  }
+
   // - Listeners
 
   private void addStateListener() {
