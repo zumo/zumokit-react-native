@@ -463,6 +463,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void isValidBtcAddress(String address, Promise promise) {
+
+    Boolean valid = this.zumoKit.utils()
+      .isValidBtcAddress(address);
+
+    promise.resolve(valid);
+
+  }
+
+  @ReactMethod
   public void ethToGwei(String eth, Promise promise) {
 
     String gwei = this.zumoKit.utils()
