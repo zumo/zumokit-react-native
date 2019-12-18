@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(nullable NSString *)data nonce:(nullable NSNumber *)nonce completionHandler:(_Nonnull SendTransactionCompletionBlock)completionHandler;
 
+- (void)sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate completionHandler:(_Nonnull SendTransactionCompletionBlock)completionHandler;
+
 
 # pragma mark - Wallet Recovery
 

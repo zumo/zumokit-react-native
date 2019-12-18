@@ -126,6 +126,19 @@ NSException *walletNotFoundException = [NSException
     
 }
 
+- (void)sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate completionHandler:(SendTransactionCompletionBlock)completionHandler {
+    
+    if(! _wallet) @throw walletNotFoundException;
+    
+    [_wallet
+     sendBtcTransaction:accountId
+     changeAccountId:changeAccountId
+     to:to value:value
+     feeRate:[feeRate longLongValue]
+     completion:completionHandler];
+    
+}
+
 # pragma mark - Wallet Recovery
 
 - (BOOL)isRecoveryMnemonic:(NSString *)mnemonic {

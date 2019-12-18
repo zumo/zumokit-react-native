@@ -189,6 +189,21 @@ RCT_EXPORT_METHOD(sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)
     
 }
 
+RCT_EXPORT_METHOD(sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    
+    @try {
+        
+        
+        
+    } @catch (NSException *exception) {
+        
+        reject(exception.name, exception.description, NULL);
+        
+    }
+    
+}
+
 
 # pragma mark - Wallet Recovery
 
