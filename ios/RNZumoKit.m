@@ -194,7 +194,15 @@ RCT_EXPORT_METHOD(sendBtcTransaction:(NSString *)accountId changeAccountId:(NSSt
     
     @try {
         
-        
+        [[ZumoKitManager sharedManager] sendBtcTransaction:accountId changeAccountId:changeAccountId to:to value:value feeRate:feeRate completionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, ZKTransaction * _Nullable transaction) {
+           
+            if(transaction) {
+                resolve([self mapTransaction:transaction]);
+            } else {
+                reject(@"error", @"Problem sending transaction", NULL);
+            }
+            
+        }];
         
     } @catch (NSException *exception) {
         
@@ -249,6 +257,17 @@ RCT_EXPORT_METHOD(recoverWallet:(NSString *)mnemonic password:(NSString *)passwo
 RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     BOOL isValid = [[ZumoKitManager sharedManager] isValidEthAddress:address];
+    resolve(@(isValid));
+}
+
+RCT_EXPORT_METHOD(isValidBtcAddress:(NSString *)address network:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    ZKNetworkType networkType = ZKNetworkTypeMAINNET;
+    if([network isEqualToString:@"TESTNET"]) {
+        networkType = ZKNetworkTypeTESTNET;
+    }
+    
+    BOOL isValid = [[ZumoKitManager sharedManager] isValidBtcAddress:address network:networkType];
     resolve(@(isValid));
 }
 

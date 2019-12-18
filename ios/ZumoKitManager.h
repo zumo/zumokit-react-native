@@ -46,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isValidEthAddress:(NSString *)address;
 
+- (BOOL)isValidBtcAddress:(NSString *)address network:(ZKNetworkType)network;
+
 - (NSString *)ethToGwei:(NSString *)eth;
 
 - (NSString *)gweiToEth:(NSString *)gwei;

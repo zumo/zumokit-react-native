@@ -170,6 +170,12 @@ NSException *walletNotFoundException = [NSException
     return [[_zumoKit utils] isValidEthAddress:address];
 }
 
+- (BOOL)isValidBtcAddress:(NSString *)address network:(ZKNetworkType)network {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] isValidBtcAddress:address network:network];
+}
+
 - (NSString *)ethToGwei:(NSString *)eth {
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
