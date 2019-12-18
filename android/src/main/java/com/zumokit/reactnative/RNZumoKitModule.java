@@ -28,6 +28,7 @@ import money.zumo.zumokit.StateListener;
 import money.zumo.zumokit.UserListener;
 import money.zumo.zumokit.AccountListener;
 import money.zumo.zumokit.TransactionListener;
+import money.zumo.zumokit.NetworkType;
 
 import android.util.Log;
 
@@ -463,10 +464,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void isValidBtcAddress(String address, Promise promise) {
-
+  public void isValidBtcAddress(String address, String network, Promise promise) {
+    
     Boolean valid = this.zumoKit.utils()
-      .isValidBtcAddress(address);
+      .isValidBtcAddress(address, NetworkType.valueOf(network));
 
     promise.resolve(valid);
 
