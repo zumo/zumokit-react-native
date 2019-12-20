@@ -261,9 +261,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    Long feeRateValue = Long.parseLong(feeRate);
-
-    this.wallet.sendBtcTransaction(accountId, changeAccountId, to, value, feeRateValue, new SendTransactionCallback() {
+    this.wallet.sendBtcTransaction(accountId, changeAccountId, to, value, feeRate, new SendTransactionCallback() {
 
       @Override
       public void onError(String errorName, String errorMessage) {
@@ -517,7 +515,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void maxSpendableEth(String accountId, String gasPrice, String gasLimit, Promise promise) {
     
-    String max = this.wallet.maxSpendableEth(accountId, gasPrice, getGasLimit);
+    String max = this.wallet.maxSpendableEth(accountId, gasPrice, gasLimit);
     promise.resolve(max);
 
   }
@@ -659,7 +657,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     for (HashMap.Entry<String, FeeRates> entry : feeRates.entrySet()) {
       String key = entry.getKey();
-      Object rates = entry.getValue();
+      FeeRates rates = entry.getValue();
 
       WritableMap mappedRates = Arguments.createMap();
 
@@ -687,7 +685,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("exchangeRates", state.getExchangeRates());
 
       WritableMap feeRates = RNZumoKitModule.mapFeeRates(state.getFeeRates());
-      map.putMap("feeRates", feeRates)
+      map.putMap("feeRates", feeRates);
 
       return map;
 
