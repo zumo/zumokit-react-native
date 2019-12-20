@@ -134,7 +134,7 @@ NSException *walletNotFoundException = [NSException
      sendBtcTransaction:accountId
      changeAccountId:changeAccountId
      to:to value:value
-     feeRate:[feeRate longLongValue]
+     feeRate:feeRate
      completion:completionHandler];
     
 }
