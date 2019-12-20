@@ -54,4 +54,26 @@ export default class Wallet {
         return new Transaction(json);
     }
 
+    /**
+     * Returns the maxmimum amount of Ethereum that can be spent.
+     *
+     * @param {string} accountId
+     * @param {string} gasPrice
+     * @param {string} gasLimit
+     * @returns
+     * @memberof Wallet
+     */
+    maxSpendableEth = RNZumoKit.maxSpendableEth;
+
+    /**
+     * Returns the maximum amount of Bitcoin that can be spent.
+     *
+     * @param {string} accountId
+     * @param {string} to
+     * @param {string} feeRate
+     * @returns
+     * @memberof Wallet
+     */
+    maxSpendableBtc = RNZumoKit.maxSpendableBtc;
+
 }

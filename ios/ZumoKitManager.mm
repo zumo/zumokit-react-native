@@ -206,6 +206,18 @@ NSException *walletNotFoundException = [NSException
     return [[_zumoKit utils] generateMnemonic:wordLength];
 }
 
+- (NSString *)maxSpendableEth:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit {
+    if(! _wallet) @throw walletNotFoundException;
+    
+    return [_wallet maxSpendableEth:accountId gasPrice:gasPrice gasLimit:gasPrice];
+}
+
+- (NSString *)maxSpendableBtc:(NSString *)accountId to:(NSString *)to feeRate:(NSString *)feeRate {
+    if(! _wallet) @throw walletNotFoundException;
+    
+    return [_wallet maxSpendableBtc:accountId to:to feeRate:feeRate];
+}
+
 - (void)clear {
     _user = NULL;
     _wallet = NULL;
