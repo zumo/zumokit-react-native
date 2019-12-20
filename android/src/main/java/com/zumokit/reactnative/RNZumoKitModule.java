@@ -29,6 +29,7 @@ import money.zumo.zumokit.UserListener;
 import money.zumo.zumokit.AccountListener;
 import money.zumo.zumokit.TransactionListener;
 import money.zumo.zumokit.NetworkType;
+import money.zumo.zumokit.FeeRates;
 
 import android.util.Log;
 
@@ -652,6 +653,27 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  public static WritableMap mapFeeRates(HashMap<String, FeeRates> feeRates) {
+
+    WritableMap map = Arguments.createMap();
+
+    for (HashMap.Entry<String, FeeRates> entry : feeRates.entrySet()) {
+      String key = entry.getKey();
+      Object rates = entry.getValue();
+
+      WritableMap mappedRates = Arguments.createMap();
+
+      mappedRates.putString("slow", rates.getSlow());
+      mappedRates.putString("average", rates.getAverage());
+      mappedRates.putString("fast", rates.getFast());
+
+      map.putMap(key, mappedRates);
+    }
+
+    return map;
+
+  }
+
   public static WritableMap mapState(State state) {
 
       WritableMap map = Arguments.createMap();
@@ -663,6 +685,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putArray("transactions", transactions);
 
       map.putString("exchangeRates", state.getExchangeRates());
+
+      WritableMap feeRates = RNZumoKitModule.mapFeeRates(state.getFeeRates());
+      map.putMap("feeRates", feeRates)
 
       return map;
 

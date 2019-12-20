@@ -20,7 +20,8 @@ class ZumoKit {
     state = {
         authenticatedUser: null,
         accounts: [],
-        transactions: []
+        transactions: [],
+        feeRates: null
     };
 
     /**
@@ -63,9 +64,12 @@ class ZumoKit {
 
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
+            console.log(state);
+
             if(state.accounts) this.state.accounts = state.accounts;
             if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
             if(state.exchangeRates) this.state.exchangeRates = JSON.parse(state.exchangeRates);
+            if(state.feeRates) this.state.feeRates = state.feeRates;
 
             this._notifyStateListeners();
 

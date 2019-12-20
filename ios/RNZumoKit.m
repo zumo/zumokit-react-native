@@ -322,11 +322,12 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 #pragma mark - Mapping
 
 - (NSDictionary *)mapState:(ZKState *)state {
-
+    
     return @{
         @"accounts": [self mapAccounts:[state accounts]],
         @"transactions": [self mapTransactions:[state transactions]],
-        @"exchangeRates": [state exchangeRates]
+        @"exchangeRates": [state exchangeRates],
+        @"feeRates": [self mapFeeRates:[state feeRates]]
     };
     
 }
@@ -404,6 +405,21 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
     if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
     if([transaction fiatValue]) dict[@"fiatValue"] = [transaction fiatValue];
+    
+    return dict;
+}
+
+- (NSDictionary *)mapFeeRates:(NSDictionary<NSString *, ZKFeeRates *>*)feeRates {
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    
+    [feeRates enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, ZKFeeRates * _Nonnull obj, BOOL * _Nonnull stop) {
+        dict[key] = @{
+            @"slow": [obj slow],
+            @"average": [obj average],
+            @"fast": [obj fast]
+        };
+    }];
     
     return dict;
 }
