@@ -58,6 +58,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)generateMnemonic:(int)wordLength;
 
+- (NSString *)maxSpendableEth:(nonnull NSString *)accountId gasPrice:(nonnull NSString *)gasPrice gasLimit:(nonnull NSString *)gasLimit;
+
+- (NSString *)maxSpendableBtc:(nonnull NSString *)accountId to:(nonnull NSString *)to feeRate:(nonnull NSString *)feeRate;
+
 - (void)clear;
 
 @end
