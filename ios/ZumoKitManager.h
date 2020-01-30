@@ -32,10 +32,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(nullable NSString *)data nonce:(nullable NSNumber *)nonce completionHandler:(_Nonnull SendTransactionCompletionBlock)completionHandler;
 
+- (void)sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate completionHandler:(_Nonnull SendTransactionCompletionBlock)completionHandler;
+
+
+# pragma mark - Wallet Recovery
+
+- (BOOL)isRecoveryMnemonic:(NSString *)mnemonic;
+
+- (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL success))completionHandler;
+
 
 # pragma mark - Utility
 
 - (BOOL)isValidEthAddress:(NSString *)address;
+
+- (BOOL)isValidBtcAddress:(NSString *)address network:(ZKNetworkType)network;
 
 - (NSString *)ethToGwei:(NSString *)eth;
 
@@ -46,6 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)weiToEth:(NSString *)wei;
 
 - (NSString *)generateMnemonic:(int)wordLength;
+
+- (NSString *)maxSpendableEth:(nonnull NSString *)accountId gasPrice:(nonnull NSString *)gasPrice gasLimit:(nonnull NSString *)gasLimit;
+
+- (NSString *)maxSpendableBtc:(nonnull NSString *)accountId to:(nonnull NSString *)to feeRate:(nonnull NSString *)feeRate;
 
 - (void)clear;
 

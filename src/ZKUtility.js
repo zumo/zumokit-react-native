@@ -46,6 +46,15 @@ class ZKUtility {
     isValidEthAddress = RNZumoKit.isValidEthAddress;
 
     /**
+     * Checks whether the address is valid or not.
+     * 
+     * @param {string} address
+     * @returns
+     * @memberof ZKUtility
+     */
+    isValidBtcAddress = RNZumoKit.isValidBtcAddress;
+
+    /**
      * Converts Ethereum to Gwei
      * 
      * @param {string} eth

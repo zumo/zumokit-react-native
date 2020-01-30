@@ -1,6 +1,9 @@
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import ZumoKit from '../ZumoKit';
 import Moment from 'moment-timezone';
 import { Decimal } from 'decimal.js';
+
+const { RNZumoKit } = NativeModules;
 
 export default class Transaction {
 
@@ -163,19 +166,34 @@ export default class Transaction {
         return (this.type == 'INCOMING') ? this.fromUserId : this.toUserId;
     }
 
+    /**
+     * The emitter that bubbles events from the native side.
+     *
+     * @memberof ZumoKit
+     */
+    _emitter = new NativeEventEmitter(RNZumoKit);
+
+    /**
+     * Transaction listener to notify when an event occurs.
+     *
+     * @memberof Transaction
+     */
+    _transactionListener;
+
     constructor(json) {
 
         if(json.id) this.id = json.id;
         if(json.txHash) this.txHash = json.txHash;
         if(json.coin) this.coin = json.coin;
+        if(json.symbol) this.symbol = json.symbol;
         if(json.fromAddress) this.fromAddress = json.fromAddress;
         if(json.toAddress) this.toAddress = json.toAddress;
         if(json.fromUserId) this.fromUserId = json.fromUserId;
         if(json.toUserId) this.toUserId = json.toUserId;
-        if(json.gasPrice) this.gasPrice = new Decimal(json.gasPrice);
+        this.gasPrice = (json.gasPrice) ? new Decimal(json.gasPrice) : new Decimal(0);
         if(json.gasLimit) this.gasLimit = json.gasLimit;
         if(json.gasUsed) this.gasUsed = json.gasUsed;
-        if(json.value) this.value = new Decimal(json.value);
+        this.value = (json.value) ? new Decimal(json.value) : new Decimal(0);
         if(json.status) this.status = json.status;
         if(json.payload) this.payload = json.payload;
         if(json.cost) this.cost = json.cost;
@@ -199,6 +217,28 @@ export default class Transaction {
             .filter((a) => a.address.toLowerCase() == json.fromAddress.toLowerCase());
 
         this.type = (filtered.length > 0) ? 'OUTGOING' : 'INCOMING';
+
+    }
+
+    async addListener(callback) {
+
+        await RNZumoKit.addTransactionListener(this.id);
+
+        this._transactionListener = this._emitter.addListener('TransactionChanged', (transaction) => {
+            if(transaction.status) this.status = transaction.status;
+            callback(this);
+        });
+
+    }
+
+    async removeListener() {
+
+        if(!this._transactionListener) return;
+
+        this._transactionListener.removeListener();
+        this._transactionListener = null;
+
+        await RNZumoKit.removeTransactionListener();
 
     }
 

@@ -28,6 +28,8 @@ import money.zumo.zumokit.StateListener;
 import money.zumo.zumokit.UserListener;
 import money.zumo.zumokit.AccountListener;
 import money.zumo.zumokit.TransactionListener;
+import money.zumo.zumokit.NetworkType;
+import money.zumo.zumokit.FeeRates;
 
 import android.util.Log;
 
@@ -48,6 +50,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private Wallet wallet;
 
+  private TransactionListener txListener;
+
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
 
@@ -57,11 +61,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void init(String apiKey, String apiRoot, String myRoot, String txServiceUrl) {
 
-    String dbPath = this.reactContext
-      .getFilesDir()
-      .getAbsolutePath();
-
-    this.zumoKit = new ZumoKit(dbPath, txServiceUrl, apiKey, apiRoot, myRoot);
+    this.zumoKit = new ZumoKit(txServiceUrl, apiKey, apiRoot, myRoot);
 
     this.addStateListener();
 
@@ -253,6 +253,31 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  @ReactMethod
+  public void sendBtcTransaction(String accountId, String changeAccountId, String to, String value, String feeRate, Promise promise) {
+
+    if(this.wallet == null) {
+      promise.reject("Wallet not found.");
+      return;
+    }
+
+    this.wallet.sendBtcTransaction(accountId, changeAccountId, to, value, feeRate, new SendTransactionCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Transaction transaction) {
+        WritableMap map = RNZumoKitModule.mapTransaction(transaction);
+        promise.resolve(map);
+      }
+
+    });
+
+  }
+
   // - Listeners
 
   private void addStateListener() {
@@ -304,6 +329,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void addAccountListener(String accountId, Promise promise) {
 
+    
+
     // - check if a user exists
     // - add a listener to the account
     // - bubble up events to JS
@@ -311,16 +338,101 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
-  // @ReactMethod
-  // public void remove
-
   @ReactMethod
   public void addTransactionListener(String transactionId, Promise promise) {
 
-    // - check if a user exists
-    // - add a listener to a specific transaction
-    // - bubble up events to JS
-    // - remove the listener when it's all done
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    if(this.txListener != null) {
+      this.user.removeTransactionListener(this.txListener);
+      this.txListener = null;
+    }
+
+    RNZumoKitModule module = this;
+
+    this.user.addTransactionListener(transactionId, new TransactionListener() {
+
+      @Override
+      public void update(Transaction transaction) {
+        
+        WritableMap map = module.mapTransaction(transaction);
+        
+        module.reactContext
+          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+          .emit("TransactionChanged", map);
+
+      }
+
+    });
+
+    promise.resolve(true);
+
+  }
+
+  @ReactMethod
+  public void removeTransactionListener(String transactionId, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    if(this.txListener == null) {
+      promise.reject("Transaction listener not found.");
+      return;
+    }
+
+    this.user.removeTransactionListener(this.txListener);
+    this.txListener = null;
+    
+    promise.resolve(true);
+
+  }
+
+  // - Wallet Recovery
+
+  @ReactMethod
+  public void isRecoveryMnemonic(String mnemonic, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    Boolean validation = this.user.isRecoveryMnemonic(mnemonic);
+    promise.resolve(validation);
+
+  }
+
+  @ReactMethod
+  public void recoverWallet(String mnemonic, String password, Promise promise) {
+
+    if(this.user == null) {
+      promise.reject("User not found.");
+      return;
+    }
+
+    RNZumoKitModule module = this;
+
+    this.user.recoverWallet(mnemonic, password, new WalletCallback() {
+
+      @Override
+      public void onError(String errorName, String errorMessage) {
+        promise.reject(errorMessage);
+      }
+
+      @Override
+      public void onSuccess(Wallet wallet) {
+
+        module.wallet = wallet;
+        promise.resolve(true);
+
+      }
+
+    });
 
   }
 
@@ -345,6 +457,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     Boolean valid = this.zumoKit.utils()
       .isValidEthAddress(address);
+
+    promise.resolve(valid);
+
+  }
+
+  @ReactMethod
+  public void isValidBtcAddress(String address, String network, Promise promise) {
+    
+    Boolean valid = this.zumoKit.utils()
+      .isValidBtcAddress(address, NetworkType.valueOf(network));
 
     promise.resolve(valid);
 
@@ -387,6 +509,22 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .weiToEth(wei);
 
     promise.resolve(eth);
+
+  }
+
+  @ReactMethod
+  public void maxSpendableEth(String accountId, String gasPrice, String gasLimit, Promise promise) {
+    
+    String max = this.wallet.maxSpendableEth(accountId, gasPrice, gasLimit);
+    promise.resolve(max);
+
+  }
+
+  @ReactMethod
+  public void maxSpendableBtc(String accountId, String to, String feeRate, Promise promise) {
+
+    String max = this.wallet.maxSpendableBtc(accountId, to, feeRate);
+    promise.resolve(max);
 
   }
 
@@ -513,6 +651,27 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   }
 
+  public static WritableMap mapFeeRates(HashMap<String, FeeRates> feeRates) {
+
+    WritableMap map = Arguments.createMap();
+
+    for (HashMap.Entry<String, FeeRates> entry : feeRates.entrySet()) {
+      String key = entry.getKey();
+      FeeRates rates = entry.getValue();
+
+      WritableMap mappedRates = Arguments.createMap();
+
+      mappedRates.putString("slow", rates.getSlow());
+      mappedRates.putString("average", rates.getAverage());
+      mappedRates.putString("fast", rates.getFast());
+
+      map.putMap(key, mappedRates);
+    }
+
+    return map;
+
+  }
+
   public static WritableMap mapState(State state) {
 
       WritableMap map = Arguments.createMap();
@@ -524,6 +683,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putArray("transactions", transactions);
 
       map.putString("exchangeRates", state.getExchangeRates());
+
+      WritableMap feeRates = RNZumoKitModule.mapFeeRates(state.getFeeRates());
+      map.putMap("feeRates", feeRates);
 
       return map;
 

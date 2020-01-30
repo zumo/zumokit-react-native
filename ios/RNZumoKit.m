@@ -189,6 +189,67 @@ RCT_EXPORT_METHOD(sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)
     
 }
 
+RCT_EXPORT_METHOD(sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    
+    @try {
+        
+        [[ZumoKitManager sharedManager] sendBtcTransaction:accountId changeAccountId:changeAccountId to:to value:value feeRate:feeRate completionHandler:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, ZKTransaction * _Nullable transaction) {
+           
+            if(transaction) {
+                resolve([self mapTransaction:transaction]);
+            } else {
+                reject(@"error", @"Problem sending transaction", NULL);
+            }
+            
+        }];
+        
+    } @catch (NSException *exception) {
+        
+        reject(exception.name, exception.description, NULL);
+        
+    }
+    
+}
+
+
+# pragma mark - Wallet Recovery
+
+
+RCT_EXPORT_METHOD(isRecoveryMnemonic:(NSString *)mnemonic resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject) {
+    
+    @try {
+        BOOL validation = [[ZumoKitManager sharedManager] isRecoveryMnemonic:mnemonic];
+        resolve(@(validation));
+    } @catch (NSException *exception) {
+        reject(exception.name, exception.description, NULL);
+    }
+    
+}
+
+RCT_EXPORT_METHOD(recoverWallet:(NSString *)mnemonic password:(NSString *)password resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    
+    @try {
+    
+        [[ZumoKitManager sharedManager] recoverWallet:mnemonic password:password completionHandler:^(BOOL success) {
+            
+            if(success) {
+                resolve(@(success));
+            } else {
+                reject(@"error", @"Could not recover wallet", NULL);
+            }
+            
+        }];
+        
+    } @catch (NSException *exception) {
+        
+        reject(exception.name, exception.description, NULL);
+        
+    }
+    
+}
+
 
 # pragma mark - Utility & Helpers
 
@@ -196,6 +257,17 @@ RCT_EXPORT_METHOD(sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)
 RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     BOOL isValid = [[ZumoKitManager sharedManager] isValidEthAddress:address];
+    resolve(@(isValid));
+}
+
+RCT_EXPORT_METHOD(isValidBtcAddress:(NSString *)address network:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    ZKNetworkType networkType = ZKNetworkTypeMAINNET;
+    if([network isEqualToString:@"TESTNET"]) {
+        networkType = ZKNetworkTypeTESTNET;
+    }
+    
+    BOOL isValid = [[ZumoKitManager sharedManager] isValidBtcAddress:address network:networkType];
     resolve(@(isValid));
 }
 
@@ -229,6 +301,18 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     resolve(mnemonic);
 }
 
+RCT_EXPORT_METHOD(maxSpendableEth:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *max = [[ZumoKitManager sharedManager] maxSpendableEth:accountId gasPrice:gasPrice gasLimit:gasLimit];
+    resolve(max);
+}
+
+RCT_EXPORT_METHOD(maxSpendableBtc:(NSString *)accountId to:(NSString *)to feeRate:(NSString *)feeRate resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    NSString *max = [[ZumoKitManager sharedManager] maxSpendableBtc:accountId to:to feeRate:feeRate];
+    resolve(max);
+}
+
 RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     [[ZumoKitManager sharedManager] clear];
@@ -238,11 +322,12 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 #pragma mark - Mapping
 
 - (NSDictionary *)mapState:(ZKState *)state {
-
+    
     return @{
         @"accounts": [self mapAccounts:[state accounts]],
         @"transactions": [self mapTransactions:[state transactions]],
-        @"exchangeRates": [state exchangeRates]
+        @"exchangeRates": [state exchangeRates],
+        @"feeRates": [self mapFeeRates:[state feeRates]]
     };
     
 }
@@ -320,6 +405,21 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
     if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
     if([transaction fiatValue]) dict[@"fiatValue"] = [transaction fiatValue];
+    
+    return dict;
+}
+
+- (NSDictionary *)mapFeeRates:(NSDictionary<NSString *, ZKFeeRates *>*)feeRates {
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    
+    [feeRates enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, ZKFeeRates * _Nonnull obj, BOOL * _Nonnull stop) {
+        dict[key] = @{
+            @"slow": [obj slow],
+            @"average": [obj average],
+            @"fast": [obj fast]
+        };
+    }];
     
     return dict;
 }

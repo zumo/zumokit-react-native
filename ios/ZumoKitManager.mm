@@ -47,14 +47,10 @@ NSException *walletNotFoundException = [NSException
 
 - (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
     
-    NSArray *appFolderPath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *dbPath = [appFolderPath objectAtIndex:0];
-
-    _zumoKit =  [[ZumoKit alloc] initWithDbPath:dbPath
-                                  txServiceUrl:txServiceUrl
-                                        apiKey:apiKey
-                                       apiRoot:apiRoot
-                                        myRoot:myRoot
+    _zumoKit =  [[ZumoKit alloc] initWithTxServiceUrl:txServiceUrl
+                                               apiKey:apiKey
+                                              apiRoot:apiRoot
+                                               myRoot:myRoot
             ];
     
     [_zumoKit addStateListener:_stateListener];
@@ -130,6 +126,41 @@ NSException *walletNotFoundException = [NSException
     
 }
 
+- (void)sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate completionHandler:(SendTransactionCompletionBlock)completionHandler {
+    
+    if(! _wallet) @throw walletNotFoundException;
+    
+    [_wallet
+     sendBtcTransaction:accountId
+     changeAccountId:changeAccountId
+     to:to value:value
+     feeRate:feeRate
+     completion:completionHandler];
+    
+}
+
+# pragma mark - Wallet Recovery
+
+- (BOOL)isRecoveryMnemonic:(NSString *)mnemonic {
+    
+    if(! _user) @throw userNotAuthenticatedException;
+    return [_user isRecoveryMnemonic:mnemonic];
+    
+}
+
+- (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL))completionHandler {
+    
+    if(! _user) @throw userNotAuthenticatedException;
+    
+    [_user recoverWallet:mnemonic password:password completion:^(bool success, NSString * _Nullable errorName, NSString * _Nullable errorMessage, ZKWallet * _Nullable wallet) {
+       
+        self->_wallet = wallet;
+        
+        completionHandler(success);
+                
+    }];
+    
+}
 
 # pragma mark - Utility
 
@@ -137,6 +168,12 @@ NSException *walletNotFoundException = [NSException
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     return [[_zumoKit utils] isValidEthAddress:address];
+}
+
+- (BOOL)isValidBtcAddress:(NSString *)address network:(ZKNetworkType)network {
+    if(! _zumoKit) @throw zumoKitNotInitializedException;
+    
+    return [[_zumoKit utils] isValidBtcAddress:address network:network];
 }
 
 - (NSString *)ethToGwei:(NSString *)eth {
@@ -167,6 +204,18 @@ NSException *walletNotFoundException = [NSException
     if(! _zumoKit) @throw zumoKitNotInitializedException;
     
     return [[_zumoKit utils] generateMnemonic:wordLength];
+}
+
+- (NSString *)maxSpendableEth:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit {
+    if(! _wallet) @throw walletNotFoundException;
+    
+    return [_wallet maxSpendableEth:accountId gasPrice:gasPrice gasLimit:gasPrice];
+}
+
+- (NSString *)maxSpendableBtc:(NSString *)accountId to:(NSString *)to feeRate:(NSString *)feeRate {
+    if(! _wallet) @throw walletNotFoundException;
+    
+    return [_wallet maxSpendableBtc:accountId to:to feeRate:feeRate];
 }
 
 - (void)clear {
