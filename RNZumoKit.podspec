@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "RNZumoKit"
-  s.version      = "1.0.0"
+  s.version      = "1.4.0-beta.1"
   s.summary      = "RNZumoKit"
   s.description  = <<-DESC
                   RNZumoKit
@@ -10,12 +10,12 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.author       = { "author" => "Zumo" }
   s.platform     = :ios, "7.0"
-  s.source       = { :git => "ssh://github.com/dlabs/zumokit-react-native.git", :tag => "master" }
+  s.source       = { :git => "ssh://github.com/dlabs/zumokit-react-native.git", :tag => "#{s.version}" }
   s.source_files  = "ios/**/*.{h,m,mm}"
   s.requires_arc = true
 
 
   s.dependency "React"
-  s.dependency "ZumoKit", "~> 1.3.0-beta.3"
+  s.dependency "ZumoKit", "#{s.version}"
 
 end
