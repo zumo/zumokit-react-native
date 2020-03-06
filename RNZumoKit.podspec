@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.author       = { "author" => "Zumo" }
   s.platform     = :ios
   s.ios.deployment_target = "10.0"
-  s.source       = { :git => "ssh://github.com/dlabs/zumokit-react-native.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/zumo/zumokit-react-native.git", :tag => "#{s.version}" }
   s.source_files  = "ios/**/*.{h,m,mm}"
   s.requires_arc = true
 
