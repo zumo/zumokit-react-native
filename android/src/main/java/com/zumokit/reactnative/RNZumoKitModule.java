@@ -15,6 +15,7 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import money.zumo.zumokit.ZumoKit;
+import money.zumo.zumokit.ZumoKitError;
 import money.zumo.zumokit.User;
 import money.zumo.zumokit.Wallet;
 import money.zumo.zumokit.WalletCallback;
@@ -52,10 +53,32 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private TransactionListener txListener;
 
+  private static final String ERROR_DEFAULT_CODE = "unknown";
+
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
 
     this.reactContext = reactContext;
+  }
+
+  private void rejectPromise(Promise promise, ZumoKitError error) {
+    String errorCode = error.getCode();
+    if (errorCode == null) {
+      errorCode = ERROR_DEFAULT_CODE;
+    }
+
+    String errorMessage = error.getMessage();
+
+    WritableMap userInfo = Arguments.createMap();
+    if(error.getType() != null) {
+      userInfo.putString("errorType", error.getType());
+    }
+
+    promise.reject(errorCode, errorMessage, userInfo);
+  }
+
+  private void rejectPromise(Promise promise, String errorMessage) {
+    promise.reject(ERROR_DEFAULT_CODE, errorMessage);
   }
 
   @ReactMethod
@@ -73,7 +96,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void auth(String token, ReadableMap headers, Promise promise) {
 
     if(this.zumoKit == null) {
-      promise.reject("ZumoKit not initialized.");
+      rejectPromise(promise, "ZumoKit not initialized.");
       return;
     }
 
@@ -82,10 +105,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     HashMap<String, String> headerMap = this.toHashMap(headers);
 
     this.zumoKit.auth(token, headerMap, new AuthCallback() {
-      
+
       @Override
-      public void onError(short errorCode, String errorMessage) {
-        promise.reject(errorMessage);
+      public void onError(ZumoKitError error) {
+        rejectPromise(promise, error);
       }
 
       @Override
@@ -105,14 +128,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     });
 
   }
-  
+
   // - Wallet Management
 
   @ReactMethod
   public void createWallet(String mnemonic, String password, Promise promise) {
-    
+
     if(this.zumoKit == null) {
-      promise.reject("ZumoKit not initialized.");
+      rejectPromise(promise, "ZumoKit not initialized.");
       return;
     }
 
@@ -121,8 +144,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.user.createWallet(mnemonic, password, new WalletCallback() {
 
       @Override
-      public void onError(String errorName, String errorMessage) {
-        promise.reject(errorMessage);
+      public void onError(ZumoKitError error) {
+        rejectPromise(promise, error);
       }
 
       @Override
@@ -141,7 +164,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void unlockWallet(String password, Promise promise) {
 
     if(this.zumoKit == null) {
-      promise.reject("ZumoKit not initialized.");
+      rejectPromise(promise, "ZumoKit not initialized.");
       return;
     }
 
@@ -150,8 +173,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.user.unlockWallet(password, new WalletCallback() {
 
       @Override
-      public void onError(String errorName, String errorMessage) {
-        promise.reject(errorMessage);
+      public void onError(ZumoKitError error) {
+        rejectPromise(promise, error);
       }
 
       @Override
@@ -170,14 +193,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void revealMnemonic(String password, Promise promise) {
 
     if(this.zumoKit == null) {
-      promise.reject("ZumoKit not initialized.");
+      rejectPromise(promise, "ZumoKit not initialized.");
       return;
     }
 
     this.user.revealMnemonic(password, new MnemonicCallback() {
       @Override
-      public void onError(String errorName, String errorMessage) {
-        promise.reject(errorMessage);
+      public void onError(ZumoKitError error) {
+        rejectPromise(promise, error);
       }
 
       @Override
@@ -194,7 +217,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void getAccounts(Promise promise) {
 
     if(this.zumoKit == null) {
-      promise.reject("ZumoKit not initialized.");
+      rejectPromise(promise, "ZumoKit not initialized.");
       return;
     }
 
@@ -212,7 +235,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void getTransactions(Promise promise) {
 
     if(this.user == null) {
-      promise.reject("User not found.");
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -227,7 +250,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void sendEthTransaction(String accountId, String gasPrice, String gasLimit, String to, String value, String data, String nonce, Promise promise) {
 
     if(this.wallet == null) {
-      promise.reject("Wallet not found.");
+      rejectPromise(promise, "Wallet not found.");
       return;
     }
 
@@ -239,8 +262,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.wallet.sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonceValue, new SendTransactionCallback() {
 
       @Override
-      public void onError(String errorName, String errorMessage) {
-        promise.reject(errorMessage);
+      public void onError(ZumoKitError error) {
+        rejectPromise(promise, error);
       }
 
       @Override
@@ -257,15 +280,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void sendBtcTransaction(String accountId, String changeAccountId, String to, String value, String feeRate, Promise promise) {
 
     if(this.wallet == null) {
-      promise.reject("Wallet not found.");
+      rejectPromise(promise, "Wallet not found.");
       return;
     }
 
     this.wallet.sendBtcTransaction(accountId, changeAccountId, to, value, feeRate, new SendTransactionCallback() {
 
       @Override
-      public void onError(String errorName, String errorMessage) {
-        promise.reject(errorMessage);
+      public void onError(ZumoKitError error) {
+        rejectPromise(promise, error);
       }
 
       @Override
@@ -286,7 +309,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.zumoKit.addStateListener(new StateListener() {
         @Override
         public void update(State state) {
-          
+
           WritableMap map = RNZumoKitModule.mapState(state);
 
           module.reactContext
@@ -329,20 +352,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void addAccountListener(String accountId, Promise promise) {
 
-    
-
     // - check if a user exists
     // - add a listener to the account
     // - bubble up events to JS
     // - remove the listener when it's all done
-
   }
 
   @ReactMethod
   public void addTransactionListener(String transactionId, Promise promise) {
 
     if(this.user == null) {
-      promise.reject("User not found.");
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -357,9 +377,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       @Override
       public void update(Transaction transaction) {
-        
+
         WritableMap map = module.mapTransaction(transaction);
-        
+
         module.reactContext
           .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
           .emit("TransactionChanged", map);
@@ -376,18 +396,18 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void removeTransactionListener(String transactionId, Promise promise) {
 
     if(this.user == null) {
-      promise.reject("User not found.");
+      rejectPromise(promise, "User not found.");
       return;
     }
 
     if(this.txListener == null) {
-      promise.reject("Transaction listener not found.");
+      rejectPromise(promise, "Transaction listener not found.");
       return;
     }
 
     this.user.removeTransactionListener(this.txListener);
     this.txListener = null;
-    
+
     promise.resolve(true);
 
   }
@@ -398,7 +418,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void isRecoveryMnemonic(String mnemonic, Promise promise) {
 
     if(this.user == null) {
-      promise.reject("User not found.");
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -411,7 +431,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void recoverWallet(String mnemonic, String password, Promise promise) {
 
     if(this.user == null) {
-      promise.reject("User not found.");
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -420,8 +440,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.user.recoverWallet(mnemonic, password, new WalletCallback() {
 
       @Override
-      public void onError(String errorName, String errorMessage) {
-        promise.reject(errorMessage);
+      public void onError(ZumoKitError error) {
+        rejectPromise(promise, error);
       }
 
       @Override
@@ -442,7 +462,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void generateMnemonic(int wordLength, Promise promise) {
 
     if(this.zumoKit == null) {
-      promise.reject("ZumoKit not initialized.");
+      rejectPromise(promise, "ZumoKit not initialized.");
       return;
     }
 
@@ -464,7 +484,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void isValidBtcAddress(String address, String network, Promise promise) {
-    
+
     Boolean valid = this.zumoKit.utils()
       .isValidBtcAddress(address, NetworkType.valueOf(network));
 
@@ -484,7 +504,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void gweiToEth(String gwei, Promise promise) {
-    
+
     String eth = this.zumoKit.utils()
       .gweiToEth(gwei);
 
@@ -514,7 +534,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void maxSpendableEth(String accountId, String gasPrice, String gasLimit, Promise promise) {
-    
+
     String max = this.wallet.maxSpendableEth(accountId, gasPrice, gasLimit);
     promise.resolve(max);
 
@@ -549,7 +569,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
-    
+
     if (!iterator.hasNextKey()) {
       return result;
     }
@@ -563,7 +583,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   public static WritableArray mapAccounts(ArrayList<Account> accounts) {
-    
+
     WritableArray response = Arguments.createArray();
 
     for (Account account : accounts) {
@@ -600,7 +620,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public static WritableMap mapTransaction(Transaction transaction) {
 
     WritableMap map = Arguments.createMap();
-    
+
     map.putString("id", transaction.getId());
     map.putString("txHash", transaction.getTxHash());
     map.putString("accountId", transaction.getAccountId());
@@ -610,11 +630,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     if(transaction.getChainId() != null) {
       map.putInt("chainId", transaction.getChainId());
     }
-    
+
     if(transaction.getNonce() != null) {
       map.putInt("nonce", transaction.getNonce().intValue());
     }
-    
+
     map.putString("status", transaction.getStatus().toString());
     map.putString("fromAddress", transaction.getFromAddress());
     map.putString("fromUserId", transaction.getFromUserId());
@@ -626,11 +646,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("gasLimit", transaction.getGasLimit());
     map.putString("cost", transaction.getCost());
 
-    if(transaction.getSubmittedAt() != null) { 
+    if(transaction.getSubmittedAt() != null) {
       map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
     }
 
-    if(transaction.getConfirmedAt() != null) { 
+    if(transaction.getConfirmedAt() != null) {
       map.putInt("confirmedAt", transaction.getConfirmedAt().intValue());
     }
 
