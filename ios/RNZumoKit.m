@@ -26,17 +26,11 @@ bool hasListeners;
 
 - (void)rejectPromiseWithZKZumoKitError:(RCTPromiseRejectBlock)reject error:(ZKZumoKitError *)error
 {
-    reject(error.errorCode, error.errorMessage, [[NSError alloc] initWithDomain:ZumoKitDomain
-                                                                           code:code
-                                                                        userInfo:@{@"errorType": error.errorType}
+    reject(error.code, error.message, [[NSError alloc] initWithDomain:ZumoKitDomain
+                                                                           code:0
+                                                                        userInfo:@{@"errorType": error.type}
                                                                     ]);
 }
-
-- (void)rejectPromiseWithString:(NSString *)errorMessage
-{
-    reject("unknown", errorMessage, NULL);
-}
-
 
 RCT_EXPORT_MODULE()
 
@@ -246,7 +240,7 @@ RCT_EXPORT_METHOD(recoverWallet:(NSString *)mnemonic password:(NSString *)passwo
 
     @try {
 
-        [[ZumoKitManager sharedManager] recoverWallet:mnemonic password:password completionHandler:^(BOOL success) {
+        [[ZumoKitManager sharedManager] recoverWallet:mnemonic password:password completionHandler:^(bool success, ZKZumoKitError * _Nullable error, ZKWallet * _Nullable wallet) {
 
             if(success) {
                 resolve(@(success));
