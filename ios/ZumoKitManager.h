@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZumoKitManager : NSObject
 
-@property (weak) id <ZKStateListener> stateListener;
+@property(weak) id<ZKStateListener> stateListener;
 
 + (ZumoKitManager *)sharedManager;
 
@@ -21,12 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(_Nonnull AuthCompletionBlock)completionHandler;
 
+#pragma mark - Wallet Management
 
-# pragma mark - Wallet Management
+- (void)createWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(_Nonnull WalletCompletionBlock)completionHandler;
 
-- (void)createWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL success))completionHandler;
-
-- (void)unlockWallet:(NSString *)password completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)unlockWallet:(NSString *)password completionHandler:(_Nonnull WalletCompletionBlock)completionHandler;
 
 - (void)revealMnemonic:(NSString *)password completionHandler:(_Nonnull MnemonicCompletionBlock)completionHandler;
 
@@ -34,15 +33,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate completionHandler:(_Nonnull SendTransactionCompletionBlock)completionHandler;
 
-
-# pragma mark - Wallet Recovery
+#pragma mark - Wallet Recovery
 
 - (BOOL)isRecoveryMnemonic:(NSString *)mnemonic;
 
-- (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(void (^)(BOOL success))completionHandler;
+- (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(_Nonnull WalletCompletionBlock)completionHandler;
 
-
-# pragma mark - Utility
+#pragma mark - Utility
 
 - (BOOL)isValidEthAddress:(NSString *)address;
 
