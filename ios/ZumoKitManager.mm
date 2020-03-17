@@ -162,6 +162,15 @@ NSException *walletNotFoundException = [NSException
 
 }
 
+# pragma mark - Account Management
+
+- (nullable ZKAccount *)getAccount:(nonnull NSString *)symbol network:(ZKNetworkType)network type:(ZKAccountType)type {
+
+    if(! _user) @throw userNotAuthenticatedException;
+
+    return [_user getAccount:symbol network:network type:type];
+}
+
 # pragma mark - Utility
 
 - (BOOL)isValidEthAddress:(NSString *)address {

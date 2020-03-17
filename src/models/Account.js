@@ -1,3 +1,5 @@
+import { Decimal } from 'decimal.js';
+
 export default class Account {
 
     /**
@@ -6,7 +8,7 @@ export default class Account {
      * @memberof Account
      */
     id;
-    
+
     /**
      * Path to the account
      *
@@ -63,7 +65,8 @@ export default class Account {
         if(json.coin) this.coin = json.coin;
         if(json.address) this.address = json.address;
         if(json.balance) this.balance = new Decimal(json.balance);
-        if(json.chainId) this.chainId = json.chainId;
+        if(json.network) this.network = json.network;
+        if(json.type) this.type = json.type;
         if(json.nonce) this.nonce = json.nonce;
     }
 
