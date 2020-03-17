@@ -496,6 +496,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     NSMutableDictionary *dict = [@{
         @"id": [transaction id],
+        @"type": [transaction type] == ZKTransactionTypeOUTGOING ? @"OUTGOING" : @"INCOMING",
         @"txHash": [transaction txHash],
         @"accountId": [transaction accountId],
         @"symbol": [transaction symbol],
@@ -518,6 +519,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
     if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
     if([transaction fiatValue]) dict[@"fiatValue"] = [transaction fiatValue];
+    if([transaction fiatCost]) dict[@"fiatCost"] = [transaction fiatCost];
 
     return dict;
 }

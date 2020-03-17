@@ -653,6 +653,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WritableMap map = Arguments.createMap();
 
     map.putString("id", transaction.getId());
+    map.putString("type", transaction.getType().toString());
     map.putString("txHash", transaction.getTxHash());
     map.putString("accountId", transaction.getAccountId());
     map.putString("symbol", transaction.getSymbol());
@@ -694,6 +695,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     map.putMap("fiatValue", fiatValues);
+
+    WritableMap fiatCost = Arguments.createMap();
+
+    for (HashMap.Entry entry : transaction.getFiatCost().entrySet()) {
+      fiatCost.putString(
+        (String) entry.getKey(),
+        (String) entry.getValue()
+      );
+    }
+
+    map.putMap("fiatCost", fiatCost);
 
     return map;
 

@@ -36,7 +36,7 @@ export default class Transaction {
     symbol;
 
     /**
-     * 
+     *
      *
      * @memberof Transaction
      */
@@ -44,7 +44,7 @@ export default class Transaction {
 
     /**
      * A `Moment` instance of the time that the transaction was created.
-     * Use `.tz()` to localise it to a timezone. 
+     * Use `.tz()` to localise it to a timezone.
      *
      * @readonly
      * @memberof Transaction
@@ -123,7 +123,7 @@ export default class Transaction {
 
     /**
      * The status of the transaction
-     * 
+     *
      * - PENDING
      * - CONFIRMED
      * - FAILED
@@ -183,21 +183,25 @@ export default class Transaction {
     constructor(json) {
 
         if(json.id) this.id = json.id;
+        if(json.type) this.type = json.type;
         if(json.txHash) this.txHash = json.txHash;
-        if(json.coin) this.coin = json.coin;
+        if(json.accountId) this.accountId = json.accountId;
         if(json.symbol) this.symbol = json.symbol;
+        if(json.coin) this.coin = json.coin;
+        if(json.network) this.network = json.network;
+        if(json.nonce) this.nonce = json.nonce;
+        if(json.status) this.status = json.status;
         if(json.fromAddress) this.fromAddress = json.fromAddress;
         if(json.toAddress) this.toAddress = json.toAddress;
         if(json.fromUserId) this.fromUserId = json.fromUserId;
         if(json.toUserId) this.toUserId = json.toUserId;
+        this.value = (json.value) ? new Decimal(json.value) : new Decimal(0);
+        if(json.fiatValue) this.fiatValue = json.fiatValue;
+        if(json.data) this.data = json.data;
         this.gasPrice = (json.gasPrice) ? new Decimal(json.gasPrice) : new Decimal(0);
         if(json.gasLimit) this.gasLimit = json.gasLimit;
-        if(json.gasUsed) this.gasUsed = json.gasUsed;
-        this.value = (json.value) ? new Decimal(json.value) : new Decimal(0);
-        if(json.status) this.status = json.status;
-        if(json.payload) this.payload = json.payload;
         if(json.cost) this.cost = json.cost;
-        if(json.fiatValue) this.fiatValue = json.fiatValue;
+        if(json.fiatCost) this.cost = json.fiatCost;
 
         if(json.timestamp) {
             this.timestamp = json.timestamp
@@ -211,12 +215,6 @@ export default class Transaction {
         if(json.confirmedAt) {
             this.confirmedAt = new Moment(json.confirmedAt, 'X');;
         }
-        
-        // Check whether the transaction is incoming or outgoing
-        const filtered = ZumoKit.state.accounts
-            .filter((a) => a.address.toLowerCase() == json.fromAddress.toLowerCase());
-
-        this.type = (filtered.length > 0) ? 'OUTGOING' : 'INCOMING';
 
     }
 
