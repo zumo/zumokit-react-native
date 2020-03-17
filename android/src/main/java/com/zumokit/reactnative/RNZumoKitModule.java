@@ -29,6 +29,7 @@ import money.zumo.zumokit.StateListener;
 import money.zumo.zumokit.UserListener;
 import money.zumo.zumokit.AccountListener;
 import money.zumo.zumokit.TransactionListener;
+import money.zumo.zumokit.AccountType;
 import money.zumo.zumokit.NetworkType;
 import money.zumo.zumokit.FeeRates;
 
@@ -134,8 +135,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void createWallet(String mnemonic, String password, Promise promise) {
 
-    if(this.zumoKit == null) {
-      rejectPromise(promise, "ZumoKit not initialized.");
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -163,8 +164,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void unlockWallet(String password, Promise promise) {
 
-    if(this.zumoKit == null) {
-      rejectPromise(promise, "ZumoKit not initialized.");
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -192,8 +193,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void revealMnemonic(String password, Promise promise) {
 
-    if(this.zumoKit == null) {
-      rejectPromise(promise, "ZumoKit not initialized.");
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -214,10 +215,33 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   // - Account Management
 
   @ReactMethod
+  public void getAccount(String symbol, String network, String type, Promise promise) {
+
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
+      return;
+    }
+
+    NetworkType network_type = NetworkType.valueOf(network);
+    AccountType account_type = AccountType.valueOf(type);
+
+    Account account = this.user.getAccount(symbol, network_type, account_type);
+
+    if (account == null) {
+      rejectPromise(promise, "Account not found.");
+      return;
+    }
+
+    WritableMap response = RNZumoKitModule.mapAccount(account);
+    promise.resolve(response);
+
+  }
+
+  @ReactMethod
   public void getAccounts(Promise promise) {
 
-    if(this.zumoKit == null) {
-      rejectPromise(promise, "ZumoKit not initialized.");
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
       return;
     }
 
@@ -582,11 +606,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     return result;
   }
 
-  public static WritableArray mapAccounts(ArrayList<Account> accounts) {
+  public static WritableMap mapAccount(Account account) {
 
-    WritableArray response = Arguments.createArray();
-
-    for (Account account : accounts) {
       WritableMap map = Arguments.createMap();
 
       map.putString("id", account.getId());
@@ -595,9 +616,19 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("coin", account.getCoin());
       map.putString("address", account.getAddress());
       map.putString("balance", account.getBalance());
-      map.putInt("chainId", (account.getChainId() != null) ? account.getChainId() : 0);
+      map.putString("network", account.getNetwork().toString());
+      map.putString("type", account.getType().toString());
 
-      response.pushMap(map);
+      return map;
+
+  }
+
+  public static WritableArray mapAccounts(ArrayList<Account> accounts) {
+
+    WritableArray response = Arguments.createArray();
+
+    for (Account account : accounts) {
+      response.pushMap(mapAccount(account));
     }
 
     return response;
@@ -626,10 +657,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("accountId", transaction.getAccountId());
     map.putString("symbol", transaction.getSymbol());
     map.putString("coin", transaction.getCoin());
-
-    if(transaction.getChainId() != null) {
-      map.putInt("chainId", transaction.getChainId());
-    }
+    map.putString("network", transaction.getNetwork().toString());
 
     if(transaction.getNonce() != null) {
       map.putInt("nonce", transaction.getNonce().intValue());
