@@ -15,7 +15,8 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import money.zumo.zumokit.ZumoKit;
-import money.zumo.zumokit.ZumoKitError;
+import money.zumo.zumokit.ZumoKitErrorType;
+import money.zumo.zumokit.ZumoKitErrorCode;
 import money.zumo.zumokit.User;
 import money.zumo.zumokit.Wallet;
 import money.zumo.zumokit.WalletCallback;
@@ -32,6 +33,7 @@ import money.zumo.zumokit.TransactionListener;
 import money.zumo.zumokit.AccountType;
 import money.zumo.zumokit.NetworkType;
 import money.zumo.zumokit.FeeRates;
+import money.zumo.zumokit.exceptions.ZumoKitException;
 
 import android.util.Log;
 
@@ -54,32 +56,37 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   private TransactionListener txListener;
 
-  private static final String ERROR_DEFAULT_CODE = "unknown";
-
   public RNZumoKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
 
     this.reactContext = reactContext;
   }
 
-  private void rejectPromise(Promise promise, ZumoKitError error) {
-    String errorCode = error.getCode();
-    if (errorCode == null) {
-      errorCode = ERROR_DEFAULT_CODE;
-    }
-
-    String errorMessage = error.getMessage();
-
+  private void rejectPromise(Promise promise, String errorType, String errorCode, String errorMessage) {
     WritableMap userInfo = Arguments.createMap();
-    if(error.getType() != null) {
-      userInfo.putString("errorType", error.getType());
-    }
+    userInfo.putString("type", errorType);
 
     promise.reject(errorCode, errorMessage, userInfo);
   }
 
+  private void rejectPromise(Promise promise, Exception e) {
+    ZumoKitException error = (ZumoKitException)e;
+
+    rejectPromise(
+      promise,
+      error.getErrorType(),
+      error.getErrorCode(),
+      error.getMessage()
+    );
+  }
+
   private void rejectPromise(Promise promise, String errorMessage) {
-    promise.reject(ERROR_DEFAULT_CODE, errorMessage);
+    rejectPromise(
+      promise,
+      ZumoKitErrorType.INVALID_REQUEST_ERROR,
+      ZumoKitErrorCode.UNKNOWN_ERROR,
+      errorMessage
+    );
   }
 
   @ReactMethod
@@ -108,7 +115,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.zumoKit.auth(token, headerMap, new AuthCallback() {
 
       @Override
-      public void onError(ZumoKitError error) {
+      public void onError(Exception error) {
         rejectPromise(promise, error);
       }
 
@@ -145,7 +152,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.user.createWallet(mnemonic, password, new WalletCallback() {
 
       @Override
-      public void onError(ZumoKitError error) {
+      public void onError(Exception error) {
         rejectPromise(promise, error);
       }
 
@@ -174,7 +181,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.user.unlockWallet(password, new WalletCallback() {
 
       @Override
-      public void onError(ZumoKitError error) {
+      public void onError(Exception error) {
         rejectPromise(promise, error);
       }
 
@@ -200,7 +207,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     this.user.revealMnemonic(password, new MnemonicCallback() {
       @Override
-      public void onError(ZumoKitError error) {
+      public void onError(Exception error) {
         rejectPromise(promise, error);
       }
 
@@ -286,7 +293,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.wallet.sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonceValue, new SendTransactionCallback() {
 
       @Override
-      public void onError(ZumoKitError error) {
+      public void onError(Exception error) {
         rejectPromise(promise, error);
       }
 
@@ -311,7 +318,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.wallet.sendBtcTransaction(accountId, changeAccountId, to, value, feeRate, new SendTransactionCallback() {
 
       @Override
-      public void onError(ZumoKitError error) {
+      public void onError(Exception error) {
         rejectPromise(promise, error);
       }
 
@@ -464,7 +471,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     this.user.recoverWallet(mnemonic, password, new WalletCallback() {
 
       @Override
-      public void onError(ZumoKitError error) {
+      public void onError(Exception error) {
         rejectPromise(promise, error);
       }
 
@@ -490,29 +497,38 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    String mnemonic = this.zumoKit.utils().generateMnemonic(wordLength);
-
-    promise.resolve(mnemonic);
+    try {
+      String mnemonic = this.zumoKit.utils().generateMnemonic(wordLength);
+      promise.resolve(mnemonic);
+    } catch (Exception e) {
+      rejectPromise(promise, e);
+    }
 
   }
 
   @ReactMethod
   public void isValidEthAddress(String address, Promise promise) {
 
-    Boolean valid = this.zumoKit.utils()
-      .isValidEthAddress(address);
-
-    promise.resolve(valid);
+    try {
+      Boolean valid = this.zumoKit.utils()
+        .isValidEthAddress(address);
+      promise.resolve(valid);
+    } catch (Exception e) {
+      rejectPromise(promise, e);
+    }
 
   }
 
   @ReactMethod
   public void isValidBtcAddress(String address, String network, Promise promise) {
 
-    Boolean valid = this.zumoKit.utils()
-      .isValidBtcAddress(address, NetworkType.valueOf(network));
-
-    promise.resolve(valid);
+    try {
+      Boolean valid = this.zumoKit.utils()
+        .isValidBtcAddress(address, NetworkType.valueOf(network));
+      promise.resolve(valid);
+    } catch (Exception e) {
+      rejectPromise(promise, e);
+    }
 
   }
 

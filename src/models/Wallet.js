@@ -1,8 +1,9 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
 const { RNZumoKit } = NativeModules;
+import { tryCatchProxy } from '../ZKErrorProxy';
 
-export default class Wallet {
+class Wallet {
 
     /**
      * Sends a new transaction on the Ethereum blockchain.
@@ -63,7 +64,9 @@ export default class Wallet {
      * @returns
      * @memberof Wallet
      */
-    maxSpendableEth = RNZumoKit.maxSpendableEth;
+    async maxSpendableEth(accountId, gasPrice, gasLimit) {
+        return RNZumoKit.maxSpendableEth(accountId, gasPrice, gasLimit);
+    }
 
     /**
      * Returns the maximum amount of Bitcoin that can be spent.
@@ -74,6 +77,10 @@ export default class Wallet {
      * @returns
      * @memberof Wallet
      */
-    maxSpendableBtc = RNZumoKit.maxSpendableBtc;
+    async maxSpendableEth(accountId, to, feeRate) {
+        return RNZumoKit.maxSpendableBtc(accountId, to, feeRate);
+    }
 
 }
+
+export default (tryCatchProxy(Wallet))

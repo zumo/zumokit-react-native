@@ -2,10 +2,10 @@ import { NativeModules, NativeEventEmitter } from 'react-native';
 import ZumoKit from '../ZumoKit';
 import Moment from 'moment-timezone';
 import { Decimal } from 'decimal.js';
-
 const { RNZumoKit } = NativeModules;
+import { tryCatchProxy } from '../ZKErrorProxy';
 
-export default class Transaction {
+class Transaction {
 
     /**
      * Unique identifier for the transaction
@@ -241,3 +241,5 @@ export default class Transaction {
     }
 
 }
+
+export default (tryCatchProxy(Transaction))
