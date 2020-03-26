@@ -3,8 +3,9 @@ const { RNZumoKit } = NativeModules;
 import Wallet from './Wallet';
 import Account from './Account';
 import Transaction from './Transaction';
+import { tryCatchProxy } from '../ZKErrorProxy';
 
-export default class User {
+class User {
 
     /**
      * The unique ID of the user.
@@ -58,7 +59,9 @@ export default class User {
      * @returns
      * @memberof User
      */
-    revealMnemonic = RNZumoKit.revealMnemonic;
+    async revealMnemonic(password) {
+        return RNZumoKit.revealMnemonic(password);
+    }
 
     /**
      * Validates the mnemonic phrase by the user's wallet
@@ -67,7 +70,9 @@ export default class User {
      * @returns
      * @memberof User
      */
-    isRecoveryMnemonic = RNZumoKit.isRecoveryMnemonic;
+    async isRecoveryMnemonic(mnemonic) {
+        return RNZumoKit.isRecoveryMnemonic(mnemonic);
+    }
 
     /**
      * Recovers a user's wallet.
@@ -77,7 +82,9 @@ export default class User {
      * @returns
      * @memberof User
      */
-    recoverWallet = RNZumoKit.recoverWallet;
+    async recoverWallet(mnemonic, password) {
+        return RNZumoKit.recoverWallet(mnemonic, password);
+    }
 
     /**
      * User account selector
@@ -113,3 +120,5 @@ export default class User {
     }
 
 }
+
+export default (tryCatchProxy(User))

@@ -1,6 +1,7 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import User from './models/User';
 import Transaction from './models/Transaction';
+import { tryCatchProxy } from './ZKErrorProxy';
 
 const { RNZumoKit } = NativeModules;
 
@@ -137,8 +138,10 @@ class ZumoKit {
      *
      * @memberof ZumoKit
      */
-    clear = RNZumoKit.clear;
+    async clear() {
+        await RNZumoKit.clear();
+    }
 
 }
 
-export default new ZumoKit();
+export default new (tryCatchProxy(ZumoKit))

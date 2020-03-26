@@ -61,11 +61,11 @@ NSException *walletNotFoundException = [NSException
 
     if(! _zumoKit) @throw zumoKitNotInitializedException;
 
-    [_zumoKit auth:token headers:headers completion:^(bool success, ZKZumoKitError * _Nullable error, ZKUser * _Nullable user) {
+    [_zumoKit auth:token headers:headers completion:^(ZKUser * _Nullable user, NSError * _Nullable error) {
 
         self->_user = user;
 
-        completionHandler(success, error, user);
+        completionHandler(user, error);
 
     }];
 
@@ -77,11 +77,11 @@ NSException *walletNotFoundException = [NSException
 
     if(! _user) @throw userNotAuthenticatedException;
 
-    [_user createWallet:mnemonic password:password completion:^(bool success, ZKZumoKitError * _Nullable error, ZKWallet * _Nullable wallet) {
+    [_user createWallet:mnemonic password:password completion:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
 
         self->_wallet = wallet;
 
-        completionHandler(success, error, wallet);
+        completionHandler(wallet, error);
 
     }];
 
@@ -92,11 +92,11 @@ NSException *walletNotFoundException = [NSException
 
     if(! _user) @throw userNotAuthenticatedException;
 
-    [_user unlockWallet:password completion:^(bool success, ZKZumoKitError * _Nullable error, ZKWallet * _Nullable wallet) {
+    [_user unlockWallet:password completion:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
 
         self->_wallet = wallet;
 
-        completionHandler(success, error, wallet);
+        completionHandler(wallet, error);
 
     }];
 
@@ -152,11 +152,11 @@ NSException *walletNotFoundException = [NSException
 
     if(! _user) @throw userNotAuthenticatedException;
 
-    [_user recoverWallet:mnemonic password:password completion:^(bool success, ZKZumoKitError * _Nullable error, ZKWallet * _Nullable wallet) {
+    [_user recoverWallet:mnemonic password:password completion:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
 
         self->_wallet = wallet;
 
-        completionHandler(success, error, wallet);
+        completionHandler(wallet, error);
 
     }];
 
