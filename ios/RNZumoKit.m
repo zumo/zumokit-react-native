@@ -32,6 +32,12 @@ bool hasListeners;
                                                                     ]);
 }
 
+- (void)rejectPromiseWithString:(RCTPromiseRejectBlock)reject errorMessage:(NSString *)errorMessage
+{
+    reject(@"unknown", errorMessage, NULL);
+}
+
+
 RCT_EXPORT_MODULE()
 
 # pragma mark - Events
@@ -258,6 +264,54 @@ RCT_EXPORT_METHOD(recoverWallet:(NSString *)mnemonic password:(NSString *)passwo
 
 }
 
+#pragma mark - Account Management
+
+RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type:(NSString *)type resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        ZKNetworkType networkType;
+        if ([network isEqualToString:@"MAINNET"])
+            networkType = ZKNetworkTypeMAINNET;
+        else if ([network isEqualToString:@"ROPSTEN"])
+            networkType = ZKNetworkTypeROPSTEN;
+        else if ([network isEqualToString:@"RINKEBY"])
+            networkType = ZKNetworkTypeRINKEBY;
+        else if ([network isEqualToString:@"GOERLI"])
+            networkType = ZKNetworkTypeGOERLI;
+        else if ([network isEqualToString:@"KOVAN"])
+            networkType = ZKNetworkTypeKOVAN;
+        else if ([network isEqualToString:@"TESTNET"])
+            networkType = ZKNetworkTypeTESTNET;
+        else
+            [self rejectPromiseWithString:reject errorMessage:@"Network type not supported."];
+
+        ZKAccountType accountType;
+        if ([type isEqualToString:@"STANDARD"])
+            accountType = ZKAccountTypeSTANDARD;
+        else if ([type isEqualToString:@"COMPATIBILITY"])
+            accountType = ZKAccountTypeCOMPATIBILITY;
+        else if ([type isEqualToString:@"SEGWIT"])
+            accountType = ZKAccountTypeSEGWIT;
+        else
+            [self rejectPromiseWithString:reject errorMessage:@"Account type not supported."];
+
+        ZKAccount * account = [[ZumoKitManager sharedManager] getAccount:symbol network:networkType type:accountType];
+
+        if(account) {
+            resolve([self mapAccount:account]);
+        } else {
+            [self rejectPromiseWithString:reject errorMessage:@"Account not found."];
+        }
+
+    } @catch (NSException *exception) {
+
+        reject(exception.name, exception.description, NULL);
+
+    }
+
+}
 
 # pragma mark - Utility & Helpers
 
@@ -340,21 +394,72 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
 }
 
+- (NSString *)mapNetworkType:(ZKNetworkType)network {
+
+    switch (network) {
+        case ZKNetworkTypeMAINNET:
+            return @"MAINNET";
+
+        case ZKNetworkTypeROPSTEN:
+            return @"ROPSTEN";
+
+        case ZKNetworkTypeRINKEBY:
+            return @"RINKEBY";
+
+        case ZKNetworkTypeGOERLI:
+            return @"GOERLI";
+
+        case ZKNetworkTypeKOVAN:
+            return @"KOVAN";
+
+        default:
+            return @"TESTNET";
+
+    }
+
+}
+
+
+- (NSString *)mapAccountType:(ZKAccountType)accountType {
+
+    switch (accountType) {
+        case ZKAccountTypeCOMPATIBILITY:
+            return @"COMPATIBILITY";
+
+        case ZKAccountTypeSEGWIT:
+            return @"SEGWIT";
+
+        default:
+            return @"STANDARD";
+
+    }
+
+}
+
+- (NSDictionary *)mapAccount:(ZKAccount *)account {
+
+    NSDictionary *dict = @{
+        @"id": [account id],
+        @"path": [account path],
+        @"symbol": [account symbol] ? [account symbol] : @"",
+        @"coin": [account coin],
+        @"address": [account address],
+        @"balance": [account balance],
+        @"network": [self mapNetworkType:[account network]],
+        @"type": [self mapAccountType:[account type]]
+    };
+
+    return dict;
+
+}
+
 - (NSArray<NSDictionary *> *)mapAccounts:(NSArray<ZKAccount *>*)accounts {
 
     NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
 
     [accounts enumerateObjectsUsingBlock:^(ZKAccount * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 
-        [mapped addObject:@{
-            @"id": [obj id],
-            @"path": [obj path],
-            @"symbol": [obj symbol] ? [obj symbol] : @"",
-            @"coin": [obj coin],
-            @"address": [obj address],
-            @"balance": [obj balance],
-            @"chainId": [obj chainId] ? [obj chainId] : @0
-        }];
+        [mapped addObject:[self mapAccount:obj]];
 
     }];
 
@@ -391,10 +496,12 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     NSMutableDictionary *dict = [@{
         @"id": [transaction id],
+        @"type": [transaction type] == ZKTransactionTypeOUTGOING ? @"OUTGOING" : @"INCOMING",
         @"txHash": [transaction txHash],
         @"accountId": [transaction accountId],
         @"symbol": [transaction symbol],
         @"coin": [transaction coin],
+        @"network": [self mapNetworkType:[transaction network]],
         @"status": status,
         @"fromAddress": [transaction fromAddress],
         @"toAddress": [transaction toAddress],
@@ -403,7 +510,6 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"timestamp": @([transaction timestamp])
     } mutableCopy];
 
-    if([transaction chainId]) dict[@"chainId"] = [transaction chainId];
     if([transaction nonce]) dict[@"nonce"] = [transaction nonce];
     if([transaction fromUserId]) dict[@"fromUserId"] = [transaction fromUserId];
     if([transaction toUserId]) dict[@"toUserId"] = [transaction toUserId];
@@ -413,6 +519,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
     if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
     if([transaction fiatValue]) dict[@"fiatValue"] = [transaction fiatValue];
+    if([transaction fiatCost]) dict[@"fiatCost"] = [transaction fiatCost];
 
     return dict;
 }

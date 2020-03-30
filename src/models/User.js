@@ -19,7 +19,7 @@ export default class User {
      * @memberof User
      */
     hasWallet;
-    
+
     constructor(json) {
         if(json.id) this.id = json.id;
         this.hasWallet = (json.hasWallet) ? true : false;
@@ -80,6 +80,17 @@ export default class User {
     recoverWallet = RNZumoKit.recoverWallet;
 
     /**
+     * User account selector
+     *
+     * @returns
+     * @memberof User
+     */
+    async getAccount(symbol, network, type) {
+        const json = await RNZumoKit.getAccount(symbol, network, type);
+        return new Account(json);
+    }
+
+    /**
      * Loads an array of accounts the user has
      *
      * @returns
@@ -90,6 +101,12 @@ export default class User {
         return array.map((json) => new Account(json));
     }
 
+    /**
+     * Loads an array of transactions the user has
+     *
+     * @returns
+     * @memberof User
+     */
     async getTransactions() {
         const array = await RNZumoKit.getTransactions();
         return array.map((json) => new Transaction(json));

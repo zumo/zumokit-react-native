@@ -39,6 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)recoverWallet:(NSString *)mnemonic password:(NSString *)password completionHandler:(_Nonnull WalletCompletionBlock)completionHandler;
 
+#pragma mark - Account Management
+
+- (nullable ZKAccount *)getAccount:(nonnull NSString *)symbol network:(ZKNetworkType)network type:(ZKAccountType)type;
+
 #pragma mark - Utility
 
 - (BOOL)isValidEthAddress:(NSString *)address;
