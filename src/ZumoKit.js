@@ -60,8 +60,8 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     init(config) {
-        const { apiKey, apiRoot, myRoot, txServiceUrl } = config;
-        RNZumoKit.init(apiKey, apiRoot, myRoot, txServiceUrl);
+        const { apiKey, apiRoot, txServiceUrl } = config;
+        RNZumoKit.init(apiKey, apiRoot, txServiceUrl);
 
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
@@ -81,12 +81,11 @@ class ZumoKit {
      * Authenticates the user with ZumoKit.
      *
      * @param {string} token
-     * @param {object} headers
      * @returns
      * @memberof ZumoKit
      */
-    async auth(token, headers) {
-        const json = await RNZumoKit.auth(token, headers);
+    async auth(token) {
+        const json = await RNZumoKit.auth(token);
         const user = new User(json);
 
         this.state.authenticatedUser = user;

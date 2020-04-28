@@ -17,9 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (ZumoKitManager *)sharedManager;
 
-- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot;
+- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot;
 
-- (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(_Nonnull AuthCompletionBlock)completionHandler;
+- (void)authenticateWithToken:(NSString *)token completionHandler:(_Nonnull AuthCompletionBlock)completionHandler;
 
 #pragma mark - Wallet Management
 

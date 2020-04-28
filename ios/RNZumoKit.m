@@ -83,7 +83,7 @@ RCT_EXPORT_MODULE()
 
 # pragma mark - Initialization + Authentication
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot txServiceUrl:(NSString *)txServiceUrl)
 {
 
     [[ZumoKitManager sharedManager] setStateListener:self];
@@ -91,19 +91,17 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NS
     [[ZumoKitManager sharedManager]
      initializeWithTxServiceUrl:txServiceUrl
      apiKey:apiKey
-     apiRoot:apiRoot
-     myRoot:myRoot];
+     apiRoot:apiRoot];
 
 }
 
-RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(auth:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
     @try {
 
         [[ZumoKitManager sharedManager]
             authenticateWithToken:token
-            headers:headers
             completionHandler:^(ZKUser * _Nullable user, NSError * _Nullable error) {
 
             if(error != nil) {

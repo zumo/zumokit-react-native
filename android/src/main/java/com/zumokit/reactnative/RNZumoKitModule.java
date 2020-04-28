@@ -90,9 +90,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void init(String apiKey, String apiRoot, String myRoot, String txServiceUrl) {
+  public void init(String apiKey, String apiRoot, String txServiceUrl) {
 
-    this.zumoKit = new ZumoKit(txServiceUrl, apiKey, apiRoot, myRoot);
+    this.zumoKit = new ZumoKit(apiKey, apiRoot, txServiceUrl);
 
     this.addStateListener();
 
@@ -101,7 +101,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   // - Authentication
 
   @ReactMethod
-  public void auth(String token, ReadableMap headers, Promise promise) {
+  public void auth(String token, Promise promise) {
 
     if(this.zumoKit == null) {
       rejectPromise(promise, "ZumoKit not initialized.");
@@ -110,9 +110,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     RNZumoKitModule module = this;
 
-    HashMap<String, String> headerMap = this.toHashMap(headers);
-
-    this.zumoKit.auth(token, headerMap, new AuthCallback() {
+    this.zumoKit.auth(token, new AuthCallback() {
 
       @Override
       public void onError(Exception error) {

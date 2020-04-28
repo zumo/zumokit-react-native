@@ -45,23 +45,22 @@ NSException *walletNotFoundException = [NSException
 }
 
 
-- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot {
+- (void)initializeWithTxServiceUrl:(NSString *)txServiceUrl apiKey:(NSString *)apiKey apiRoot:(NSString *)apiRoot {
 
-    _zumoKit =  [[ZumoKit alloc] initWithTxServiceUrl:txServiceUrl
-                                               apiKey:apiKey
-                                              apiRoot:apiRoot
-                                               myRoot:myRoot
+    _zumoKit =  [[ZumoKit alloc] initWithApiKey:apiKey
+                                        apiRoot:apiRoot
+                                   txServiceUrl:txServiceUrl
             ];
 
     [_zumoKit addStateListener:_stateListener];
 
 }
 
-- (void)authenticateWithToken:(NSString *)token headers:(NSDictionary *)headers completionHandler:(AuthCompletionBlock)completionHandler {
+- (void)authenticateWithToken:(NSString *)token completionHandler:(AuthCompletionBlock)completionHandler {
 
     if(! _zumoKit) @throw zumoKitNotInitializedException;
 
-    [_zumoKit auth:token headers:headers completion:^(ZKUser * _Nullable user, NSError * _Nullable error) {
+    [_zumoKit auth:token completion:^(ZKUser * _Nullable user, NSError * _Nullable error) {
 
         self->_user = user;
 
