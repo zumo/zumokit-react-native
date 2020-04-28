@@ -768,7 +768,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @Override
   public Map<String, Object> getConstants() {
     final Map<String, Object> constants = new HashMap<>();
-    constants.put("VERSION", ZumoKit.getVersion());
+    constants.put("version", ZumoKit.getVersion());
     return constants;
   }
 

@@ -51,7 +51,7 @@ class ZumoKit {
      *
      * @memberof ZumoKit
      */
-    VERSION = RNZumoKit.VERSION;
+    version = RNZumoKit.version;
 
     /**
      * Initialise ZumoKit with the provided JSON config.
@@ -65,6 +65,7 @@ class ZumoKit {
 
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
+            console.log('ZumoKitStateChanged');
             console.log(state);
 
             if(state.accounts) this.state.accounts = state.accounts;
