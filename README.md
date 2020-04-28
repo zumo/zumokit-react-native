@@ -50,7 +50,7 @@ import ZumoKit from 'react-native-zumo-kit';
 ZumoKit module is your entrypoint to ZumoKit SDK. Check your SDK version by calling:
 
 ```js
-console.log(ZumoKit.VERSION);
+console.log(ZumoKit.version);
 ```
 
 Refer to ZumoKit SDK developer [documentation](https://developers.zumo.money/docs/intro/intro.html) and [reference](https://developers.zumo.money/docs/reference/react-native/overview.html) for usage details.

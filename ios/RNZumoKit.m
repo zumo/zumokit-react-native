@@ -26,7 +26,7 @@ bool hasListeners;
 
 - (NSDictionary *)constantsToExport
 {
-    return @{ @"VERSION": [ZumoKit version] };
+    return @{ @"version": [ZumoKit version] };
 }
 
 + (BOOL)requiresMainQueueSetup {
