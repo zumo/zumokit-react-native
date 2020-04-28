@@ -70,7 +70,7 @@ class ZumoKit {
 
             if(state.accounts) this.state.accounts = state.accounts;
             if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
-            if(state.exchangeRates) this.state.exchangeRates = JSON.parse(state.exchangeRates);
+            if(state.exchangeRates) this.state.exchangeRates = state.exchangeRates;
             if(state.feeRates) this.state.feeRates = state.feeRates;
 
             this._notifyStateListeners();
@@ -85,8 +85,8 @@ class ZumoKit {
      * @returns
      * @memberof ZumoKit
      */
-    async auth(token) {
-        const json = await RNZumoKit.auth(token);
+    async getUser(token) {
+        const json = await RNZumoKit.getUser(token);
         const user = new User(json);
 
         this.state.authenticatedUser = user;
