@@ -1,9 +1,18 @@
 
 #import "RNZumoKit.h"
-#import "ZumoKitManager.h"
 #import <ZumoKit/ZumoKit.h>
 #import <ZumoKit/ZKZumoKitErrorCode.h>
 #import <ZumoKit/ZKZumoKitErrorType.h>
+
+@interface RNZumoKit ()
+
+@property (strong, nonatomic) ZumoKit *zumoKit;
+
+@property (strong, nonatomic) ZKUser *user;
+
+@property (strong, nonatomic) ZKWallet *wallet;
+
+@end
 
 @implementation RNZumoKit
 
@@ -17,7 +26,7 @@ bool hasListeners;
 
 - (NSDictionary *)constantsToExport
 {
-    return @{ @"VERSION": [ZumoKit version] };
+    return @{ @"version": [ZumoKit version] };
 }
 
 + (BOOL)requiresMainQueueSetup {
@@ -83,33 +92,27 @@ RCT_EXPORT_MODULE()
 
 # pragma mark - Initialization + Authentication
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot myRoot:(NSString *)myRoot txServiceUrl:(NSString *)txServiceUrl)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey apiRoot:(NSString *)apiRoot txServiceUrl:(NSString *)txServiceUrl)
 {
+    _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiRoot:apiRoot txServiceUrl:txServiceUrl];
 
-    [[ZumoKitManager sharedManager] setStateListener:self];
-
-    [[ZumoKitManager sharedManager]
-     initializeWithTxServiceUrl:txServiceUrl
-     apiKey:apiKey
-     apiRoot:apiRoot
-     myRoot:myRoot];
+    [_zumoKit addStateListener:self];
 
 }
 
-RCT_EXPORT_METHOD(auth:(NSString *)token headers:(NSDictionary *)headers resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(getUser:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
     @try {
 
-        [[ZumoKitManager sharedManager]
-            authenticateWithToken:token
-            headers:headers
-            completionHandler:^(ZKUser * _Nullable user, NSError * _Nullable error) {
+        [_zumoKit getUser:token completion:^(ZKUser * _Nullable user, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
                 return;
             }
+
+            self->_user = user;
 
             resolve(@{
                 @"id": [user getId],
@@ -134,12 +137,14 @@ RCT_EXPORT_METHOD(createWallet:(NSString *)mnemonic password:(NSString *)passwor
 
     @try {
 
-        [[ZumoKitManager sharedManager] createWallet:mnemonic password:password completionHandler:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
+        [_user createWallet:mnemonic password:password completion:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
                 return;
             }
+
+            self->_wallet = wallet;
 
             resolve(@(YES));
 
@@ -158,7 +163,7 @@ RCT_EXPORT_METHOD(revealMnemonic:(NSString *)password resolver:(RCTPromiseResolv
 
     @try {
 
-        [[ZumoKitManager sharedManager] revealMnemonic:password completionHandler:^(NSString * _Nullable mnemonic, NSError * _Nullable error) {
+        [_user revealMnemonic:password completion:^(NSString * _Nullable mnemonic, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -182,13 +187,14 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)password resolver:(RCTPromiseResolveB
 
     @try {
 
-        [[ZumoKitManager sharedManager] unlockWallet:password completionHandler:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
-
+        [_user unlockWallet:password completion:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
                 return;
             }
+
+            self->_wallet = wallet;
 
             resolve(@(YES));
 
@@ -202,12 +208,71 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)password resolver:(RCTPromiseResolveB
 
 }
 
-RCT_EXPORT_METHOD(sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(NSString *)data nonce:(NSString *)nonce resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
     @try {
 
-        [[ZumoKitManager sharedManager] sendEthTransaction:accountId gasPrice:gasPrice gasLimit:gasLimit to:to value:value data:data nonce:nonce ? @([nonce integerValue]) : NULL completionHandler:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
+        NSDictionary *accountData = composedTransactionData[@"account"];
+
+        NSString *accountId = accountData[@"id"];
+        NSString *accountPath = accountData[@"path"];
+        NSString *accountSymbol = accountData[@"symbol"];
+        NSString *accountCoin = accountData[@"coin"];
+        NSString *accountAddress = accountData[@"address"];
+        NSString *accountBalance = accountData[@"balance"];
+        NSNumber *accountNonce = accountData[@"nonce"];
+        NSNumber *accountVersion = accountData[@"version"];
+
+        NSString *network = accountData[@"network"];
+        ZKNetworkType accountNetwork;
+        if ([network isEqualToString:@"MAINNET"])
+            accountNetwork = ZKNetworkTypeMAINNET;
+        else if ([network isEqualToString:@"ROPSTEN"])
+            accountNetwork = ZKNetworkTypeROPSTEN;
+        else if ([network isEqualToString:@"RINKEBY"])
+            accountNetwork = ZKNetworkTypeRINKEBY;
+        else if ([network isEqualToString:@"GOERLI"])
+            accountNetwork = ZKNetworkTypeGOERLI;
+        else if ([network isEqualToString:@"KOVAN"])
+            accountNetwork = ZKNetworkTypeKOVAN;
+        else if ([network isEqualToString:@"TESTNET"])
+            accountNetwork = ZKNetworkTypeTESTNET;
+        else {
+            [self rejectPromiseWith:reject
+                      errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
+                      errorCode:ZKZumoKitErrorCodeINVALIDNETWORKTYPE
+                   errorMessage:@"Network type not supported."];
+            return;
+        }
+
+        NSString *type = accountData[@"type"];
+        ZKAccountType accountType;
+        if ([type isEqualToString:@"STANDARD"])
+            accountType = ZKAccountTypeSTANDARD;
+        else if ([type isEqualToString:@"COMPATIBILITY"])
+            accountType = ZKAccountTypeCOMPATIBILITY;
+        else if ([type isEqualToString:@"SEGWIT"])
+            accountType = ZKAccountTypeSEGWIT;
+        else {
+            [self rejectPromiseWith:reject
+                           errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
+                           errorCode:ZKZumoKitErrorCodeINVALIDACCOUNTTYPE
+                        errorMessage:@"Account type not supported."];
+            return;
+        }
+
+        ZKAccount *account = [[ZKAccount alloc] initWithId:accountId path:accountPath symbol:accountSymbol coin:accountCoin address:accountAddress balance:accountBalance nonce:accountNonce network:accountNetwork type:accountType version:accountVersion.charValue];
+
+        NSString * signedTransaction = composedTransactionData[@"signedTransaction"];
+        NSString * destination = (composedTransactionData[@"destination"] == [NSNull null]) ? NULL : composedTransactionData[@"destination"];
+        NSString * value = (composedTransactionData[@"value"] == [NSNull null]) ? NULL : composedTransactionData[@"value"];
+        NSString * data = (composedTransactionData[@"data"] == [NSNull null]) ? NULL : composedTransactionData[@"data"];
+        NSString * fee = composedTransactionData[@"fee"];
+
+        ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithSignedTransaction:signedTransaction account:account destination:destination value:value data:data fee:fee];
+
+        [_wallet submitTransaction:composedTransaction completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -226,19 +291,44 @@ RCT_EXPORT_METHOD(sendEthTransaction:(NSString *)accountId gasPrice:(NSString *)
 
 }
 
-RCT_EXPORT_METHOD(sendBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+
+RCT_EXPORT_METHOD(composeEthTransaction:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit to:(NSString *)to value:(NSString *)value data:(NSString *)data nonce:(NSString *)nonce resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
     @try {
 
-        [[ZumoKitManager sharedManager] sendBtcTransaction:accountId changeAccountId:changeAccountId to:to value:value feeRate:feeRate completionHandler:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeEthTransaction:accountId gasPrice:gasPrice gasLimit:gasLimit to:to value:value data:data nonce:nonce ? @([nonce integerValue]) : NULL completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
                 return;
             }
 
-            resolve([self mapTransaction:transaction]);
+            resolve([self mapComposedTransaction:transaction]);
+
+        }];
+
+    } @catch (NSException *exception) {
+
+       [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+   }
+
+}
+
+RCT_EXPORT_METHOD(composeBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId to:(NSString *)to value:(NSString *)value feeRate:(NSString *)feeRate resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        [_wallet composeBtcTransaction:accountId changeAccountId:changeAccountId to:to value:value feeRate:feeRate completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapComposedTransaction:transaction]);
 
         }];
 
@@ -257,7 +347,7 @@ RCT_EXPORT_METHOD(sendBtcTransaction:(NSString *)accountId changeAccountId:(NSSt
 RCT_EXPORT_METHOD(isRecoveryMnemonic:(NSString *)mnemonic resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject) {
 
     @try {
-        BOOL validation = [[ZumoKitManager sharedManager] isRecoveryMnemonic:mnemonic];
+        BOOL validation = [_user isRecoveryMnemonic:mnemonic];
         resolve(@(validation));
     } @catch (NSException *exception) {
         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
@@ -270,12 +360,14 @@ RCT_EXPORT_METHOD(recoverWallet:(NSString *)mnemonic password:(NSString *)passwo
 
     @try {
 
-        [[ZumoKitManager sharedManager] recoverWallet:mnemonic password:password completionHandler:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
+        [_user recoverWallet:mnemonic password:password completion:^(ZKWallet * _Nullable wallet, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
                 return;
             }
+
+            self->_wallet = wallet;
 
             resolve(@(YES));
 
@@ -309,11 +401,13 @@ RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type
             networkType = ZKNetworkTypeKOVAN;
         else if ([network isEqualToString:@"TESTNET"])
             networkType = ZKNetworkTypeTESTNET;
-        else
+        else {
             [self rejectPromiseWith:reject
                           errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
                           errorCode:ZKZumoKitErrorCodeINVALIDNETWORKTYPE
                        errorMessage:@"Network type not supported."];
+            return;
+        }
 
         ZKAccountType accountType;
         if ([type isEqualToString:@"STANDARD"])
@@ -322,13 +416,15 @@ RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type
             accountType = ZKAccountTypeCOMPATIBILITY;
         else if ([type isEqualToString:@"SEGWIT"])
             accountType = ZKAccountTypeSEGWIT;
-        else
+        else {
             [self rejectPromiseWith:reject
                           errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
                           errorCode:ZKZumoKitErrorCodeINVALIDACCOUNTTYPE
                        errorMessage:@"Account type not supported."];
+            return;
+        }
 
-        ZKAccount * account = [[ZumoKitManager sharedManager] getAccount:symbol network:networkType type:accountType];
+        ZKAccount * account = [_user getAccount:symbol network:networkType type:accountType];
 
         if(account) {
             resolve([self mapAccount:account]);
@@ -352,7 +448,7 @@ RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type
 
 RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    BOOL isValid = [[ZumoKitManager sharedManager] isValidEthAddress:address];
+    BOOL isValid = [[_zumoKit utils] isValidEthAddress:address];
     resolve(@(isValid));
 }
 
@@ -363,55 +459,56 @@ RCT_EXPORT_METHOD(isValidBtcAddress:(NSString *)address network:(NSString *)netw
         networkType = ZKNetworkTypeTESTNET;
     }
 
-    BOOL isValid = [[ZumoKitManager sharedManager] isValidBtcAddress:address network:networkType];
+    BOOL isValid = [[_zumoKit utils] isValidBtcAddress:address network:networkType];
     resolve(@(isValid));
 }
 
 RCT_EXPORT_METHOD(ethToGwei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *gwei = [[ZumoKitManager sharedManager] ethToGwei:eth];
+    NSString *gwei = [[_zumoKit utils] ethToGwei:eth];
     resolve(gwei);
 }
 
 RCT_EXPORT_METHOD(gweiToEth:(NSString *)gwei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *eth = [[ZumoKitManager sharedManager] gweiToEth:gwei];
+    NSString *eth = [[_zumoKit utils] gweiToEth:gwei];
     resolve(eth);
 }
 
 RCT_EXPORT_METHOD(ethToWei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *wei = [[ZumoKitManager sharedManager] ethToWei:eth];
+    NSString *wei = [[_zumoKit utils] ethToWei:eth];
     resolve(wei);
 }
 
 RCT_EXPORT_METHOD(weiToEth:(NSString *)wei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *eth = [[ZumoKitManager sharedManager] weiToEth:wei];
+    NSString *eth = [[_zumoKit utils] weiToEth:wei];
     resolve(eth);
 }
 
 RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *mnemonic = [[ZumoKitManager sharedManager] generateMnemonic:wordLength];
+    NSString *mnemonic = [[_zumoKit utils] generateMnemonic:wordLength];
     resolve(mnemonic);
 }
 
 RCT_EXPORT_METHOD(maxSpendableEth:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *max = [[ZumoKitManager sharedManager] maxSpendableEth:accountId gasPrice:gasPrice gasLimit:gasLimit];
+    NSString *max = [_wallet maxSpendableEth:accountId gasPrice:gasPrice gasLimit:gasLimit];
     resolve(max);
 }
 
 RCT_EXPORT_METHOD(maxSpendableBtc:(NSString *)accountId to:(NSString *)to feeRate:(NSString *)feeRate resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *max = [[ZumoKitManager sharedManager] maxSpendableBtc:accountId to:to feeRate:feeRate];
+    NSString *max = [_wallet maxSpendableBtc:accountId to:to feeRate:feeRate];
     resolve(max);
 }
 
 RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    [[ZumoKitManager sharedManager] clear];
+    _user = NULL;
+    _wallet = NULL;
     resolve(@(YES));
 }
 
@@ -422,7 +519,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     return @{
         @"accounts": [self mapAccounts:[state accounts]],
         @"transactions": [self mapTransactions:[state transactions]],
-        @"exchangeRates": [state exchangeRates],
+        @"exchangeRates": [self mapExchangeRates:[state exchangeRates]],
         @"feeRates": [self mapFeeRates:[state feeRates]]
     };
 
@@ -475,12 +572,14 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     NSDictionary *dict = @{
         @"id": [account id],
         @"path": [account path],
-        @"symbol": [account symbol] ? [account symbol] : @"",
+        @"symbol": [account symbol],
         @"coin": [account coin],
         @"address": [account address],
         @"balance": [account balance],
+        @"nonce": [account nonce] ? [account nonce] : [NSNull null],
         @"network": [self mapNetworkType:[account network]],
-        @"type": [self mapAccountType:[account type]]
+        @"type": [self mapAccountType:[account type]],
+        @"version": [[NSNumber alloc] initWithChar:[account version]]
     };
 
     return dict;
@@ -498,6 +597,34 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     }];
 
     return mapped;
+
+}
+
+
+- (NSDictionary *)mapComposedTransaction:(ZKComposedTransaction *)composedTransaction {
+
+    NSMutableDictionary *dict = [@{
+        @"signedTransaction": [composedTransaction signedTransaction],
+        @"account": [self mapAccount:[composedTransaction account]],
+        @"destination": [composedTransaction destination]  ? [composedTransaction destination] :  [NSNull null],
+        @"value": [composedTransaction value] ? [composedTransaction value] :  [NSNull null],
+        @"data": [composedTransaction data] ? [composedTransaction data] :  [NSNull null],
+        @"fee": [composedTransaction fee]
+    } mutableCopy];
+
+    return dict;
+}
+
+- (NSString *)mapTransactionType:(ZKTransactionType)transacationType {
+
+    switch (transacationType) {
+        case ZKTransactionTypeEXCHANGE:
+            return @"EXCHANGE";
+
+        default:
+            return @"NORMAL";
+
+    }
 
 }
 
@@ -530,7 +657,8 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     NSMutableDictionary *dict = [@{
         @"id": [transaction id],
-        @"type": [transaction type] == ZKTransactionTypeOUTGOING ? @"OUTGOING" : @"INCOMING",
+        @"type": [self mapTransactionType:[transaction type]],
+        @"direction": [transaction direction] == ZKTransactionDirectionOUTGOING ? @"OUTGOING" : @"INCOMING",
         @"txHash": [transaction txHash],
         @"accountId": [transaction accountId],
         @"symbol": [transaction symbol],
@@ -571,6 +699,30 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     }];
 
     return dict;
+}
+
+- (NSDictionary *)mapExchangeRates:(NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *)exchangeRates {
+
+    NSMutableDictionary *outerDict = [[NSMutableDictionary alloc] init];
+
+    [exchangeRates enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull outerKey, NSDictionary<NSString *, ZKExchangeRate *> * _Nonnull outerObj, BOOL * _Nonnull stop) {
+
+        NSMutableDictionary *innerDict = [[NSMutableDictionary alloc] init];
+
+        [outerObj enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull innerKey, ZKExchangeRate * _Nonnull obj, BOOL * _Nonnull stop) {
+                innerDict[innerKey] =@{
+                    @"id": [obj id],
+                    @"depositCurrency": [obj depositCurrency],
+                    @"withdrawCurrency": [obj withdrawCurrency],
+                    @"value": [obj value],
+                    @"timestamp": [NSNumber numberWithLongLong:[obj timestamp]]
+                };
+        }];
+
+        outerDict[outerKey] = innerDict;
+    }];
+
+    return outerDict;
 }
 
 - (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions {

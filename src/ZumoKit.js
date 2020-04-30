@@ -51,7 +51,7 @@ class ZumoKit {
      *
      * @memberof ZumoKit
      */
-    VERSION = RNZumoKit.VERSION;
+    version = RNZumoKit.version;
 
     /**
      * Initialise ZumoKit with the provided JSON config.
@@ -60,16 +60,17 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     init(config) {
-        const { apiKey, apiRoot, myRoot, txServiceUrl } = config;
-        RNZumoKit.init(apiKey, apiRoot, myRoot, txServiceUrl);
+        const { apiKey, apiRoot, txServiceUrl } = config;
+        RNZumoKit.init(apiKey, apiRoot, txServiceUrl);
 
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
+            console.log('ZumoKitStateChanged');
             console.log(state);
 
             if(state.accounts) this.state.accounts = state.accounts;
             if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
-            if(state.exchangeRates) this.state.exchangeRates = JSON.parse(state.exchangeRates);
+            if(state.exchangeRates) this.state.exchangeRates = state.exchangeRates;
             if(state.feeRates) this.state.feeRates = state.feeRates;
 
             this._notifyStateListeners();
@@ -81,12 +82,11 @@ class ZumoKit {
      * Authenticates the user with ZumoKit.
      *
      * @param {string} token
-     * @param {object} headers
      * @returns
      * @memberof ZumoKit
      */
-    async auth(token, headers) {
-        const json = await RNZumoKit.auth(token, headers);
+    async getUser(token) {
+        const json = await RNZumoKit.getUser(token);
         const user = new User(json);
 
         this.state.authenticatedUser = user;

@@ -140,11 +140,18 @@ class Transaction {
     payload;
 
     /**
-     * The type of transaction. Either INCOMING or OUTGOING.
+     * The type of transaction. Either NORMAL or Exchange.
      *
      * @memberof Transaction
      */
     type;
+
+     /**
+     * The direction of transaction. Either INCOMING or OUTGOING.
+     *
+     * @memberof Transaction
+     */
+    direction;
 
     /**
      * The address to be displayed dependant on the type of transaction.
@@ -153,7 +160,7 @@ class Transaction {
      * @memberof Transaction
      */
     get address() {
-        return (this.type == 'INCOMING') ? this.fromAddress : this.toAddress;
+        return (this.direction == 'INCOMING') ? this.fromAddress : this.toAddress;
     }
 
     /**
@@ -163,7 +170,7 @@ class Transaction {
      * @memberof Transaction
      */
     get userId() {
-        return (this.type == 'INCOMING') ? this.fromUserId : this.toUserId;
+        return (this.direction == 'INCOMING') ? this.fromUserId : this.toUserId;
     }
 
     /**
@@ -184,6 +191,7 @@ class Transaction {
 
         if(json.id) this.id = json.id;
         if(json.type) this.type = json.type;
+        if(json.direction) this.direction = json.direction;
         if(json.txHash) this.txHash = json.txHash;
         if(json.accountId) this.accountId = json.accountId;
         if(json.symbol) this.symbol = json.symbol;

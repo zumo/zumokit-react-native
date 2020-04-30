@@ -1,12 +1,26 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
+import ComposedTransaction from './ComposedTransaction';
 const { RNZumoKit } = NativeModules;
 import { tryCatchProxy } from '../ZKErrorProxy';
 
 class Wallet {
 
+     /**
+     * Submits transaction to Transaction Service
+     *
+     * @param {ComposedTransaction} composedTransaction
+     * @returns {Transaction}
+     * @memberof Wallet
+     */
+    async submitTransaction(composedTransaction) {
+        const json = await RNZumoKit.submitTransaction(composedTransaction.json);
+
+        return new Transaction(json);
+    }
+
     /**
-     * Sends a new transaction on the Ethereum blockchain.
+     * Composes a new transaction on the Ethereum blockchain.
      *
      * @param {string} accountId
      * @param {string} gasPrice
@@ -18,8 +32,8 @@ class Wallet {
      * @returns
      * @memberof Wallet
      */
-    async sendEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonce) {
-        const json = await RNZumoKit.sendEthTransaction(
+    async composeEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonce) {
+        const json = await RNZumoKit.composeEthTransaction(
             accountId,
             '' + gasPrice,
             '' + gasLimit,
@@ -29,11 +43,11 @@ class Wallet {
             (nonce) ? '' + nonce : null
         );
 
-        return new Transaction(json);
+        return new ComposedTransaction(json);
     }
 
     /**
-     * Sends a new Bitcoin transaction.
+     * Composes a new Bitcoin transaction.
      *
      * @param {string} accountId
      * @param {string} changeAccountId
@@ -43,8 +57,8 @@ class Wallet {
      * @returns
      * @memberof Wallet
      */
-    async sendBtcTransaction(accountId, changeAccountId, to, value, feeRate) {
-        const json = await RNZumoKit.sendBtcTransaction(
+    async composeBtcTransaction(accountId, changeAccountId, to, value, feeRate) {
+        const json = await RNZumoKit.composeBtcTransaction(
             accountId,
             changeAccountId,
             to,
@@ -52,7 +66,7 @@ class Wallet {
             '' + feeRate
         );
 
-        return new Transaction(json);
+        return new ComposedTransaction(json);
     }
 
     /**

@@ -1,4 +1,6 @@
 function transformError(error) {
+  console.dir(error)
+
   let { code, message, userInfo } = error
   let { type } = userInfo
   return { type, code, message }
