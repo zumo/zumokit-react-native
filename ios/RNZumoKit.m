@@ -668,7 +668,6 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"fromAddress": [transaction fromAddress],
         @"toAddress": [transaction toAddress],
         @"value": [transaction value],
-        @"cost": [transaction cost],
         @"timestamp": @([transaction timestamp])
     } mutableCopy];
 
@@ -681,7 +680,8 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
     if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
     if([transaction fiatValue]) dict[@"fiatValue"] = [transaction fiatValue];
-    if([transaction fiatCost]) dict[@"fiatCost"] = [transaction fiatCost];
+    if([transaction fee]) dict[@"fee"] = [transaction fee];
+    if([transaction fiatFee]) dict[@"fiatFee"] = [transaction fiatFee];
 
     return dict;
 }

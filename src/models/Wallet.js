@@ -91,7 +91,7 @@ class Wallet {
      * @returns
      * @memberof Wallet
      */
-    async maxSpendableEth(accountId, to, feeRate) {
+    async maxSpendableBtc(accountId, to, feeRate) {
         return RNZumoKit.maxSpendableBtc(accountId, to, feeRate);
     }
 

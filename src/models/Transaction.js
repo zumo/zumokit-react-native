@@ -208,8 +208,8 @@ class Transaction {
         if(json.data) this.data = json.data;
         this.gasPrice = (json.gasPrice) ? new Decimal(json.gasPrice) : new Decimal(0);
         if(json.gasLimit) this.gasLimit = json.gasLimit;
-        if(json.cost) this.cost = json.cost;
-        if(json.fiatCost) this.cost = json.fiatCost;
+        if(json.fee) this.fee = json.fee;
+        if(json.fiatFee) this.fiatFee = json.fiatFee;
 
         if(json.timestamp) {
             this.timestamp = json.timestamp
