@@ -129,6 +129,30 @@ RCT_EXPORT_METHOD(getUser:(NSString *)token resolver:(RCTPromiseResolveBlock)res
 
 }
 
+RCT_EXPORT_METHOD(getHistoricalExchangeRates:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        [_zumoKit getHistoricalExchangeRates:^(HistoricalExchangeRates _Nullable historicalRates, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapHistoricalExchangeRates:historicalRates]);
+
+        }];
+
+    } @catch (NSException *exception) {
+
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+    }
+
+}
+
 # pragma mark - Wallet Management
 
 
@@ -723,6 +747,32 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     }];
 
     return outerDict;
+}
+
+- (NSDictionary *)mapHistoricalExchangeRates:(HistoricalExchangeRates) historicalRates {
+
+    NSMutableDictionary *rates = [[NSMutableDictionary alloc] init];
+
+    [historicalRates enumerateKeysAndObjectsUsingBlock:^(
+            NSString * _Nonnull timeInterval,
+            NSArray<NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *> * _Nonnull historicalRatesArray,
+            BOOL * _Nonnull stop) {
+
+        NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+
+        [historicalRatesArray enumerateObjectsUsingBlock:^(
+                NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> * _Nonnull obj,
+                NSUInteger idx,
+                BOOL * _Nonnull stop) {
+
+            [mapped addObject:[self mapExchangeRates:obj]];
+
+        }];
+
+        rates[timeInterval] = mapped;
+    }];
+
+    return rates;
 }
 
 - (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions {

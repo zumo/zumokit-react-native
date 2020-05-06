@@ -97,6 +97,16 @@ class ZumoKit {
     }
 
     /**
+     * Get historical exchange rates
+     *
+     * @returns ¯\_(ツ)_/¯
+     * @memberof ZumoKit
+     */
+    async getHistoricalExchangeRates() {
+        return RNZumoKit.getHistoricalExchangeRates();
+    }
+
+    /**
      * Adds a new listener for state updates.
      *
      * @param {function} callback
