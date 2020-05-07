@@ -21,7 +21,15 @@ class User {
      */
     hasWallet;
 
+    /**
+     * JSON representation of User object
+     *
+     * @memberof User
+     */
+    json;
+
     constructor(json) {
+        this.json = json;
         if(json.id) this.id = json.id;
         this.hasWallet = (json.hasWallet) ? true : false;
     }

@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 
-export default class Account {
+class Account {
 
     /**
      * Unique ID of the account
@@ -58,7 +58,15 @@ export default class Account {
      */
     nonce;
 
+    /**
+     * JSON representation of Account object
+     *
+     * @memberof Account
+     */
+    json;
+
     constructor(json) {
+        this.json = json;
         if(json.id) this.id = json.id;
         if(json.path) this.path = json.path;
         if(json.symbol) this.symbol = json.symbol;
@@ -71,3 +79,5 @@ export default class Account {
     }
 
 }
+
+export default (tryCatchProxy(Account))
