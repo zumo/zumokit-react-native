@@ -129,29 +129,29 @@ RCT_EXPORT_METHOD(getUser:(NSString *)token resolver:(RCTPromiseResolveBlock)res
 
 }
 
-RCT_EXPORT_METHOD(getHistoricalExchangeRates:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
+// RCT_EXPORT_METHOD(getHistoricalExchangeRates:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+// {
 
-    @try {
+//     @try {
 
-        [_zumoKit getHistoricalExchangeRates:^(HistoricalExchangeRates _Nullable historicalRates, NSError * _Nullable error) {
+//         [_zumoKit getHistoricalExchangeRates:^(HistoricalExchangeRates _Nullable historicalRates, NSError * _Nullable error) {
 
-            if(error != nil) {
-                [self rejectPromiseWithNSError:reject error:error];
-                return;
-            }
+//             if(error != nil) {
+//                 [self rejectPromiseWithNSError:reject error:error];
+//                 return;
+//             }
 
-            resolve([self mapHistoricalExchangeRates:historicalRates]);
+//             resolve([self mapHistoricalExchangeRates:historicalRates]);
 
-        }];
+//         }];
 
-    } @catch (NSException *exception) {
+//     } @catch (NSException *exception) {
 
-        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+//         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
 
-    }
+//     }
 
-}
+// }
 
 # pragma mark - Wallet Management
 
@@ -245,7 +245,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
         NSString *accountCoin = accountData[@"coin"];
         NSString *accountAddress = accountData[@"address"];
         NSString *accountBalance = accountData[@"balance"];
-        NSNumber *accountNonce = accountData[@"nonce"];
+        NSNumber *accountNonce = (accountData[@"nonce"] == [NSNull null]) ? NULL : accountData[@"nonce"];
         NSNumber *accountVersion = accountData[@"version"];
 
         NSString *network = accountData[@"network"];
@@ -749,31 +749,31 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     return outerDict;
 }
 
-- (NSDictionary *)mapHistoricalExchangeRates:(HistoricalExchangeRates) historicalRates {
+// - (NSDictionary *)mapHistoricalExchangeRates:(HistoricalExchangeRates) historicalRates {
 
-    NSMutableDictionary *rates = [[NSMutableDictionary alloc] init];
+//     NSMutableDictionary *rates = [[NSMutableDictionary alloc] init];
 
-    [historicalRates enumerateKeysAndObjectsUsingBlock:^(
-            NSString * _Nonnull timeInterval,
-            NSArray<NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *> * _Nonnull historicalRatesArray,
-            BOOL * _Nonnull stop) {
+//     [historicalRates enumerateKeysAndObjectsUsingBlock:^(
+//             NSString * _Nonnull timeInterval,
+//             NSArray<NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *> * _Nonnull historicalRatesArray,
+//             BOOL * _Nonnull stop) {
 
-        NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+//         NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
 
-        [historicalRatesArray enumerateObjectsUsingBlock:^(
-                NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> * _Nonnull obj,
-                NSUInteger idx,
-                BOOL * _Nonnull stop) {
+//         [historicalRatesArray enumerateObjectsUsingBlock:^(
+//                 NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> * _Nonnull obj,
+//                 NSUInteger idx,
+//                 BOOL * _Nonnull stop) {
 
-            [mapped addObject:[self mapExchangeRates:obj]];
+//             [mapped addObject:[self mapExchangeRates:obj]];
 
-        }];
+//         }];
 
-        rates[timeInterval] = mapped;
-    }];
+//         rates[timeInterval] = mapped;
+//     }];
 
-    return rates;
-}
+//     return rates;
+// }
 
 - (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions {
 

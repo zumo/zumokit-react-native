@@ -729,7 +729,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     if (transaction.getValue() == null){
       map.putNull("value");
     } else {
-      map.putString("value", transaction.getDestination());
+      map.putString("value", transaction.getValue());
     }
 
     if (transaction.getData() == null){
