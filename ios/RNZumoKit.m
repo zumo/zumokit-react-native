@@ -129,29 +129,29 @@ RCT_EXPORT_METHOD(getUser:(NSString *)token resolver:(RCTPromiseResolveBlock)res
 
 }
 
-// RCT_EXPORT_METHOD(getHistoricalExchangeRates:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-// {
+ RCT_EXPORT_METHOD(getHistoricalExchangeRates:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+ {
 
-//     @try {
+     @try {
 
-//         [_zumoKit getHistoricalExchangeRates:^(HistoricalExchangeRates _Nullable historicalRates, NSError * _Nullable error) {
+         [_zumoKit getHistoricalExchangeRates:^(HistoricalExchangeRates _Nullable historicalRates, NSError * _Nullable error) {
 
-//             if(error != nil) {
-//                 [self rejectPromiseWithNSError:reject error:error];
-//                 return;
-//             }
+             if(error != nil) {
+                 [self rejectPromiseWithNSError:reject error:error];
+                 return;
+             }
 
-//             resolve([self mapHistoricalExchangeRates:historicalRates]);
+             resolve([self mapHistoricalExchangeRates:historicalRates]);
 
-//         }];
+         }];
 
-//     } @catch (NSException *exception) {
+     } @catch (NSException *exception) {
 
-//         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
 
-//     }
+     }
 
-// }
+ }
 
 # pragma mark - Wallet Management
 
@@ -755,31 +755,45 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     return outerDict;
 }
 
-// - (NSDictionary *)mapHistoricalExchangeRates:(HistoricalExchangeRates) historicalRates {
-//
-//     NSMutableDictionary *rates = [[NSMutableDictionary alloc] init];
-//
-//     [historicalRates enumerateKeysAndObjectsUsingBlock:^(
-//             NSString * _Nonnull timeInterval,
-//             NSArray<NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *> * _Nonnull historicalRatesArray,
-//             BOOL * _Nonnull stop) {
-//
-//         NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
-//
-//         [historicalRatesArray enumerateObjectsUsingBlock:^(
-//                 NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> * _Nonnull obj,
-//                 NSUInteger idx,
-//                 BOOL * _Nonnull stop) {
-//
-//             [mapped addObject:[self mapExchangeRate:obj]];
-//
-//         }];
-//
-//         rates[timeInterval] = mapped;
-//     }];
-//
-//     return rates;
-// }
+ - (NSDictionary *)mapHistoricalExchangeRates:(HistoricalExchangeRates) historicalRates {
+
+     NSMutableDictionary *rates = [[NSMutableDictionary alloc] init];
+
+     [historicalRates enumerateKeysAndObjectsUsingBlock:^(
+             NSString * _Nonnull timeInterval,
+             NSDictionary<NSString *, NSDictionary<NSString *, NSArray<ZKExchangeRate *> *> *> * _Nonnull exchangeRates,
+             BOOL * _Nonnull stop) {
+
+         NSMutableDictionary *outerDict = [[NSMutableDictionary alloc] init];
+
+         [exchangeRates enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull outerKey, NSDictionary<NSString *, NSArray<ZKExchangeRate *> *> * _Nonnull outerObj, BOOL * _Nonnull stop) {
+
+             NSMutableDictionary *innerDict = [[NSMutableDictionary alloc] init];
+
+             [outerObj enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull innerKey, NSArray<ZKExchangeRate *> * _Nonnull array, BOOL * _Nonnull stop) {
+
+                NSMutableArray<ZKExchangeRate *> *mapped = [[NSMutableArray alloc] init];
+
+                [array enumerateObjectsUsingBlock:^(
+                        ZKExchangeRate * _Nonnull obj,
+                        NSUInteger idx,
+                        BOOL * _Nonnull stop) {
+
+                    [mapped addObject:[self mapExchangeRate:obj]];
+
+                }];
+
+                 innerDict[innerKey] = mapped;
+             }];
+
+             outerDict[outerKey] = innerDict;
+         }];
+
+         rates[timeInterval] = outerDict;
+     }];
+
+     return rates;
+ }
 
 
 - (NSDictionary *)mapExchangeFees:(ZKExchangeFees *)exchangeFees {
