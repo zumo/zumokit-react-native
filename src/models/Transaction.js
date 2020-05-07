@@ -219,7 +219,7 @@ class Transaction {
         if(json.fiatValue) this.fiatValue = parseFiatValues(json.fiatValue);
         if(json.data) this.data = json.data;
         if(json.gasPrice) this.gasPrice = new Decimal(json.gasPrice);
-        if(json.gasLimit) this.gasLimit = json.gasLimit;
+        if(json.gasLimit) this.gasLimit = parseInt(json.gasLimit);
         if(json.fee) this.fee = new Decimal(json.fee);
         if(json.fiatFee) this.fiatFee = parseFiatValues(json.fiatFee);
         if(json.timestamp) this.timestamp = json.timestamp;

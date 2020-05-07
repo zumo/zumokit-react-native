@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+import { tryCatchProxy } from '../ZKErrorProxy';
 
 class FeeRates {
 

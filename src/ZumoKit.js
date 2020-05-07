@@ -72,7 +72,7 @@ class ZumoKit {
             if(state.exchangeRates) this.state.exchangeRates = parseExchangeRates(state.exchangeRates);
             if(state.feeRates) this.state.feeRates = parseFeeRates(state.feeRates);
 
-            console.log(state);
+            console.log(this.state);
 
             this._notifyStateListeners();
 

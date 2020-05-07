@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+import { tryCatchProxy } from '../ZKErrorProxy';
 
 class ExchangeRate {
 
@@ -54,9 +55,9 @@ class ExchangeRate {
     constructor(json) {
         this.json = json;
         this.id = json.id;
-        this.depositCurrrency = json.depositCurrrency;
+        this.depositCurrency = json.depositCurrency;
         this.withdrawCurrency = json.withdrawCurrency;
-        this.balance = new Decimal(json.balance);
+        this.value = new Decimal(json.value);
         this.validTo = json.validTo;
         this.timestamp = json.timestamp;
     }
