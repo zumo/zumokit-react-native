@@ -1,6 +1,6 @@
 function transformError(error) {
   let { code, message, userInfo } = error
-  let { type } = userInfo
+  let type = (userInfo && userInfo.type) ? userInfo.type : "zumo_kit_error"
   return { type, code, message }
 }
 
