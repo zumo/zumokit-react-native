@@ -54,13 +54,12 @@ class ComposedTransaction {
      */
     json;
 
-
     constructor(json) {
         this.json = json;
         this.signedTransaction = json.signedTransaction;
         this.account = new Account(json.account);
         this.destination = json.destination;
-        this.value = (json.value) ? new Decimal(json.value) : new Decimal(0);
+        this.value = json.value ? new Decimal(json.value) : null;
         this.data = json.data;
         this.fee = new Decimal(json.fee);
     }
