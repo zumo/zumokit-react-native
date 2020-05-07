@@ -543,7 +543,8 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     return @{
         @"accounts": [self mapAccounts:[state accounts]],
         @"transactions": [self mapTransactions:[state transactions]],
-        @"exchangeRates": [self mapExchangeRates:[state exchangeRates]],
+        @"exchangeRates": [self mapExchangeRatesDict:[state exchangeRates]],
+        @"exchangeFees": [self mapExchangeFeesDict:[state exchangeFees]],
         @"feeRates": [self mapFeeRates:[state feeRates]]
     };
 
@@ -725,7 +726,18 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     return dict;
 }
 
-- (NSDictionary *)mapExchangeRates:(NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *)exchangeRates {
+- (NSDictionary *)mapExchangeRate:(ZKExchangeRate *)exchangeRates {
+
+    return @{
+        @"id": [exchangeRates id],
+        @"depositCurrency": [exchangeRates depositCurrency],
+        @"withdrawCurrency": [exchangeRates withdrawCurrency],
+        @"value": [exchangeRates value],
+        @"timestamp": [NSNumber numberWithLongLong:[exchangeRates timestamp]]
+    };
+}
+
+- (NSDictionary *)mapExchangeRatesDict:(NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *)exchangeRates {
 
     NSMutableDictionary *outerDict = [[NSMutableDictionary alloc] init];
 
@@ -734,13 +746,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         NSMutableDictionary *innerDict = [[NSMutableDictionary alloc] init];
 
         [outerObj enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull innerKey, ZKExchangeRate * _Nonnull obj, BOOL * _Nonnull stop) {
-                innerDict[innerKey] =@{
-                    @"id": [obj id],
-                    @"depositCurrency": [obj depositCurrency],
-                    @"withdrawCurrency": [obj withdrawCurrency],
-                    @"value": [obj value],
-                    @"timestamp": [NSNumber numberWithLongLong:[obj timestamp]]
-                };
+            innerDict[innerKey] = [self mapExchangeRate:obj];
         }];
 
         outerDict[outerKey] = innerDict;
@@ -750,30 +756,62 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 }
 
 // - (NSDictionary *)mapHistoricalExchangeRates:(HistoricalExchangeRates) historicalRates {
-
+//
 //     NSMutableDictionary *rates = [[NSMutableDictionary alloc] init];
-
+//
 //     [historicalRates enumerateKeysAndObjectsUsingBlock:^(
 //             NSString * _Nonnull timeInterval,
 //             NSArray<NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> *> * _Nonnull historicalRatesArray,
 //             BOOL * _Nonnull stop) {
-
+//
 //         NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
-
+//
 //         [historicalRatesArray enumerateObjectsUsingBlock:^(
 //                 NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeRate *> *> * _Nonnull obj,
 //                 NSUInteger idx,
 //                 BOOL * _Nonnull stop) {
-
-//             [mapped addObject:[self mapExchangeRates:obj]];
-
+//
+//             [mapped addObject:[self mapExchangeRate:obj]];
+//
 //         }];
-
+//
 //         rates[timeInterval] = mapped;
 //     }];
-
+//
 //     return rates;
 // }
+
+
+- (NSDictionary *)mapExchangeFees:(ZKExchangeFees *)exchangeFees {
+
+    return @{
+        @"id": [exchangeFees id],
+        @"depositCurrency": [exchangeFees depositCurrency],
+        @"withdrawCurrency": [exchangeFees withdrawCurrency],
+        @"feeRate": [exchangeFees feeRate],
+        @"depositFeeRate": [exchangeFees depositFeeRate],
+        @"withdrawFee": [exchangeFees withdrawFee],
+        @"timestamp": [NSNumber numberWithLongLong:[exchangeFees timestamp]]
+    };
+}
+
+- (NSDictionary *)mapExchangeFeesDict:(NSDictionary<NSString *, NSDictionary<NSString *, ZKExchangeFees *> *> *)exchangeFees {
+
+    NSMutableDictionary *outerDict = [[NSMutableDictionary alloc] init];
+
+    [exchangeFees enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull outerKey, NSDictionary<NSString *, ZKExchangeFees *> * _Nonnull outerObj, BOOL * _Nonnull stop) {
+
+        NSMutableDictionary *innerDict = [[NSMutableDictionary alloc] init];
+
+        [outerObj enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull innerKey, ZKExchangeFees * _Nonnull obj, BOOL * _Nonnull stop) {
+            innerDict[innerKey] = [self mapExchangeFees: obj];
+        }];
+
+        outerDict[outerKey] = innerDict;
+    }];
+
+    return outerDict;
+}
 
 - (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions {
 
