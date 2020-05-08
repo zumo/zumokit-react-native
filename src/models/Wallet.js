@@ -14,20 +14,20 @@ class Wallet {
      * @param {string} accountId
      * @param {string} gasPrice
      * @param {string} gasLimit
-     * @param {string} to
-     * @param {string} value
+     * @param {string} destinationAddresss
+     * @param {string} amount
      * @param {string} data
      * @param {number} nonce
      * @returns
      * @memberof Wallet
      */
-    async composeEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonce) {
+    async composeEthTransaction(accountId, gasPrice, gasLimit, destinationAddresss, amount, data, nonce) {
         const json = await RNZumoKit.composeEthTransaction(
             accountId,
             '' + gasPrice,
             '' + gasLimit,
-            to,
-            '' + value,
+            destinationAddresss,
+            '' + amount,
             data,
             (nonce) ? '' + nonce : null
         );
@@ -40,18 +40,18 @@ class Wallet {
      *
      * @param {string} accountId
      * @param {string} changeAccountId
-     * @param {string} to
-     * @param {string} value
+     * @param {string} destinationAddresss
+     * @param {string} amount
      * @param {string} feeRate
      * @returns
      * @memberof Wallet
      */
-    async composeBtcTransaction(accountId, changeAccountId, to, value, feeRate) {
+    async composeBtcTransaction(accountId, changeAccountId, destinationAddresss, amount, feeRate) {
         const json = await RNZumoKit.composeBtcTransaction(
             accountId,
             changeAccountId,
-            to,
-            '' + value,
+            destinationAddresss,
+            '' + amount,
             '' + feeRate
         );
 
@@ -74,21 +74,21 @@ class Wallet {
     /**
      * Composes a new exchange
      *
-     * @param {string} depositAccountId
-     * @param {string} withdrawAccountId
+     * @param {string} fromAccountId
+     * @param {string} toAccountId
      * @param {ExchangeRate} exchangeRate
      * @param {ExchangeFees} exchangeFees
-     * @param {Decimal} value
+     * @param {Decimal} amount
      * @returns
      * @memberof ComposedExchange
      */
-    async composeExchange(depositAccountId, withdrawAccountId, exchangeRate, exchangeFees, value) {
+    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeFees, amount) {
         const json = await RNZumoKit.composeExchange(
-            depositAccountId,
-            withdrawAccountId,
+            fromAccountId,
+            toAccountId,
             exchangeRate.json,
             exchangeFees.json,
-            value.toString()
+            amount.toString()
         );
 
         return new ComposedExchange(json);

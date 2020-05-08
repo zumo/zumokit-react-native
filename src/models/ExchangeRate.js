@@ -14,14 +14,14 @@ export default class ExchangeRate {
      *
      * @memberof ExchangeRate
      */
-    depositCurrrency;
+    fromCurrrency;
 
     /**
      * Withdraw currency
      *
      * @memberof ExchangeRate
      */
-    withdrawCurrency;
+    toCurrency;
 
     /**
      * Exchange rate value
@@ -54,8 +54,8 @@ export default class ExchangeRate {
     constructor(json) {
         this.json = json;
         this.id = json.id;
-        this.depositCurrency = json.depositCurrency;
-        this.withdrawCurrency = json.withdrawCurrency;
+        this.fromCurrency = json.depositCurrency;
+        this.toCurrency = json.withdrawCurrency;
         this.value = json.value;
         this.validTo = json.validTo;
         this.timestamp = json.timestamp;

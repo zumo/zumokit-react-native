@@ -10,39 +10,39 @@ export default class ExchangeFees {
     id;
 
     /**
-     * Deposit currency
+     * From currency
      *
      * @memberof ExchangeFees
      */
-    depositCurrrency;
+    fromCurrency;
 
     /**
-     * Withdraw currency
+     * To currency
      *
      * @memberof ExchangeFees
      */
-    withdrawCurrency;
+    toCurrency;
 
     /**
      * Fee rate that will be used to deposit funds from user to exchange
      *
      * @memberof ExchangeFees
      */
-    depositFeeRate;
+    outgoingTransactionFeeRate;
 
     /**
      * Exchange fee rate
      *
      * @memberof ExchangeFees
      */
-    feeRate;
+    exchangeFeeRate;
 
     /**
      * Fee of the return transaction from exchange to user
      *
      * @memberof ExchangeFees
      */
-    withdrawFee;
+    incomingTransactionFee;
 
     /**
      * Timestamp
@@ -61,10 +61,11 @@ export default class ExchangeFees {
     constructor(json) {
         this.json = json;
         this.id = json.id;
-        this.depositCurrency = json.depositCurrency;
-        this.withdrawCurrency = json.withdrawCurrency;
-        this.feeRate = new Decimal(json.feeRate);
-        this.withdrawFee = new Decimal(json.feeRate);
+        this.fromCurrency = json.depositCurrency;
+        this.toCurrency = json.withdrawCurrency;
+        this.outgoingTransactionFeeRate = new Decimal(json.depositFeeRate);
+        this.exchangefeeRate = new Decimal(json.feeRate);
+        this.incomingTransactionFee = new Decimal(json.withdrawFee);
         this.validTo = json.validTo;
         this.timestamp = json.timestamp;
     }
