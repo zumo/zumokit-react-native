@@ -1,8 +1,7 @@
 import Account from './Account';
 import { Decimal } from 'decimal.js';
-import { tryCatchProxy } from '../ZKErrorProxy';
 
-class ComposedTransaction {
+export default class ComposedTransaction {
 
     /**
      * Signed transaction
@@ -60,11 +59,9 @@ class ComposedTransaction {
         this.signedTransaction = json.signedTransaction;
         this.account = new Account(json.account);
         this.destination = json.destination;
-        this.value = (json.value) ? new Decimal(json.value) : new Decimal(0);
+        this.value = (json.value) ? new Decimal(json.value) : null;
         this.data = json.data;
         this.fee = new Decimal(json.fee);
     }
 
 }
-
-export default (tryCatchProxy(ComposedTransaction))

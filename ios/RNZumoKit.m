@@ -543,6 +543,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     return @{
         @"accounts": [self mapAccounts:[state accounts]],
         @"transactions": [self mapTransactions:[state transactions]],
+        @"exchanges": [self mapExchanges:[state exchanges]],
         @"exchangeRates": [self mapExchangeRatesDict:[state exchangeRates]],
         @"exchangeFees": [self mapExchangeFeesDict:[state exchangeFees]],
         @"feeRates": [self mapFeeRates:[state feeRates]]
@@ -711,6 +712,28 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     return dict;
 }
 
+- (NSDictionary *)mapExchange:(ZKExchange *)exchange {
+    return @{
+         @"id": [exchange id],
+         @"status": [exchange status],
+         @"depositCurrency": [exchange depositCurrency],
+         @"depositAccountId": [exchange depositAccountId],
+         @"depositTransactionId": [exchange depositTransactionId],
+         @"withdrawCurrency": [exchange withdrawCurrency],
+         @"withdrawAccountId": [exchange withdrawAccountId],
+         @"withdrawTransactionId": [exchange withdrawTransactionId] ? [exchange withdrawTransactionId] : [NSNull null],
+         @"amount": [exchange amount],
+         @"depositFee": [exchange depositFee] ? [exchange depositFee] : [NSNull null],
+         @"returnAmount": [exchange returnAmount],
+         @"exchangeFee": [exchange exchangeFee],
+         @"withdrawFee": [exchange withdrawFee],
+         @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
+         @"exchangeFees": [self mapExchangeFees:[exchange exchangeFees]],
+         @"submittedAt": [exchange submittedAt],
+         @"confirmedAt": [exchange confirmedAt] ? [exchange confirmedAt] : [NSNull null],
+    };
+}
+
 - (NSDictionary *)mapFeeRates:(NSDictionary<NSString *, ZKFeeRates *>*)feeRates {
 
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
@@ -733,6 +756,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"depositCurrency": [exchangeRates depositCurrency],
         @"withdrawCurrency": [exchangeRates withdrawCurrency],
         @"value": [exchangeRates value],
+        @"validTo": [NSNumber numberWithLongLong:[exchangeRates validTo]],
         @"timestamp": [NSNumber numberWithLongLong:[exchangeRates timestamp]]
     };
 }
@@ -833,6 +857,18 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     [transactions enumerateObjectsUsingBlock:^(ZKTransaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [mapped addObject:[self mapTransaction:obj]];
+    }];
+
+    return mapped;
+
+}
+
+- (NSArray<NSDictionary *> *)mapExchanges:(NSArray<ZKExchange *>*)exchanges {
+
+    NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+
+    [exchanges enumerateObjectsUsingBlock:^(ZKExchange * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [mapped addObject:[self mapExchange:obj]];
     }];
 
     return mapped;

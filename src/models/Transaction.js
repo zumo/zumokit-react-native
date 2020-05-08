@@ -1,5 +1,4 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
-import ZumoKit from '../ZumoKit';
 import Moment from 'moment-timezone';
 import { Decimal } from 'decimal.js';
 const { RNZumoKit } = NativeModules;
@@ -187,8 +186,15 @@ class Transaction {
      */
     _transactionListener;
 
-    constructor(json) {
+    /**
+     * JSON representation of Account object
+     *
+     * @memberof Account
+     */
+    json;
 
+    constructor(json) {
+        this.json = json;
         if(json.id) this.id = json.id;
         if(json.type) this.type = json.type;
         if(json.direction) this.direction = json.direction;
