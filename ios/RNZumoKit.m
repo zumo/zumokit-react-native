@@ -364,6 +364,49 @@ RCT_EXPORT_METHOD(composeBtcTransaction:(NSString *)accountId changeAccountId:(N
 
 }
 
+RCT_EXPORT_METHOD(composeExchange:(NSString *)depositAccountId withdrawAccountId:(NSString *)withdrawAccountId exchangeRate:(NSDictionary *)exchangeRate exchangeFees:(NSDictionary *)exchangeFees value:(NSString *)value resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        NSString *exchangeRateId = exchangeRate[@"id"];
+        NSString *exchangeRateDepositCurrency = exchangeRate[@"depositCurrency"];
+        NSString *exchangeRateWithdrawCurrency = exchangeRate[@"withdrawCurrency"];
+        NSString *exchangeRateValue = exchangeRate[@"value"];
+        NSNumber *exchangeRateValidTo = exchangeRate[@"validTo"];
+        NSNumber *exchangeRateTimestamp = exchangeRate[@"timestamp"];
+
+        ZKExchangeRate *rate = [[ZKExchangeRate alloc] initWithId:exchangeRateId depositCurrency:exchangeRateDepositCurrency withdrawCurrency:exchangeRateWithdrawCurrency value:exchangeRateValue validTo:exchangeRateValidTo.longLongValue timestamp:exchangeRateTimestamp.longLongValue];
+
+        NSString *exchangeFeesId = exchangeFees[@"id"];
+        NSString *exchangeFeesDepositCurrency = exchangeFees[@"depositCurrency"];
+        NSString *exchangeFeesWithdrawCurrency = exchangeFees[@"withdrawCurrency"];
+        NSString *exchangeFeesFeeRate = exchangeFees[@"feeRate"];
+        NSString *exchangeFeesDepositFeeRate = exchangeFees[@"depositFeeRate"];
+        NSString *exchangeFeesWithdrawFee = exchangeFees[@"withdrawFee"];
+        NSNumber *exchangeFeesTimestamp = exchangeFees[@"timestamp"];
+
+        ZKExchangeFees *fees = [[ZKExchangeFees alloc] initWithId:exchangeFeesId depositCurrency:exchangeFeesDepositCurrency withdrawCurrency:exchangeFeesWithdrawCurrency feeRate:exchangeFeesFeeRate depositFeeRate:exchangeFeesDepositFeeRate withdrawFee:exchangeFeesWithdrawFee timestamp:exchangeFeesTimestamp.longLongValue];
+
+        [_wallet composeExchange:depositAccountId withdrawAccountId:withdrawAccountId exchangeRate:rate exchangeFees:fees value:value completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapComposedExchange:exchange]);
+
+        }];
+
+    } @catch (NSException *exception) {
+
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+    }
+
+}
+
 
 # pragma mark - Wallet Recovery
 
@@ -640,6 +683,24 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     return dict;
 }
+
+
+- (NSDictionary *)mapComposedExchange:(ZKComposedExchange *)exchange {
+    return @{
+         @"signedTransaction": [exchange signedTransaction],
+         @"depositAccount": [self mapAccount:[exchange depositAccount]],
+         @"withdrawAccount": [self mapAccount:[exchange withdrawAccount]],
+         @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
+         @"exchangeFees": [self mapExchangeFees:[exchange exchangeFees]],
+         @"exchangeAddress": [exchange exchangeAddress],
+         @"value": [exchange value],
+         @"returnValue": [exchange returnValue],
+         @"depositFee": [exchange depositFee],
+         @"exchangeFee": [exchange exchangeFee],
+         @"withdrawFee": [exchange withdrawFee],
+    };
+}
+
 
 - (NSString *)mapTransactionType:(ZKTransactionType)transacationType {
 
