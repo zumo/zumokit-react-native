@@ -95,10 +95,10 @@ class Wallet {
     }
 
     /**
-     * Submits transaction to Transaction Service
+     * Submits exchange to Transaction Service
      *
      * @param {ComposedExchange} composedExchange
-     * @returns {Transaction}
+     * @returns {Exchange}
      * @memberof Wallet
      */
     async submitExchange(composedExchange) {
