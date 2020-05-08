@@ -359,16 +359,16 @@ RCT_EXPORT_METHOD(submitExchange:(NSDictionary *)composedExchangeData resolver:(
 
         ZKComposedExchange * composedExchange = [[ZKComposedExchange alloc] initWithSignedTransaction:signedTransaction depositAccount:depositAccount withdrawAccount:withdrawAccount exchangeRate:exchangeRate exchangeFees:exchangeFees exchangeAddress:exchangeAddress value:value returnValue:returnValue depositFee:depositFee exchangeFee:exchangeFee withdrawFee:withdrawFee];
 
-//        [_wallet submitExchange:composedExchange completion:^(ZKExchange * _Nullable exchange, NSError * _Nullable error) {
-//
-//            if(error != nil) {
-//                [self rejectPromiseWithNSError:reject error:error];
-//                return;
-//            }
-//
-//            resolve([self mapExchange:exchange]);
-//
-//        }];
+       [_wallet submitExchange:composedExchange completion:^(ZKExchange * _Nullable exchange, NSError * _Nullable error) {
+
+           if(error != nil) {
+               [self rejectPromiseWithNSError:reject error:error];
+               return;
+           }
+
+           resolve([self mapExchange:exchange]);
+
+       }];
 
     } @catch (NSException *exception) {
 
