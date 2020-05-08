@@ -1,6 +1,8 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
 import ComposedTransaction from './ComposedTransaction';
+import Exchange from './Exchange';
+import ComposedExchange from './ComposedExchange';
 const { RNZumoKit } = NativeModules;
 import { tryCatchProxy } from '../ZKErrorProxy';
 
@@ -67,6 +69,29 @@ class Wallet {
         );
 
         return new ComposedTransaction(json);
+    }
+
+    /**
+     * Composes a new exchange
+     *
+     * @param {string} depositAccountId
+     * @param {string} withdrawAccountId
+     * @param {ExchangeRate} exchangeRate
+     * @param {ExchangeFees} exchangeFees
+     * @param {Decimal} value
+     * @returns
+     * @memberof ComposedExchange
+     */
+    async composeExchange(depositAccountId, withdrawAccountId, exchangeRate, exchangeFees, value) {
+        const json = await RNZumoKit.composeExchange(
+            depositAccountId,
+            withdrawAccountId,
+            exchangeRate.json,
+            exchangeFees.json,
+            value.toString()
+        );
+
+        return new ComposedExchange(json);
     }
 
     /**

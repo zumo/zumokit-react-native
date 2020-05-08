@@ -1,6 +1,6 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import User from './models/User';
-import Transaction from './models/Transaction';
+import Parser from './util/Parser';
 import { tryCatchProxy } from './ZKErrorProxy';
 
 const { RNZumoKit } = NativeModules;
@@ -22,7 +22,10 @@ class ZumoKit {
         authenticatedUser: null,
         accounts: [],
         transactions: [],
-        feeRates: null
+        exchanges: [],
+        feeRates: null,
+        exchangeRates: null,
+        exchangeFees: null
     };
 
     /**
@@ -68,10 +71,14 @@ class ZumoKit {
             console.log('ZumoKitStateChanged');
             console.log(state);
 
-            if(state.accounts) this.state.accounts = state.accounts;
-            if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
-            if(state.exchangeRates) this.state.exchangeRates = state.exchangeRates;
-            if(state.feeRates) this.state.feeRates = state.feeRates;
+            if(state.accounts) this.state.accounts = Parser.parseAccounts(state.accounts);
+            if(state.transactions) this.state.transactions = Parser.parseTransactions(state.transactions);
+            if(state.exchanges) this.state.exchanges = Parser.parseExchanges(state.exchanges);
+            if(state.exchangeRates) this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
+            if(state.feeRates) this.state.feeRates = Parser.parseFeeRates(state.feeRates);
+            if(state.exchangeFees) this.state.exchangeFees = Parser.parseExchangeFees(state.exchangeFees);
+
+            console.log(this.state);
 
             this._notifyStateListeners();
 
