@@ -52,6 +52,13 @@ export default class Account {
     chainId;
 
     /**
+     * Number of transactions on the account to-date; used to sign outgoing transactions
+     *
+     * @memberof Account
+     */
+    nonce;
+
+    /**
      * JSON representation of Account object
      *
      * @memberof Account
