@@ -8,19 +8,6 @@ import { tryCatchProxy } from '../ZKErrorProxy';
 
 class Wallet {
 
-     /**
-     * Submits transaction to Transaction Service
-     *
-     * @param {ComposedTransaction} composedTransaction
-     * @returns {Transaction}
-     * @memberof Wallet
-     */
-    async submitTransaction(composedTransaction) {
-        const json = await RNZumoKit.submitTransaction(composedTransaction.json);
-
-        return new Transaction(json);
-    }
-
     /**
      * Composes a new transaction on the Ethereum blockchain.
      *
@@ -71,6 +58,19 @@ class Wallet {
         return new ComposedTransaction(json);
     }
 
+     /**
+     * Submits transaction to Transaction Service
+     *
+     * @param {ComposedTransaction} composedTransaction
+     * @returns {Transaction}
+     * @memberof Wallet
+     */
+    async submitTransaction(composedTransaction) {
+        const json = await RNZumoKit.submitTransaction(composedTransaction.json);
+
+        return new Transaction(json);
+    }
+
     /**
      * Composes a new exchange
      *
@@ -92,6 +92,18 @@ class Wallet {
         );
 
         return new ComposedExchange(json);
+    }
+
+    /**
+     * Submits exchange to Transaction Service
+     *
+     * @param {ComposedExchange} composedExchange
+     * @returns {Exchange}
+     * @memberof Wallet
+     */
+    async submitExchange(composedExchange) {
+        const json = await RNZumoKit.submitExchange(composedExchange.json);
+        return new Exchange(json);
     }
 
     /**
