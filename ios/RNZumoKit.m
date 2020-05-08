@@ -237,58 +237,8 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
 
     @try {
 
-        NSDictionary *accountData = composedTransactionData[@"account"];
-
-        NSString *accountId = accountData[@"id"];
-        NSString *accountPath = accountData[@"path"];
-        NSString *accountSymbol = accountData[@"symbol"];
-        NSString *accountCoin = accountData[@"coin"];
-        NSString *accountAddress = accountData[@"address"];
-        NSString *accountBalance = accountData[@"balance"];
-        NSNumber *accountNonce = (accountData[@"nonce"] == [NSNull null]) ? NULL : accountData[@"nonce"];
-        NSNumber *accountVersion = accountData[@"version"];
-
-        NSString *network = accountData[@"network"];
-        ZKNetworkType accountNetwork;
-        if ([network isEqualToString:@"MAINNET"])
-            accountNetwork = ZKNetworkTypeMAINNET;
-        else if ([network isEqualToString:@"ROPSTEN"])
-            accountNetwork = ZKNetworkTypeROPSTEN;
-        else if ([network isEqualToString:@"RINKEBY"])
-            accountNetwork = ZKNetworkTypeRINKEBY;
-        else if ([network isEqualToString:@"GOERLI"])
-            accountNetwork = ZKNetworkTypeGOERLI;
-        else if ([network isEqualToString:@"KOVAN"])
-            accountNetwork = ZKNetworkTypeKOVAN;
-        else if ([network isEqualToString:@"TESTNET"])
-            accountNetwork = ZKNetworkTypeTESTNET;
-        else {
-            [self rejectPromiseWith:reject
-                      errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
-                      errorCode:ZKZumoKitErrorCodeINVALIDNETWORKTYPE
-                   errorMessage:@"Network type not supported."];
-            return;
-        }
-
-        NSString *type = accountData[@"type"];
-        ZKAccountType accountType;
-        if ([type isEqualToString:@"STANDARD"])
-            accountType = ZKAccountTypeSTANDARD;
-        else if ([type isEqualToString:@"COMPATIBILITY"])
-            accountType = ZKAccountTypeCOMPATIBILITY;
-        else if ([type isEqualToString:@"SEGWIT"])
-            accountType = ZKAccountTypeSEGWIT;
-        else {
-            [self rejectPromiseWith:reject
-                           errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
-                           errorCode:ZKZumoKitErrorCodeINVALIDACCOUNTTYPE
-                        errorMessage:@"Account type not supported."];
-            return;
-        }
-
-        ZKAccount *account = [[ZKAccount alloc] initWithId:accountId path:accountPath symbol:accountSymbol coin:accountCoin address:accountAddress balance:accountBalance nonce:accountNonce network:accountNetwork type:accountType version:accountVersion.charValue];
-
         NSString * signedTransaction = composedTransactionData[@"signedTransaction"];
+        ZKAccount *account = [self unboxAccount:composedTransactionData[@"account"]];
         NSString * destination = (composedTransactionData[@"destination"] == [NSNull null]) ? NULL : composedTransactionData[@"destination"];
         NSString * value = (composedTransactionData[@"value"] == [NSNull null]) ? NULL : composedTransactionData[@"value"];
         NSString * data = (composedTransactionData[@"data"] == [NSNull null]) ? NULL : composedTransactionData[@"data"];
@@ -368,25 +318,8 @@ RCT_EXPORT_METHOD(composeExchange:(NSString *)depositAccountId withdrawAccountId
 {
 
     @try {
-
-        NSString *exchangeRateId = exchangeRate[@"id"];
-        NSString *exchangeRateDepositCurrency = exchangeRate[@"depositCurrency"];
-        NSString *exchangeRateWithdrawCurrency = exchangeRate[@"withdrawCurrency"];
-        NSString *exchangeRateValue = exchangeRate[@"value"];
-        NSNumber *exchangeRateValidTo = exchangeRate[@"validTo"];
-        NSNumber *exchangeRateTimestamp = exchangeRate[@"timestamp"];
-
-        ZKExchangeRate *rate = [[ZKExchangeRate alloc] initWithId:exchangeRateId depositCurrency:exchangeRateDepositCurrency withdrawCurrency:exchangeRateWithdrawCurrency value:exchangeRateValue validTo:exchangeRateValidTo.longLongValue timestamp:exchangeRateTimestamp.longLongValue];
-
-        NSString *exchangeFeesId = exchangeFees[@"id"];
-        NSString *exchangeFeesDepositCurrency = exchangeFees[@"depositCurrency"];
-        NSString *exchangeFeesWithdrawCurrency = exchangeFees[@"withdrawCurrency"];
-        NSString *exchangeFeesFeeRate = exchangeFees[@"feeRate"];
-        NSString *exchangeFeesDepositFeeRate = exchangeFees[@"depositFeeRate"];
-        NSString *exchangeFeesWithdrawFee = exchangeFees[@"withdrawFee"];
-        NSNumber *exchangeFeesTimestamp = exchangeFees[@"timestamp"];
-
-        ZKExchangeFees *fees = [[ZKExchangeFees alloc] initWithId:exchangeFeesId depositCurrency:exchangeFeesDepositCurrency withdrawCurrency:exchangeFeesWithdrawCurrency feeRate:exchangeFeesFeeRate depositFeeRate:exchangeFeesDepositFeeRate withdrawFee:exchangeFeesWithdrawFee timestamp:exchangeFeesTimestamp.longLongValue];
+        ZKExchangeRate *rate = [self unboxExchangeRate:exchangeRate];
+        ZKExchangeFees *fees = [self unboxExchangeFees:exchangeFees];
 
         [_wallet composeExchange:depositAccountId withdrawAccountId:withdrawAccountId exchangeRate:rate exchangeFees:fees value:value completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
 
@@ -404,6 +337,44 @@ RCT_EXPORT_METHOD(composeExchange:(NSString *)depositAccountId withdrawAccountId
         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
 
     }
+
+}
+
+RCT_EXPORT_METHOD(submitExchange:(NSDictionary *)composedExchangeData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        NSString * signedTransaction = composedExchangeData[@"signedTransaction"];
+        ZKAccount *depositAccount = [self unboxAccount:composedExchangeData[@"depositAccount"]];
+        ZKAccount *withdrawAccount = [self unboxAccount:composedExchangeData[@"withdrawAccount"]];
+        ZKExchangeRate *exchangeRate = [self unboxExchangeRate:composedExchangeData[@"exchangeRate"]];
+        ZKExchangeFees *exchangeFees = [self unboxExchangeFees:composedExchangeData[@"exchangeFees"]];
+        NSString * exchangeAddress = composedExchangeData[@"exchangeAddress"];
+        NSString * value = composedExchangeData[@"value"];
+        NSString * returnValue = composedExchangeData[@"returnValue"];
+        NSString * depositFee = composedExchangeData[@"depositFee"];
+        NSString * exchangeFee = composedExchangeData[@"exchangeFee"];
+        NSString * withdrawFee = composedExchangeData[@"withdrawFee"];
+
+        ZKComposedExchange * composedExchange = [[ZKComposedExchange alloc] initWithSignedTransaction:signedTransaction depositAccount:depositAccount withdrawAccount:withdrawAccount exchangeRate:exchangeRate exchangeFees:exchangeFees exchangeAddress:exchangeAddress value:value returnValue:returnValue depositFee:depositFee exchangeFee:exchangeFee withdrawFee:withdrawFee];
+
+//        [_wallet submitExchange:composedExchange completion:^(ZKExchange * _Nullable exchange, NSError * _Nullable error) {
+//
+//            if(error != nil) {
+//                [self rejectPromiseWithNSError:reject error:error];
+//                return;
+//            }
+//
+//            resolve([self mapExchange:exchange]);
+//
+//        }];
+
+    } @catch (NSException *exception) {
+
+       [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+   }
 
 }
 
@@ -455,41 +426,8 @@ RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type
 
     @try {
 
-        ZKNetworkType networkType;
-        if ([network isEqualToString:@"MAINNET"])
-            networkType = ZKNetworkTypeMAINNET;
-        else if ([network isEqualToString:@"ROPSTEN"])
-            networkType = ZKNetworkTypeROPSTEN;
-        else if ([network isEqualToString:@"RINKEBY"])
-            networkType = ZKNetworkTypeRINKEBY;
-        else if ([network isEqualToString:@"GOERLI"])
-            networkType = ZKNetworkTypeGOERLI;
-        else if ([network isEqualToString:@"KOVAN"])
-            networkType = ZKNetworkTypeKOVAN;
-        else if ([network isEqualToString:@"TESTNET"])
-            networkType = ZKNetworkTypeTESTNET;
-        else {
-            [self rejectPromiseWith:reject
-                          errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
-                          errorCode:ZKZumoKitErrorCodeINVALIDNETWORKTYPE
-                       errorMessage:@"Network type not supported."];
-            return;
-        }
-
-        ZKAccountType accountType;
-        if ([type isEqualToString:@"STANDARD"])
-            accountType = ZKAccountTypeSTANDARD;
-        else if ([type isEqualToString:@"COMPATIBILITY"])
-            accountType = ZKAccountTypeCOMPATIBILITY;
-        else if ([type isEqualToString:@"SEGWIT"])
-            accountType = ZKAccountTypeSEGWIT;
-        else {
-            [self rejectPromiseWith:reject
-                          errorType:ZKZumoKitErrorTypeINVALIDARGUMENTERROR
-                          errorCode:ZKZumoKitErrorCodeINVALIDACCOUNTTYPE
-                       errorMessage:@"Account type not supported."];
-            return;
-        }
+        ZKNetworkType networkType = [self  unboxNetworkType:network];
+        ZKAccountType accountType = [self unboxAccountType:type];
 
         ZKAccount * account = [_user getAccount:symbol network:networkType type:accountType];
 
@@ -936,5 +874,79 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
 }
 
+#pragma mark - Unboxing
+
+- (ZKNetworkType)unboxNetworkType:(NSString *)network {
+    if ([network isEqualToString:@"MAINNET"])
+        return ZKNetworkTypeMAINNET;
+    else if ([network isEqualToString:@"ROPSTEN"])
+        return ZKNetworkTypeROPSTEN;
+    else if ([network isEqualToString:@"RINKEBY"])
+        return ZKNetworkTypeRINKEBY;
+    else if ([network isEqualToString:@"GOERLI"])
+        return ZKNetworkTypeGOERLI;
+    else if ([network isEqualToString:@"KOVAN"])
+        return ZKNetworkTypeKOVAN;
+    else if ([network isEqualToString:@"TESTNET"])
+        return ZKNetworkTypeTESTNET;
+    else {
+        @throw [NSException exceptionWithName:ZKZumoKitErrorCodeINVALIDNETWORKTYPE
+                                       reason:@"Network type not supported."
+                                     userInfo:nil];
+    }
+}
+
+- (ZKAccountType)unboxAccountType:(NSString *)type {
+    if ([type isEqualToString:@"STANDARD"])
+        return ZKAccountTypeSTANDARD;
+    else if ([type isEqualToString:@"COMPATIBILITY"])
+        return ZKAccountTypeCOMPATIBILITY;
+    else if ([type isEqualToString:@"SEGWIT"])
+        return ZKAccountTypeSEGWIT;
+    else {
+        @throw [NSException exceptionWithName:ZKZumoKitErrorCodeINVALIDACCOUNTTYPE
+                                       reason:@"Account type not supported."
+                                     userInfo:nil];
+    }
+}
+
+- (ZKAccount *)unboxAccount:(NSDictionary *)accountData {
+    NSString *accountId = accountData[@"id"];
+    NSString *accountPath = accountData[@"path"];
+    NSString *accountSymbol = accountData[@"symbol"];
+    NSString *accountCoin = accountData[@"coin"];
+    NSString *accountAddress = accountData[@"address"];
+    NSString *accountBalance = accountData[@"balance"];
+    NSNumber *accountNonce = (accountData[@"nonce"] == [NSNull null]) ? NULL : accountData[@"nonce"];
+    NSNumber *accountVersion = accountData[@"version"];
+    ZKNetworkType accountNetwork = [self unboxNetworkType:accountData[@"network"]];
+    ZKAccountType accountType = [self unboxAccountType:accountData[@"type"]];
+
+    return [[ZKAccount alloc] initWithId:accountId path:accountPath symbol:accountSymbol coin:accountCoin address:accountAddress balance:accountBalance nonce:accountNonce network:accountNetwork type:accountType version:accountVersion.charValue];
+}
+
+- (ZKExchangeRate *)unboxExchangeRate:(NSDictionary *)exchangeRate {
+    NSString *exchangeRateId = exchangeRate[@"id"];
+    NSString *exchangeRateDepositCurrency = exchangeRate[@"depositCurrency"];
+    NSString *exchangeRateWithdrawCurrency = exchangeRate[@"withdrawCurrency"];
+    NSString *exchangeRateValue = exchangeRate[@"value"];
+    NSNumber *exchangeRateValidTo = exchangeRate[@"validTo"];
+    NSNumber *exchangeRateTimestamp = exchangeRate[@"timestamp"];
+
+    return [[ZKExchangeRate alloc] initWithId:exchangeRateId depositCurrency:exchangeRateDepositCurrency withdrawCurrency:exchangeRateWithdrawCurrency value:exchangeRateValue validTo:exchangeRateValidTo.longLongValue timestamp:exchangeRateTimestamp.longLongValue];
+}
+
+
+- (ZKExchangeFees *)unboxExchangeFees:(NSDictionary *)exchangeFees {
+    NSString *exchangeFeesId = exchangeFees[@"id"];
+    NSString *exchangeFeesDepositCurrency = exchangeFees[@"depositCurrency"];
+    NSString *exchangeFeesWithdrawCurrency = exchangeFees[@"withdrawCurrency"];
+    NSString *exchangeFeesFeeRate = exchangeFees[@"feeRate"];
+    NSString *exchangeFeesDepositFeeRate = exchangeFees[@"depositFeeRate"];
+    NSString *exchangeFeesWithdrawFee = exchangeFees[@"withdrawFee"];
+    NSNumber *exchangeFeesTimestamp = exchangeFees[@"timestamp"];
+
+    return [[ZKExchangeFees alloc] initWithId:exchangeFeesId depositCurrency:exchangeFeesDepositCurrency withdrawCurrency:exchangeFeesWithdrawCurrency feeRate:exchangeFeesFeeRate depositFeeRate:exchangeFeesDepositFeeRate withdrawFee:exchangeFeesWithdrawFee timestamp:exchangeFeesTimestamp.longLongValue];
+}
 
 @end
