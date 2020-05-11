@@ -64,9 +64,8 @@ export default class ExchangeFees {
         this.fromCurrency = json.depositCurrency;
         this.toCurrency = json.withdrawCurrency;
         this.outgoingTransactionFeeRate = new Decimal(json.depositFeeRate);
-        this.exchangefeeRate = new Decimal(json.feeRate);
+        this.exchangeFeeRate = new Decimal(json.feeRate);
         this.incomingTransactionFee = new Decimal(json.withdrawFee);
-        this.validTo = json.validTo;
         this.timestamp = json.timestamp;
     }
 

@@ -24,6 +24,7 @@ class Exchange {
         this.exchangeFees = new ExchangeFees(json.exchangeFees);
         this.submittedAt = json.submittedAt;
         this.confirmedAt = json.confirmedAt;
+        this.timestamp = json.submittedAt;
     }
 
 }
