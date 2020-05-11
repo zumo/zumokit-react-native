@@ -69,7 +69,6 @@ class ZumoKit {
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
             console.log('ZumoKitStateChanged');
-            console.log(state);
 
             if(state.accounts) this.state.accounts = Parser.parseAccounts(state.accounts);
             if(state.transactions) this.state.transactions = Parser.parseTransactions(state.transactions);
