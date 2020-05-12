@@ -970,6 +970,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("exchangeFee", exchange.getExchangeFee());
     map.putString("withdrawFee", exchange.getWithdrawFee());
     map.putMap("exchangeRate",  RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
+    map.putMap("exchangeRates",  RNZumoKitModule.mapExchangeRates(exchange.getExchangeRates()));
     map.putMap("exchangeFees", RNZumoKitModule.mapExchangeFees(exchange.getExchangeFees()));
     map.putInt("submittedAt", exchange.getSubmittedAt().intValue());
 
