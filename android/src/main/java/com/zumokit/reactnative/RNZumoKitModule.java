@@ -951,12 +951,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("depositTransactionId", exchange.getDepositTransactionId());
     map.putString("withdrawCurrency", exchange.getWithdrawCurrency());
     map.putString("withdrawAccountId", exchange.getWithdrawAccountId());
-    map.putString("withdrawTransactionId", exchange.getDepositTransactionId());
 
-    if(exchange.getDepositTransactionId() == null) {
+    if(exchange.getWithdrawTransactionId() == null) {
       map.putNull("withdrawTransactionId");
     } else {
-      map.putString("withdrawTransactionId", exchange.getDepositTransactionId());
+      map.putString("withdrawTransactionId", exchange.getWithdrawTransactionId());
     }
 
     map.putString("amount", exchange.getAmount());
@@ -971,6 +970,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("exchangeFee", exchange.getExchangeFee());
     map.putString("withdrawFee", exchange.getWithdrawFee());
     map.putMap("exchangeRate",  RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
+    map.putMap("exchangeRates",  RNZumoKitModule.mapExchangeRates(exchange.getExchangeRates()));
     map.putMap("exchangeFees", RNZumoKitModule.mapExchangeFees(exchange.getExchangeFees()));
     map.putInt("submittedAt", exchange.getSubmittedAt().intValue());
 

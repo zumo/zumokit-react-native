@@ -727,6 +727,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
          @"exchangeFee": [exchange exchangeFee],
          @"withdrawFee": [exchange withdrawFee],
          @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
+         @"exchangeRates": [self mapExchangeRatesDict:[exchange exchangeRates]],
          @"exchangeFees": [self mapExchangeFees:[exchange exchangeFees]],
          @"submittedAt": [exchange submittedAt],
          @"confirmedAt": [exchange confirmedAt] ? [exchange confirmedAt] : [NSNull null],
