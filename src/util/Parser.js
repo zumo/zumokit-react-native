@@ -2,7 +2,7 @@ import Account from '../models/Account'
 import Transaction from '../models/Transaction'
 import Exchange from '../models/Exchange'
 import ExchangeRate from '../models/ExchangeRate'
-import ExchangeFees from '../models/ExchangeFees';
+import ExchangeSettings from '../models/ExchangeSettings';
 import FeeRates from '../models/FeeRates';
 
 export default class Parser {
@@ -37,14 +37,14 @@ export default class Parser {
     return exchangeRateMap
   }
 
-  static parseExchangeFees(exchangeFeesMap) {
-    for (const depositCurrency in exchangeFeesMap) {
-      for (const withdrawCurrency in exchangeFeesMap[depositCurrency]) {
-        exchangeFeesMap[depositCurrency][withdrawCurrency] =
-          new ExchangeFees(exchangeFeesMap[depositCurrency][withdrawCurrency])
+  static parseExchangeSettings(exchangeSettingsMap) {
+    for (const depositCurrency in exchangeSettingsMap) {
+      for (const withdrawCurrency in exchangeSettingsMap[depositCurrency]) {
+        exchangeSettingsMap[depositCurrency][withdrawCurrency] =
+          new ExchangeSettings(exchangeSettingsMap[depositCurrency][withdrawCurrency])
       }
     }
-    return exchangeFeesMap
+    return exchangeSettingsMap
   }
 
   static parseHistoricalExchangeRates(exchangeRateMap) {

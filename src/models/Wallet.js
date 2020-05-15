@@ -77,17 +77,17 @@ class Wallet {
      * @param {string} fromAccountId
      * @param {string} toAccountId
      * @param {ExchangeRate} exchangeRate
-     * @param {ExchangeFees} exchangeFees
+     * @param {ExchangeSettings} exchangeSettings
      * @param {Decimal} amount
      * @returns
      * @memberof ComposedExchange
      */
-    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeFees, amount) {
+    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeSettings, amount) {
         const json = await RNZumoKit.composeExchange(
             fromAccountId,
             toAccountId,
             exchangeRate.json,
-            exchangeFees.json,
+            exchangeSettings.json,
             amount.toString()
         );
 

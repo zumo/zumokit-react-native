@@ -1,60 +1,74 @@
 import { Decimal } from 'decimal.js';
 
-export default class ExchangeFees {
+export default class ExchangeSettings {
 
     /**
      * ID of the exchange rate group
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     id;
 
     /**
      * From currency
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     fromCurrency;
 
     /**
      * To currency
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     toCurrency;
 
     /**
+     * Deposit address
+     *
+     * @memberof ExchangeSettings
+     */
+    depositAddress;
+
+    /**
+     * Minimum exchange amount
+     *
+     * @memberof ExchangeSettings
+     */
+    minExchangeAmount
+
+    /**
      * Fee rate that will be used to deposit funds from user to exchange
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     outgoingTransactionFeeRate;
 
     /**
      * Exchange fee rate
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     exchangeFeeRate;
 
     /**
      * Fee of the return transaction from exchange to user
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     incomingTransactionFee;
 
     /**
      * Timestamp
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     timestamp;
 
     /**
-     * JSON representation of ExchangeFees object
+     * JSON representation of ExchangeSettings object
      *
-     * @memberof ExchangeFees
+     * @memberof ExchangeSettings
      */
     json;
 
@@ -63,6 +77,8 @@ export default class ExchangeFees {
         this.id = json.id;
         this.fromCurrency = json.depositCurrency;
         this.toCurrency = json.withdrawCurrency;
+        this.depositAddress = json.depositAddress;
+        this.minExchangeAmount = new Decimal(json.minExchangeAmount);
         this.outgoingTransactionFeeRate = new Decimal(json.depositFeeRate);
         this.exchangeFeeRate = new Decimal(json.feeRate);
         this.incomingTransactionFee = new Decimal(json.withdrawFee);
