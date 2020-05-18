@@ -1,6 +1,6 @@
 import { Decimal } from 'decimal.js';
 import ExchangeRate from './ExchangeRate';
-import ExchangeFees from './ExchangeFees';
+import ExchangeSettings from './ExchangeSettings';
 import { tryCatchProxy } from '../ZKErrorProxy';
 import Parser from '../util/Parser';
 
@@ -22,7 +22,7 @@ class Exchange {
         this.returnAmount = new Decimal(json.returnAmount);
         this.exchangeFee = new Decimal(json.exchangeFee);
         this.exchangeRate = new ExchangeRate(json.exchangeRate);
-        this.exchangeFees = new ExchangeFees(json.exchangeFees);
+        this.exchangeSettings = new ExchangeSettings(json.exchangeSettings);
         this.exchangeRates = Parser.parseExchangeRates(json.exchangeRates);
         this.submittedAt = json.submittedAt;
         this.confirmedAt = json.confirmedAt;

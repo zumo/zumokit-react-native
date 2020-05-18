@@ -25,7 +25,7 @@ class ZumoKit {
         exchanges: [],
         feeRates: null,
         exchangeRates: null,
-        exchangeFees: null
+        exchangeSettings: null
     };
 
     /**
@@ -75,7 +75,7 @@ class ZumoKit {
             if(state.exchanges) this.state.exchanges = Parser.parseExchanges(state.exchanges);
             if(state.exchangeRates) this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
             if(state.feeRates) this.state.feeRates = Parser.parseFeeRates(state.feeRates);
-            if(state.exchangeFees) this.state.exchangeFees = Parser.parseExchangeFees(state.exchangeFees);
+            if(state.exchangeSettings) this.state.exchangeSettings = Parser.parseExchangeSettings(state.exchangeSettings);
 
             console.log(this.state);
 
