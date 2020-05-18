@@ -825,7 +825,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     NSMutableDictionary *depositAddress = [[NSMutableDictionary alloc] init];
 
     [[exchangeSettings depositAddress] enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, NSString * _Nonnull value, BOOL * _Nonnull stop) {
-        ZKNetworkType networkType = (ZKNetworkType) key;
+        ZKNetworkType networkType = (ZKNetworkType) [key intValue];
         depositAddress[[self mapNetworkType:networkType]] = value;
     }];
 
