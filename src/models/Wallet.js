@@ -1,10 +1,62 @@
 import { NativeModules } from 'react-native';
 import Transaction from './Transaction';
 import ComposedTransaction from './ComposedTransaction';
+import Exchange from './Exchange';
+import ComposedExchange from './ComposedExchange';
 const { RNZumoKit } = NativeModules;
 import { tryCatchProxy } from '../ZKErrorProxy';
 
 class Wallet {
+
+    /**
+     * Composes a new transaction on the Ethereum blockchain.
+     *
+     * @param {string} accountId
+     * @param {string} gasPrice
+     * @param {string} gasLimit
+     * @param {string} destinationAddresss
+     * @param {string} amount
+     * @param {string} data
+     * @param {number} nonce
+     * @returns
+     * @memberof Wallet
+     */
+    async composeEthTransaction(accountId, gasPrice, gasLimit, destinationAddresss, amount, data, nonce) {
+        const json = await RNZumoKit.composeEthTransaction(
+            accountId,
+            '' + gasPrice,
+            '' + gasLimit,
+            destinationAddresss,
+            '' + amount,
+            data,
+            (nonce) ? '' + nonce : null
+        );
+
+        return new ComposedTransaction(json);
+    }
+
+    /**
+     * Composes a new Bitcoin transaction.
+     *
+     * @param {string} accountId
+     * @param {string} changeAccountId
+     * @param {string} destinationAddresss
+     * @param {string} amount
+     * @param {string} feeRate
+     * @returns
+     * @memberof Wallet
+     */
+    async composeBtcTransaction(accountId, changeAccountId, destinationAddresss, amount, feeRate) {
+        const json = await RNZumoKit.composeBtcTransaction(
+            accountId,
+            changeAccountId,
+            destinationAddresss,
+            '' + amount,
+            '' + feeRate
+        );
+
+        return new ComposedTransaction(json);
+    }
 
      /**
      * Submits transaction to Transaction Service
@@ -20,53 +72,38 @@ class Wallet {
     }
 
     /**
-     * Composes a new transaction on the Ethereum blockchain.
+     * Composes a new exchange
      *
-     * @param {string} accountId
-     * @param {string} gasPrice
-     * @param {string} gasLimit
-     * @param {string} to
-     * @param {string} value
-     * @param {string} data
-     * @param {number} nonce
+     * @param {string} fromAccountId
+     * @param {string} toAccountId
+     * @param {ExchangeRate} exchangeRate
+     * @param {ExchangeSettings} exchangeSettings
+     * @param {Decimal} amount
      * @returns
-     * @memberof Wallet
+     * @memberof ComposedExchange
      */
-    async composeEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonce) {
-        const json = await RNZumoKit.composeEthTransaction(
-            accountId,
-            '' + gasPrice,
-            '' + gasLimit,
-            to,
-            '' + value,
-            data,
-            (nonce) ? '' + nonce : null
+    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeSettings, amount) {
+        const json = await RNZumoKit.composeExchange(
+            fromAccountId,
+            toAccountId,
+            exchangeRate.json,
+            exchangeSettings.json,
+            amount.toString()
         );
 
-        return new ComposedTransaction(json);
+        return new ComposedExchange(json);
     }
 
     /**
-     * Composes a new Bitcoin transaction.
+     * Submits exchange to Transaction Service
      *
-     * @param {string} accountId
-     * @param {string} changeAccountId
-     * @param {string} to
-     * @param {string} value
-     * @param {string} feeRate
-     * @returns
+     * @param {ComposedExchange} composedExchange
+     * @returns {Exchange}
      * @memberof Wallet
      */
-    async composeBtcTransaction(accountId, changeAccountId, to, value, feeRate) {
-        const json = await RNZumoKit.composeBtcTransaction(
-            accountId,
-            changeAccountId,
-            to,
-            '' + value,
-            '' + feeRate
-        );
-
-        return new ComposedTransaction(json);
+    async submitExchange(composedExchange) {
+        const json = await RNZumoKit.submitExchange(composedExchange.json);
+        return new Exchange(json);
     }
 
     /**

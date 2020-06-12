@@ -58,13 +58,21 @@ export default class Account {
      */
     nonce;
 
+    /**
+     * JSON representation of Account object
+     *
+     * @memberof Account
+     */
+    json;
+
     constructor(json) {
+        this.json = json;
         if(json.id) this.id = json.id;
         if(json.path) this.path = json.path;
         if(json.symbol) this.symbol = json.symbol;
         if(json.coin) this.coin = json.coin;
         if(json.address) this.address = json.address;
-        if(json.balance) this.balance = new Decimal(json.balance);
+        if(json.balance) this.balance = json.balance;
         if(json.network) this.network = json.network;
         if(json.type) this.type = json.type;
         if(json.nonce) this.nonce = json.nonce;
