@@ -1,6 +1,7 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import User from './models/User';
-import Transaction from './models/Transaction';
+import Parser from './util/Parser';
+import { tryCatchProxy } from './ZKErrorProxy';
 
 const { RNZumoKit } = NativeModules;
 
@@ -21,7 +22,10 @@ class ZumoKit {
         authenticatedUser: null,
         accounts: [],
         transactions: [],
-        feeRates: null
+        exchanges: [],
+        feeRates: null,
+        exchangeRates: null,
+        exchangeSettings: null
     };
 
     /**
@@ -50,7 +54,7 @@ class ZumoKit {
      *
      * @memberof ZumoKit
      */
-    VERSION = RNZumoKit.VERSION;
+    version = RNZumoKit.version;
 
     /**
      * Initialise ZumoKit with the provided JSON config.
@@ -59,17 +63,21 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     init(config) {
-        const { apiKey, apiRoot, myRoot, txServiceUrl } = config;
-        RNZumoKit.init(apiKey, apiRoot, myRoot, txServiceUrl);
+        const { apiKey, apiRoot, txServiceUrl } = config;
+        RNZumoKit.init(apiKey, apiRoot, txServiceUrl);
 
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
-            console.log(state);
+            console.log('ZumoKitStateChanged');
 
-            if(state.accounts) this.state.accounts = state.accounts;
-            if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
-            if(state.exchangeRates) this.state.exchangeRates = JSON.parse(state.exchangeRates);
-            if(state.feeRates) this.state.feeRates = state.feeRates;
+            if(state.accounts) this.state.accounts = Parser.parseAccounts(state.accounts);
+            if(state.transactions) this.state.transactions = Parser.parseTransactions(state.transactions);
+            if(state.exchanges) this.state.exchanges = Parser.parseExchanges(state.exchanges);
+            if(state.exchangeRates) this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
+            if(state.feeRates) this.state.feeRates = Parser.parseFeeRates(state.feeRates);
+            if(state.exchangeSettings) this.state.exchangeSettings = Parser.parseExchangeSettings(state.exchangeSettings);
+
+            console.log(this.state);
 
             this._notifyStateListeners();
 
@@ -80,12 +88,11 @@ class ZumoKit {
      * Authenticates the user with ZumoKit.
      *
      * @param {string} token
-     * @param {object} headers
      * @returns
      * @memberof ZumoKit
      */
-    async auth(token, headers) {
-        const json = await RNZumoKit.auth(token, headers);
+    async getUser(token) {
+        const json = await RNZumoKit.getUser(token);
         const user = new User(json);
 
         this.state.authenticatedUser = user;
@@ -93,6 +100,16 @@ class ZumoKit {
         this._notifyStateListeners();
 
         return user;
+    }
+
+    /**
+     * Get historical exchange rates
+     *
+     * @returns ¯\_(ツ)_/¯
+     * @memberof ZumoKit
+     */
+    async getHistoricalExchangeRates() {
+        return RNZumoKit.getHistoricalExchangeRates();
     }
 
     /**
@@ -137,8 +154,10 @@ class ZumoKit {
      *
      * @memberof ZumoKit
      */
-    clear = RNZumoKit.clear;
+    async clear() {
+        await RNZumoKit.clear();
+    }
 
 }
 
-export default new ZumoKit();
+export default new (tryCatchProxy(ZumoKit))

@@ -1,11 +1,10 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
-import ZumoKit from '../ZumoKit';
 import Moment from 'moment-timezone';
 import { Decimal } from 'decimal.js';
-
 const { RNZumoKit } = NativeModules;
+import { tryCatchProxy } from '../ZKErrorProxy';
 
-export default class Transaction {
+class Transaction {
 
     /**
      * Unique identifier for the transaction
@@ -140,11 +139,18 @@ export default class Transaction {
     payload;
 
     /**
-     * The type of transaction. Either INCOMING or OUTGOING.
+     * The type of transaction. Either NORMAL or Exchange.
      *
      * @memberof Transaction
      */
     type;
+
+     /**
+     * The direction of transaction. Either INCOMING or OUTGOING.
+     *
+     * @memberof Transaction
+     */
+    direction;
 
     /**
      * The address to be displayed dependant on the type of transaction.
@@ -153,7 +159,7 @@ export default class Transaction {
      * @memberof Transaction
      */
     get address() {
-        return (this.type == 'INCOMING') ? this.fromAddress : this.toAddress;
+        return (this.direction == 'INCOMING') ? this.fromAddress : this.toAddress;
     }
 
     /**
@@ -163,7 +169,7 @@ export default class Transaction {
      * @memberof Transaction
      */
     get userId() {
-        return (this.type == 'INCOMING') ? this.fromUserId : this.toUserId;
+        return (this.direction == 'INCOMING') ? this.fromUserId : this.toUserId;
     }
 
     /**
@@ -180,10 +186,18 @@ export default class Transaction {
      */
     _transactionListener;
 
-    constructor(json) {
+    /**
+     * JSON representation of Account object
+     *
+     * @memberof Account
+     */
+    json;
 
+    constructor(json) {
+        this.json = json;
         if(json.id) this.id = json.id;
         if(json.type) this.type = json.type;
+        if(json.direction) this.direction = json.direction;
         if(json.txHash) this.txHash = json.txHash;
         if(json.accountId) this.accountId = json.accountId;
         if(json.symbol) this.symbol = json.symbol;
@@ -200,8 +214,8 @@ export default class Transaction {
         if(json.data) this.data = json.data;
         this.gasPrice = (json.gasPrice) ? new Decimal(json.gasPrice) : new Decimal(0);
         if(json.gasLimit) this.gasLimit = json.gasLimit;
-        if(json.cost) this.cost = json.cost;
-        if(json.fiatCost) this.cost = json.fiatCost;
+        if(json.fee) this.fee = json.fee;
+        if(json.fiatFee) this.fiatFee = json.fiatFee;
 
         if(json.timestamp) {
             this.timestamp = json.timestamp
@@ -241,3 +255,5 @@ export default class Transaction {
     }
 
 }
+
+export default (tryCatchProxy(Transaction))
