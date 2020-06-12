@@ -1,8 +1,9 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
+import ZumoKit from '../ZumoKit';
+import Moment from 'moment-timezone';
 import { Decimal } from 'decimal.js';
 const { RNZumoKit } = NativeModules;
 import { tryCatchProxy } from '../ZKErrorProxy';
-import { parseFiatValues } from '../utils/helpers';
 
 class Transaction {
 
@@ -27,7 +28,6 @@ class Transaction {
      */
     coin;
 
-
     /**
      * The symbol for the coin used to create the transaction
      *
@@ -43,18 +43,13 @@ class Transaction {
     timestamp;
 
     /**
+     * A `Moment` instance of the time that the transaction was created.
+     * Use `.tz()` to localise it to a timezone.
      *
-     *
+     * @readonly
      * @memberof Transaction
      */
-    submittedAt;
-
-    /**
-     *
-     *
-     * @memberof Transaction
-     */
-    confirmedAt;
+    time;
 
     /**
      * The address that sent the transaction
@@ -192,15 +187,8 @@ class Transaction {
      */
     _transactionListener;
 
-    /**
-     * JSON representation of Transaction object
-     *
-     * @memberof Transaction
-     */
-    json;
-
     constructor(json) {
-        this.json = json;
+
         if(json.id) this.id = json.id;
         if(json.type) this.type = json.type;
         if(json.direction) this.direction = json.direction;
@@ -215,16 +203,27 @@ class Transaction {
         if(json.toAddress) this.toAddress = json.toAddress;
         if(json.fromUserId) this.fromUserId = json.fromUserId;
         if(json.toUserId) this.toUserId = json.toUserId;
-        if(json.value) this.value = new Decimal(json.value);
-        if(json.fiatValue) this.fiatValue = parseFiatValues(json.fiatValue);
+        this.value = (json.value) ? new Decimal(json.value) : new Decimal(0);
+        if(json.fiatValue) this.fiatValue = json.fiatValue;
         if(json.data) this.data = json.data;
-        if(json.gasPrice) this.gasPrice = new Decimal(json.gasPrice);
-        if(json.gasLimit) this.gasLimit = parseInt(json.gasLimit);
-        if(json.fee) this.fee = new Decimal(json.fee);
-        if(json.fiatFee) this.fiatFee = parseFiatValues(json.fiatFee);
-        if(json.timestamp) this.timestamp = json.timestamp;
-        if(json.submittedAt) this.submittedAt = json.submittedAt;
-        if(json.confirmedAt) this.submittedAt = json.confirmedAt;
+        this.gasPrice = (json.gasPrice) ? new Decimal(json.gasPrice) : new Decimal(0);
+        if(json.gasLimit) this.gasLimit = json.gasLimit;
+        if(json.fee) this.fee = json.fee;
+        if(json.fiatFee) this.fiatFee = json.fiatFee;
+
+        if(json.timestamp) {
+            this.timestamp = json.timestamp
+            this.time = new Moment(json.timestamp, 'X');;
+        }
+
+        if(json.submittedAt) {
+            this.submittedAt = new Moment(json.submittedAt, 'X');;
+        }
+
+        if(json.confirmedAt) {
+            this.confirmedAt = new Moment(json.confirmedAt, 'X');;
+        }
+
     }
 
     async addListener(callback) {

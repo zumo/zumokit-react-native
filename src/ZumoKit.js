@@ -1,7 +1,7 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import User from './models/User';
+import Transaction from './models/Transaction';
 import { tryCatchProxy } from './ZKErrorProxy';
-import { parseAccounts, parseTransactions, parseExchangeRates, parseFeeRates, parseHistoricalExchangeRates } from './utils/helpers';
 
 const { RNZumoKit } = NativeModules;
 
@@ -66,13 +66,12 @@ class ZumoKit {
         this._stateListener = this._emitter.addListener('StateChanged', (state) => {
 
             console.log('ZumoKitStateChanged');
+            console.log(state);
 
-            if(state.accounts) this.state.accounts = parseAccounts(state.accounts);
-            if(state.transactions) this.state.transactions = parseTransactions(state.transactions);
-            if(state.exchangeRates) this.state.exchangeRates = parseExchangeRates(state.exchangeRates);
-            if(state.feeRates) this.state.feeRates = parseFeeRates(state.feeRates);
-
-            console.log(this.state);
+            if(state.accounts) this.state.accounts = state.accounts;
+            if(state.transactions) this.state.transactions = state.transactions.map((json) => new Transaction(json));
+            if(state.exchangeRates) this.state.exchangeRates = state.exchangeRates;
+            if(state.feeRates) this.state.feeRates = state.feeRates;
 
             this._notifyStateListeners();
 
@@ -104,8 +103,7 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     async getHistoricalExchangeRates() {
-        const json = RNZumoKit.getHistoricalExchangeRates();
-        return parseHistoricalExchangeRates(json);
+        return RNZumoKit.getHistoricalExchangeRates();
     }
 
     /**

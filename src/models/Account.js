@@ -1,7 +1,6 @@
 import { Decimal } from 'decimal.js';
-import { tryCatchProxy } from '../ZKErrorProxy';
 
-class Account {
+export default class Account {
 
     /**
      * Unique ID of the account
@@ -59,15 +58,7 @@ class Account {
      */
     nonce;
 
-    /**
-     * JSON representation of Account object
-     *
-     * @memberof Account
-     */
-    json;
-
     constructor(json) {
-        this.json = json;
         if(json.id) this.id = json.id;
         if(json.path) this.path = json.path;
         if(json.symbol) this.symbol = json.symbol;
@@ -80,5 +71,3 @@ class Account {
     }
 
 }
-
-export default (tryCatchProxy(Account))
