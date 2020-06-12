@@ -1,6 +1,6 @@
 function transformError(error) {
   let { code, message, userInfo } = error
-  let type = (userInfo && userInfo.type) ? userInfo.type : "zumo_kit_error"
+  let { type } = userInfo
   return { type, code, message }
 }
 
@@ -29,8 +29,7 @@ export function tryCatchProxy (superClass) {
   }
 
   for (const property in Object.getOwnPropertyDescriptors(prototype)) {
-      if (Object.prototype.hasOwnProperty.call(prototype, property) &&
-            property !== 'constructor' && typeof prototype[property] === 'function') {
+      if (Object.prototype.hasOwnProperty.call(prototype, property) && property !== 'constructor' && typeof prototype[property] === 'function') {
           superClass.prototype[property] = handler(superClass.prototype[property])
       }
   }
