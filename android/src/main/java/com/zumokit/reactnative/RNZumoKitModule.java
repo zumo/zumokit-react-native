@@ -1143,7 +1143,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     AccountType type = AccountType.valueOf(map.getString("type"));
     byte version = Integer.valueOf(map.getInt("version")).byteValue();
 
-    return new Account(accountId, path, symbol, coin, address, balance, nonce, network, type, version);
+    return new Account(accountId, path, symbol, coin, address, balance, nonce, network, type, null, version);
   }
 
   public static ExchangeRate unboxExchangeRate(ReadableMap map) {
