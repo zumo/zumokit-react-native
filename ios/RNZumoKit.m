@@ -498,18 +498,6 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     resolve(mnemonic);
 }
 
-RCT_EXPORT_METHOD(maxSpendableEth:(NSString *)accountId gasPrice:(NSString *)gasPrice gasLimit:(NSString *)gasLimit resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    NSString *max = [_wallet maxSpendableEth:accountId gasPrice:gasPrice gasLimit:gasLimit];
-    resolve(max);
-}
-
-RCT_EXPORT_METHOD(maxSpendableBtc:(NSString *)accountId to:(NSString *)to feeRate:(NSString *)feeRate resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    NSString *max = [_wallet maxSpendableBtc:accountId to:to feeRate:feeRate];
-    resolve(max);
-}
-
 RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     _user = NULL;

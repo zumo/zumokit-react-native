@@ -707,22 +707,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void maxSpendableEth(String accountId, String gasPrice, String gasLimit, Promise promise) {
-
-    String max = this.wallet.maxSpendableEth(accountId, gasPrice, gasLimit);
-    promise.resolve(max);
-
-  }
-
-  @ReactMethod
-  public void maxSpendableBtc(String accountId, String to, String feeRate, Promise promise) {
-
-    String max = this.wallet.maxSpendableBtc(accountId, to, feeRate);
-    promise.resolve(max);
-
-  }
-
-  @ReactMethod
   public void clear(Promise promise) {
 
     this.user = null;
