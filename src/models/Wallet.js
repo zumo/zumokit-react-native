@@ -22,7 +22,7 @@ class Wallet {
      * @returns
      * @memberof Wallet
      */
-    async composeEthTransaction(accountId, gasPrice, gasLimit, destinationAddresss, amount, data, nonce, sendMax) {
+    async composeEthTransaction(accountId, gasPrice, gasLimit, destinationAddresss, amount, data, nonce, sendMax = false) {
         const json = await RNZumoKit.composeEthTransaction(
             accountId,
             '' + gasPrice,
@@ -49,7 +49,7 @@ class Wallet {
      * @returns
      * @memberof Wallet
      */
-    async composeBtcTransaction(accountId, changeAccountId, destinationAddresss, amount, feeRate, sendMax) {
+    async composeBtcTransaction(accountId, changeAccountId, destinationAddresss, amount, feeRate, sendMax = false) {
         const json = await RNZumoKit.composeBtcTransaction(
             accountId,
             changeAccountId,
@@ -87,7 +87,7 @@ class Wallet {
      * @returns
      * @memberof ComposedExchange
      */
-    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeSettings, amount, sendMax) {
+    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeSettings, amount, sendMax = false) {
         const json = await RNZumoKit.composeExchange(
             fromAccountId,
             toAccountId,
