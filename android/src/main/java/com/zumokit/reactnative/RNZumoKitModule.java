@@ -109,7 +109,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   // - Authentication
 
   @ReactMethod
-  public void getUser(String token, Promise promise) {
+  public void getUser(String tokenSet, Promise promise) {
 
     if(this.zumoKit == null) {
       rejectPromise(promise, "ZumoKit not initialized.");
@@ -118,7 +118,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     RNZumoKitModule module = this;
 
-    this.zumoKit.getUser(token, new UserCallback() {
+    this.zumoKit.getUser(tokenSet, new UserCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -318,7 +318,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void composeEthTransaction(String accountId, String gasPrice, String gasLimit, String to, String value, String data, String nonce, Promise promise) {
+  public void composeEthTransaction(String accountId, String gasPrice, String gasLimit, String to, String value, String data, String nonce, Boolean sendMax, Promise promise) {
 
     if(this.wallet == null) {
       rejectPromise(promise, "Wallet not found.");
@@ -330,7 +330,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       nonceValue = Long.parseLong(nonce);
     }
 
-    this.wallet.composeEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonceValue, new ComposeTransactionCallback() {
+    this.wallet.composeEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonceValue, sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -348,14 +348,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void composeBtcTransaction(String accountId, String changeAccountId, String to, String value, String feeRate, Promise promise) {
+  public void composeBtcTransaction(String accountId, String changeAccountId, String to, String value, String feeRate, Boolean sendMax, Promise promise) {
 
     if(this.wallet == null) {
       rejectPromise(promise, "Wallet not found.");
       return;
     }
 
-    this.wallet.composeBtcTransaction(accountId, changeAccountId, to, value, feeRate, new ComposeTransactionCallback() {
+    this.wallet.composeBtcTransaction(accountId, changeAccountId, to, value, feeRate, sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -373,7 +373,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void composeExchange(String fromAccountId, String toAccountId, ReadableMap exchangeRate, ReadableMap exchangeSettings, String amount, Promise promise) {
+  public void composeExchange(String fromAccountId, String toAccountId, ReadableMap exchangeRate, ReadableMap exchangeSettings, String amount, Boolean sendMax, Promise promise) {
     if(this.wallet == null) {
       rejectPromise(promise, "Wallet not found.");
       return;
@@ -382,7 +382,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     ExchangeRate rate = RNZumoKitModule.unboxExchangeRate(exchangeRate);
     ExchangeSettings settings = RNZumoKitModule.unboxExchangeSettings(exchangeSettings);
 
-    this.wallet.composeExchange(fromAccountId, toAccountId, rate, settings, amount, new ComposeExchangeCallback() {
+    this.wallet.composeExchange(fromAccountId, toAccountId, rate, settings, amount, sendMax, new ComposeExchangeCallback() {
       @Override
       public void onError(Exception e) {
         rejectPromise(promise, e);
@@ -703,22 +703,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       .weiToEth(wei);
 
     promise.resolve(eth);
-
-  }
-
-  @ReactMethod
-  public void maxSpendableEth(String accountId, String gasPrice, String gasLimit, Promise promise) {
-
-    String max = this.wallet.maxSpendableEth(accountId, gasPrice, gasLimit);
-    promise.resolve(max);
-
-  }
-
-  @ReactMethod
-  public void maxSpendableBtc(String accountId, String to, String feeRate, Promise promise) {
-
-    String max = this.wallet.maxSpendableBtc(accountId, to, feeRate);
-    promise.resolve(max);
 
   }
 
@@ -1159,7 +1143,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     AccountType type = AccountType.valueOf(map.getString("type"));
     byte version = Integer.valueOf(map.getInt("version")).byteValue();
 
-    return new Account(accountId, path, symbol, coin, address, balance, nonce, network, type, version);
+    return new Account(accountId, path, symbol, coin, address, balance, nonce, network, type, null, version);
   }
 
   public static ExchangeRate unboxExchangeRate(ReadableMap map) {

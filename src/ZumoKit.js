@@ -70,12 +70,12 @@ class ZumoKit {
 
             console.log('ZumoKitStateChanged');
 
-            if(state.accounts) this.state.accounts = Parser.parseAccounts(state.accounts);
-            if(state.transactions) this.state.transactions = Parser.parseTransactions(state.transactions);
-            if(state.exchanges) this.state.exchanges = Parser.parseExchanges(state.exchanges);
-            if(state.exchangeRates) this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
-            if(state.feeRates) this.state.feeRates = Parser.parseFeeRates(state.feeRates);
-            if(state.exchangeSettings) this.state.exchangeSettings = Parser.parseExchangeSettings(state.exchangeSettings);
+            if (state.accounts) this.state.accounts = Parser.parseAccounts(state.accounts);
+            if (state.transactions) this.state.transactions = Parser.parseTransactions(state.transactions);
+            if (state.exchanges) this.state.exchanges = Parser.parseExchanges(state.exchanges);
+            if (state.exchangeRates) this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
+            if (state.feeRates) this.state.feeRates = Parser.parseFeeRates(state.feeRates);
+            if (state.exchangeSettings) this.state.exchangeSettings = Parser.parseExchangeSettings(state.exchangeSettings);
 
             console.log(this.state);
 
@@ -87,12 +87,12 @@ class ZumoKit {
     /**
      * Authenticates the user with ZumoKit.
      *
-     * @param {string} token
+     * @param {Object} tokenSet
      * @returns
      * @memberof ZumoKit
      */
-    async getUser(token) {
-        const json = await RNZumoKit.getUser(token);
+    async getUser(tokenSet) {
+        const json = await RNZumoKit.getUser(JSON.stringify(tokenSet));
         const user = new User(json);
 
         this.state.authenticatedUser = user;
@@ -120,7 +120,7 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     addStateListener(callback) {
-        if(this._listeners.includes(callback)) return;
+        if (this._listeners.includes(callback)) return;
         this._listeners.push(callback);
         callback(this.state);
     }
@@ -133,7 +133,7 @@ class ZumoKit {
      * @memberof ZumoKit
      */
     removeStateListener(callback) {
-        if(!this._listeners.includes(callback)) return;
+        if (!this._listeners.includes(callback)) return;
         const index = this._listeners.indexOf(callback);
         this._listeners.splice(index, 1);
     }
