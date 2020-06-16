@@ -18,18 +18,20 @@ class Wallet {
      * @param {string} amount
      * @param {string} data
      * @param {number} nonce
+     * @param {Boolean} sendMax
      * @returns
      * @memberof Wallet
      */
-    async composeEthTransaction(accountId, gasPrice, gasLimit, destinationAddresss, amount, data, nonce) {
+    async composeEthTransaction(accountId, gasPrice, gasLimit, destinationAddresss, amount, data, nonce, sendMax = false) {
         const json = await RNZumoKit.composeEthTransaction(
             accountId,
             '' + gasPrice,
             '' + gasLimit,
             destinationAddresss,
-            '' + amount,
+            (amount) ? '' + amount : null,
             data,
-            (nonce) ? '' + nonce : null
+            (nonce) ? '' + nonce : null,
+            sendMax
         );
 
         return new ComposedTransaction(json);
@@ -43,28 +45,30 @@ class Wallet {
      * @param {string} destinationAddresss
      * @param {string} amount
      * @param {string} feeRate
+     * @param {Boolean} sendMax
      * @returns
      * @memberof Wallet
      */
-    async composeBtcTransaction(accountId, changeAccountId, destinationAddresss, amount, feeRate) {
+    async composeBtcTransaction(accountId, changeAccountId, destinationAddresss, amount, feeRate, sendMax = false) {
         const json = await RNZumoKit.composeBtcTransaction(
             accountId,
             changeAccountId,
             destinationAddresss,
-            '' + amount,
-            '' + feeRate
+            (amount) ? '' + amount : null,
+            '' + feeRate,
+            sendMax
         );
 
         return new ComposedTransaction(json);
     }
 
-     /**
-     * Submits transaction to Transaction Service
-     *
-     * @param {ComposedTransaction} composedTransaction
-     * @returns {Transaction}
-     * @memberof Wallet
-     */
+    /**
+    * Submits transaction to Transaction Service
+    *
+    * @param {ComposedTransaction} composedTransaction
+    * @returns {Transaction}
+    * @memberof Wallet
+    */
     async submitTransaction(composedTransaction) {
         const json = await RNZumoKit.submitTransaction(composedTransaction.json);
 
@@ -79,16 +83,18 @@ class Wallet {
      * @param {ExchangeRate} exchangeRate
      * @param {ExchangeSettings} exchangeSettings
      * @param {Decimal} amount
+     * @param {Boolean} sendMax
      * @returns
      * @memberof ComposedExchange
      */
-    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeSettings, amount) {
+    async composeExchange(fromAccountId, toAccountId, exchangeRate, exchangeSettings, amount, sendMax = false) {
         const json = await RNZumoKit.composeExchange(
             fromAccountId,
             toAccountId,
             exchangeRate.json,
             exchangeSettings.json,
-            amount.toString()
+            amount ? amount.toString() : null,
+            sendMax
         );
 
         return new ComposedExchange(json);
@@ -104,32 +110,6 @@ class Wallet {
     async submitExchange(composedExchange) {
         const json = await RNZumoKit.submitExchange(composedExchange.json);
         return new Exchange(json);
-    }
-
-    /**
-     * Returns the maxmimum amount of Ethereum that can be spent.
-     *
-     * @param {string} accountId
-     * @param {string} gasPrice
-     * @param {string} gasLimit
-     * @returns
-     * @memberof Wallet
-     */
-    async maxSpendableEth(accountId, gasPrice, gasLimit) {
-        return RNZumoKit.maxSpendableEth(accountId, gasPrice, gasLimit);
-    }
-
-    /**
-     * Returns the maximum amount of Bitcoin that can be spent.
-     *
-     * @param {string} accountId
-     * @param {string} to
-     * @param {string} feeRate
-     * @returns
-     * @memberof Wallet
-     */
-    async maxSpendableBtc(accountId, to, feeRate) {
-        return RNZumoKit.maxSpendableBtc(accountId, to, feeRate);
     }
 
 }
