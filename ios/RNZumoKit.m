@@ -425,11 +425,7 @@ RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type
 {
 
     @try {
-
-        ZKNetworkType networkType = [self  unboxNetworkType:network];
-        ZKAccountType accountType = [self unboxAccountType:type];
-
-        ZKAccount * account = [_user getAccount:symbol network:networkType type:accountType];
+        ZKAccount * account = [_user getAccount:symbol network:network type:type];
 
         if(account) {
             resolve([self mapAccount:account]);
@@ -459,12 +455,7 @@ RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseReso
 
 RCT_EXPORT_METHOD(isValidBtcAddress:(NSString *)address network:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    ZKNetworkType networkType = ZKNetworkTypeMAINNET;
-    if([network isEqualToString:@"TESTNET"]) {
-        networkType = ZKNetworkTypeTESTNET;
-    }
-
-    BOOL isValid = [[_zumoKit utils] isValidBtcAddress:address network:networkType];
+    BOOL isValid = [[_zumoKit utils] isValidBtcAddress:address network:network];
     resolve(@(isValid));
 }
 
@@ -520,61 +511,34 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
 }
 
-- (NSString *)mapNetworkType:(ZKNetworkType)network {
-
-    switch (network) {
-        case ZKNetworkTypeMAINNET:
-            return @"MAINNET";
-
-        case ZKNetworkTypeROPSTEN:
-            return @"ROPSTEN";
-
-        case ZKNetworkTypeRINKEBY:
-            return @"RINKEBY";
-
-        case ZKNetworkTypeGOERLI:
-            return @"GOERLI";
-
-        case ZKNetworkTypeKOVAN:
-            return @"KOVAN";
-
-        default:
-            return @"TESTNET";
-
-    }
-
-}
-
-
-- (NSString *)mapAccountType:(ZKAccountType)accountType {
-
-    switch (accountType) {
-        case ZKAccountTypeCOMPATIBILITY:
-            return @"COMPATIBILITY";
-
-        case ZKAccountTypeSEGWIT:
-            return @"SEGWIT";
-
-        default:
-            return @"STANDARD";
-
-    }
-
-}
-
 - (NSDictionary *)mapAccount:(ZKAccount *)account {
+
+    NSMutableDictionary *cryptoProperties = [[NSMutableDictionary alloc] init];
+    if ([account cryptoProperties]){
+        cryptoProperties[@"path"] = account.cryptoProperties.path;
+        cryptoProperties[@"address"] = account.cryptoProperties.address;
+        cryptoProperties[@"nonce"] = account.cryptoProperties.nonce ? account.cryptoProperties.nonce : [NSNull null];
+        cryptoProperties[@"utxoPool"] = account.cryptoProperties.utxoPool ? account.cryptoProperties.utxoPool : [NSNull null];
+        cryptoProperties[@"version"] = [[NSNumber alloc] initWithChar:[account.cryptoProperties version]];
+    }
+
+    NSMutableDictionary *fiatProperties = [[NSMutableDictionary alloc] init];
+    if ([account fiatProperties]){
+        fiatProperties[@"accountNumber"] = account.fiatProperties.accountNumber ? account.fiatProperties.accountNumber : [NSNull null];
+        fiatProperties[@"sortCode"] = account.fiatProperties.sortCode ? account.fiatProperties.sortCode : [NSNull null];
+        fiatProperties[@"bic"] = account.fiatProperties.bic ? account.fiatProperties.bic : [NSNull null];
+        fiatProperties[@"iban"] = account.fiatProperties.iban ? account.fiatProperties.iban : [NSNull null];
+    }
 
     NSDictionary *dict = @{
         @"id": [account id],
-        @"path": [account path],
-        @"symbol": [account symbol],
-        @"coin": [account coin],
-        @"address": [account address],
+        @"currencyType": [account currencyType],
+        @"currencyCode": [account currencyCode],
+        @"network": [account network],
+        @"type": [account type],
         @"balance": [account balance],
-        @"nonce": [account nonce] ? [account nonce] : [NSNull null],
-        @"network": [self mapNetworkType:[account network]],
-        @"type": [self mapAccountType:[account type]],
-        @"version": [[NSNumber alloc] initWithChar:[account version]]
+        @"cryptoProperties": [account cryptoProperties] ? cryptoProperties : [NSNull null],
+        @"fiatProperties": [account fiatProperties] ? fiatProperties : [NSNull null]
     };
 
     return dict;
@@ -676,7 +640,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"accountId": [transaction accountId],
         @"symbol": [transaction symbol],
         @"coin": [transaction coin],
-        @"network": [self mapNetworkType:[transaction network]],
+        @"network": [transaction network],
         @"status": status,
         @"fromAddress": [transaction fromAddress],
         @"toAddress": [transaction toAddress],
@@ -812,9 +776,8 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     NSMutableDictionary *depositAddress = [[NSMutableDictionary alloc] init];
 
-    [[exchangeSettings depositAddress] enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, NSString * _Nonnull value, BOOL * _Nonnull stop) {
-        ZKNetworkType networkType = (ZKNetworkType) [key intValue];
-        depositAddress[[self mapNetworkType:networkType]] = value;
+    [[exchangeSettings depositAddress] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull network, NSString * _Nonnull address, BOOL * _Nonnull stop) {
+        depositAddress[network] = address;
     }];
 
     return @{
@@ -874,53 +837,40 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
 #pragma mark - Unboxing
 
-- (ZKNetworkType)unboxNetworkType:(NSString *)network {
-    if ([network isEqualToString:@"MAINNET"])
-        return ZKNetworkTypeMAINNET;
-    else if ([network isEqualToString:@"ROPSTEN"])
-        return ZKNetworkTypeROPSTEN;
-    else if ([network isEqualToString:@"RINKEBY"])
-        return ZKNetworkTypeRINKEBY;
-    else if ([network isEqualToString:@"GOERLI"])
-        return ZKNetworkTypeGOERLI;
-    else if ([network isEqualToString:@"KOVAN"])
-        return ZKNetworkTypeKOVAN;
-    else if ([network isEqualToString:@"TESTNET"])
-        return ZKNetworkTypeTESTNET;
-    else {
-        @throw [NSException exceptionWithName:ZKZumoKitErrorCodeINVALIDNETWORKTYPE
-                                       reason:@"Network type not supported."
-                                     userInfo:nil];
-    }
-}
-
-- (ZKAccountType)unboxAccountType:(NSString *)type {
-    if ([type isEqualToString:@"STANDARD"])
-        return ZKAccountTypeSTANDARD;
-    else if ([type isEqualToString:@"COMPATIBILITY"])
-        return ZKAccountTypeCOMPATIBILITY;
-    else if ([type isEqualToString:@"SEGWIT"])
-        return ZKAccountTypeSEGWIT;
-    else {
-        @throw [NSException exceptionWithName:ZKZumoKitErrorCodeINVALIDACCOUNTTYPE
-                                       reason:@"Account type not supported."
-                                     userInfo:nil];
-    }
-}
-
 - (ZKAccount *)unboxAccount:(NSDictionary *)accountData {
-    NSString *accountId = accountData[@"id"];
-    NSString *accountPath = accountData[@"path"];
-    NSString *accountSymbol = accountData[@"symbol"];
-    NSString *accountCoin = accountData[@"coin"];
-    NSString *accountAddress = accountData[@"address"];
-    NSString *accountBalance = accountData[@"balance"];
-    NSNumber *accountNonce = (accountData[@"nonce"] == [NSNull null]) ? NULL : accountData[@"nonce"];
-    NSNumber *accountVersion = accountData[@"version"];
-    ZKNetworkType accountNetwork = [self unboxNetworkType:accountData[@"network"]];
-    ZKAccountType accountType = [self unboxAccountType:accountData[@"type"]];
+    ZKCryptoProperties *cryptoProperties;
+    if (accountData[@"cryptoProperties"] != [NSNull null]){
+        NSDictionary *cryptoPropertiesData = accountData[@"cryptoProperties"];
 
-    return [[ZKAccount alloc] initWithId:accountId path:accountPath symbol:accountSymbol coin:accountCoin address:accountAddress balance:accountBalance nonce:accountNonce network:accountNetwork type:accountType utxoPool:NULL version:accountVersion.charValue];
+        NSString *accountAddress = cryptoPropertiesData[@"address"];
+        NSString *accountPath = cryptoPropertiesData[@"path"];
+        NSNumber *accountNonce = (cryptoPropertiesData[@"nonce"] == [NSNull null]) ? NULL : cryptoPropertiesData[@"nonce"];
+        NSString *accountUtxoPool = (cryptoPropertiesData[@"utxoPool"] == [NSNull null]) ? NULL : cryptoPropertiesData[@"utxoPool"];
+        NSNumber *accountVersion = cryptoPropertiesData[@"version"];
+
+        cryptoProperties = [[ZKCryptoProperties alloc] initWithAddress:accountAddress path:accountPath nonce:accountNonce utxoPool:accountUtxoPool version:accountVersion.charValue];
+    }
+
+    ZKFiatProperties *fiatProperties;
+    if (accountData[@"fiatProperties"] != [NSNull null]){
+        NSDictionary *fiatPropertiesData = accountData[@"fiatProperties"];
+
+        NSString *accountNumber = (fiatPropertiesData[@"accountNumber"] == [NSNull null]) ? NULL : fiatPropertiesData[@"accountNumber"];
+        NSString *sortCode = (fiatPropertiesData[@"sortCode"] == [NSNull null]) ? NULL : fiatPropertiesData[@"sortCode"];
+        NSString *bic = (fiatPropertiesData[@"bic"] == [NSNull null]) ? NULL : fiatPropertiesData[@"bic"];
+        NSString *iban = (fiatPropertiesData[@"iban"] == [NSNull null]) ? NULL : fiatPropertiesData[@"iban"];
+
+        fiatProperties = [[ZKFiatProperties alloc] initWithAccountNumber:accountNumber sortCode:sortCode bic:bic iban:iban];
+    }
+
+    NSString *accountId = accountData[@"id"];
+    NSString *accountCurrencyType = accountData[@"currencyType"];
+    NSString *accountCurrencyCode = accountData[@"currencyCode"];
+    NSString *accountNetwork = accountData[@"network"];
+    NSString *accountType = accountData[@"type"];
+    NSString *accountBalance = accountData[@"balance"];
+
+    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:accountBalance cryptoProperties:cryptoProperties fiatProperties:fiatProperties];
 }
 
 - (ZKExchangeRate *)unboxExchangeRate:(NSDictionary *)exchangeRate {
@@ -948,9 +898,8 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     NSMutableDictionary *depositAddress = [[NSMutableDictionary alloc] init];
 
     NSDictionary *depositAddressMap = exchangeSettings[@"depositAddress"];
-    [depositAddressMap enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull value, BOOL * _Nonnull stop) {
-        ZKNetworkType networkType = [self unboxNetworkType:key];
-        depositAddress[@(networkType)] = value;
+    [depositAddressMap enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull network, NSString * _Nonnull address, BOOL * _Nonnull stop) {
+        depositAddress[network] = address;
     }];
 
     return [[ZKExchangeSettings alloc] initWithId:exchangeSettingsId depositAddress:depositAddress depositCurrency:exchangeSettingsDepositCurrency withdrawCurrency:exchangeSettingsWithdrawCurrency minExchangeAmount:minExchangeAmount feeRate:exchangeSettingsFeeRate depositFeeRate:exchangeSettingsDepositFeeRate withdrawFee:exchangeSettingsWithdrawFee timestamp:exchangeSettingsTimestamp.longLongValue];
