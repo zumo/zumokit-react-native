@@ -232,6 +232,65 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)password resolver:(RCTPromiseResolveB
 
 }
 
+RCT_EXPORT_METHOD(isModulrCustomer:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        if ([_user isModulrCustomer:network]){
+            resolve(@(YES));
+        } else {
+            resolve(@(NO));
+        }
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(makeModulrCustomer:(NSString *)network data:(NSDictionary *)data resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        NSString *firstName = data[@"firstName"];
+        NSString *middleName = data[@"middleName"];
+        NSString *lastName = data[@"lastName"];
+        NSString *dateOfBirth = data[@"dateOfBirth"];
+        NSString *email = data[@"email"];
+        NSString *phone = data[@"phone"];
+        NSString *addressLine1 = data[@"addressLine1"];
+        NSString *addressLine2 = data[@"addressLine2"];
+        NSString *country = data[@"country"];
+        NSString *postCode = data[@"postCode"];
+        NSString *postTown = data[@"postTown"];
+
+        [_user makeModulrCustomer:network firstName:firstName middleName:middleName lastName:lastName dateOfBirth:dateOfBirth email:email phone:phone addressLine1:addressLine1 addressLine2:addressLine2 country:country postCode:postCode postTown:postTown completion:^(NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve(@(YES));
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(createFiatAccount:(NSString *)network currencyCode:(NSString *)currencyCode resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user createFiatAccount:network currencyCode:currencyCode completion:^(ZKAccount * _Nullable account, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapAccount:account]);
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
 RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
