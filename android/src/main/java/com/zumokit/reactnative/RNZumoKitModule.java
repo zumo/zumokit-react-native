@@ -16,10 +16,13 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import money.zumo.zumokit.ComposeExchangeCallback;
 import money.zumo.zumokit.ComposedExchange;
+import money.zumo.zumokit.CryptoProperties;
 import money.zumo.zumokit.Exchange;
 import money.zumo.zumokit.ExchangeSettings;
+import money.zumo.zumokit.FiatProperties;
 import money.zumo.zumokit.HistoricalExchangeRatesCallback;
 import money.zumo.zumokit.SubmitExchangeCallback;
+import money.zumo.zumokit.SuccessCallback;
 import money.zumo.zumokit.ZumoKit;
 import money.zumo.zumokit.ZumoKitErrorType;
 import money.zumo.zumokit.ZumoKitErrorCode;
@@ -37,19 +40,13 @@ import money.zumo.zumokit.SubmitTransactionCallback;
 import money.zumo.zumokit.StateListener;
 import money.zumo.zumokit.UserListener;
 import money.zumo.zumokit.TransactionListener;
-import money.zumo.zumokit.AccountType;
-import money.zumo.zumokit.NetworkType;
+import money.zumo.zumokit.AccountCallback;
 import money.zumo.zumokit.FeeRates;
 import money.zumo.zumokit.ExchangeRate;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
-import android.util.Log;
-
 import java.util.Map;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.Date;
 import java.util.HashMap;
 
 public class RNZumoKitModule extends ReactContextBaseJavaModule {
@@ -204,6 +201,68 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void isModulrCustomer(String network, Promise promise) {
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
+      return;
+    }
+
+    promise.resolve(this.user.isModulrCustomer(network));
+  }
+
+  @ReactMethod
+  public void makeModulrCustomer(String network, ReadableMap map, Promise promise) {
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
+      return;
+    }
+
+    String firstName = map.getString("firstName");
+    String middleName =  map.getString("middleName");
+    String lastName = map.getString("lastName");
+    String dateOfBirth =  map.getString("dateOfBirth");
+    String email =  map.getString("email");
+    String phone = map.getString("phone");
+    String addressLine1 = map.getString("addressLine1");
+    String addressLine2 = map.getString("addressLine2");
+    String country = map.getString("country");
+    String postCode = map.getString("postCode");
+    String postTown = map.getString("postTown");
+
+    this.user.makeModulrCustomer(network, firstName, middleName, lastName, dateOfBirth, email, phone, addressLine1, addressLine2, country, postCode, postTown, new SuccessCallback() {
+      @Override
+      public void onError(Exception e) {
+        rejectPromise(promise, e);
+      }
+
+      @Override
+      public void onSuccess() {
+        promise.resolve(true);
+      }
+    });
+  }
+
+  @ReactMethod
+  public void createFiatAccount(String network, String currencyCode, Promise promise) {
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
+      return;
+    }
+
+    this.user.createFiatAccount(network, currencyCode, new AccountCallback() {
+      @Override
+      public void onError(Exception e) {
+        rejectPromise(promise, e);
+      }
+
+      @Override
+      public void onSuccess(Account account) {
+        promise.resolve(mapAccount(account));
+      }
+    });
+  }
+
+  @ReactMethod
   public void revealMnemonic(String password, Promise promise) {
 
     if(this.user == null) {
@@ -235,10 +294,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    NetworkType network_type = NetworkType.valueOf(network);
-    AccountType account_type = AccountType.valueOf(type);
-
-    Account account = this.user.getAccount(symbol, network_type, account_type);
+    Account account = this.user.getAccount(symbol, network, type);
 
     if (account == null) {
       rejectPromise(promise, "Account not found.");
@@ -657,8 +713,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   public void isValidBtcAddress(String address, String network, Promise promise) {
 
     try {
-      Boolean valid = this.zumoKit.utils()
-        .isValidBtcAddress(address, NetworkType.valueOf(network));
+      Boolean valid = this.zumoKit.utils().isValidBtcAddress(address, network);
       promise.resolve(valid);
     } catch (Exception e) {
       rejectPromise(promise, e);
@@ -742,25 +797,75 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
   public static WritableMap mapAccount(Account account) {
 
-      WritableMap map = Arguments.createMap();
+    WritableMap cryptoProperties = Arguments.createMap();
+    if (account.getCryptoProperties() != null) {
+      cryptoProperties.putString("path", account.getCryptoProperties().getPath());
+      cryptoProperties.putString("address", account.getCryptoProperties().getAddress());
 
-      map.putString("id", account.getId());
-      map.putString("path", account.getPath());
-      map.putString("symbol", account.getSymbol());
-      map.putString("coin", account.getCoin());
-      map.putString("address", account.getAddress());
-      map.putString("balance", account.getBalance());
-      map.putString("network", account.getNetwork().toString());
-      map.putString("type", account.getType().toString());
-      map.putInt("version", account.getVersion());
-
-      if (account.getNonce() == null) {
-        map.putNull("nonce");
+      if (account.getCryptoProperties().getNonce() == null) {
+        cryptoProperties.putNull("nonce");
       } else {
-        map.putInt("nonce", account.getNonce().intValue());
+        cryptoProperties.putInt("nonce", account.getCryptoProperties().getNonce().intValue());
       }
 
-      return map;
+      if (account.getCryptoProperties().getNonce() == null) {
+        cryptoProperties.putNull("nonce");
+      } else {
+        cryptoProperties.putInt("nonce", account.getCryptoProperties().getNonce().intValue());
+      }
+
+      cryptoProperties.putInt("version", account.getCryptoProperties().getVersion());
+    }
+
+    WritableMap fiatProperties = Arguments.createMap();
+    if (account.getFiatProperties() != null) {
+      if (account.getFiatProperties().getAccountNumber() == null) {
+        fiatProperties.putNull("accountNumber");
+      } else {
+        fiatProperties.putString("accountNumber", account.getFiatProperties().getAccountNumber());
+      }
+
+      if (account.getFiatProperties().getSortCode() == null) {
+        fiatProperties.putNull("sortCode");
+      } else {
+        fiatProperties.putString("sortCode", account.getFiatProperties().getSortCode());
+      }
+
+      if (account.getFiatProperties().getBic() == null) {
+        fiatProperties.putNull("bic");
+      } else {
+        fiatProperties.putString("bic", account.getFiatProperties().getBic());
+      }
+
+      if (account.getFiatProperties().getIban() == null) {
+        fiatProperties.putNull("iban");
+      } else {
+        fiatProperties.putString("iban", account.getFiatProperties().getIban());
+      }
+    }
+
+    WritableMap map = Arguments.createMap();
+
+    map.putString("id", account.getId());
+    map.putString("currencyType", account.getCurrencyType());
+    map.putString("currencyCode", account.getCurrencyCode());
+    map.putString("network", account.getNetwork());
+    map.putString("type", account.getType());
+    map.putString("balance", account.getBalance());
+
+    if (account.getCryptoProperties() == null) {
+      map.putNull("cryptoProperties");
+    } else {
+      map.putMap("cryptoProperties", cryptoProperties);
+    }
+
+    if (account.getFiatProperties() == null) {
+      map.putNull("fiatProperties");
+    } else {
+      map.putMap("fiatProperties", fiatProperties);
+    }
+
+    return map;
 
   }
 
@@ -1127,23 +1232,44 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   public static Account unboxAccount(ReadableMap map) {
-    String accountId = map.getString("id");
-    String path = map.getString("path");
-    String symbol = map.getString("symbol");
-    String coin = map.getString("coin");
-    String address = map.getString("address");
-    String balance = map.getString("balance");
+    CryptoProperties cryptoProperties = null;
+    if(!map.isNull("cryptoProperties")) {
+      ReadableMap cryptoPropertiesData = map.getMap("cryptoProperties");
 
-    Long nonce = null;
-    if(!map.isNull("nonce")) {
-      nonce = Long.valueOf(map.getInt("nonce"));
+      String address = cryptoPropertiesData.getString("address");
+      String path = cryptoPropertiesData.getString("path");
+
+      Long nonce = null;
+      if(!cryptoPropertiesData.isNull("nonce")) {
+        nonce = Long.valueOf(cryptoPropertiesData.getInt("nonce"));
+      }
+
+      String utxoPool =  cryptoPropertiesData.getString("utxoPool");;
+      byte version = Integer.valueOf(map.getInt("version")).byteValue();
+
+      cryptoProperties = new CryptoProperties(address, path, nonce, utxoPool, version);
     }
 
-    NetworkType network = NetworkType.valueOf(map.getString("network"));
-    AccountType type = AccountType.valueOf(map.getString("type"));
-    byte version = Integer.valueOf(map.getInt("version")).byteValue();
+    FiatProperties fiatProperties = null;
+    if(!map.isNull("fiatProperties")) {
+      ReadableMap cryptoPropertiesData = map.getMap("fiatProperties");
 
-    return new Account(accountId, path, symbol, coin, address, balance, nonce, network, type, null, version);
+      String accountNumber = cryptoPropertiesData.getString("accountNumber");
+      String sortCode = cryptoPropertiesData.getString("sortCode");
+      String bic = cryptoPropertiesData.getString("bic");
+      String iban = cryptoPropertiesData.getString("iban");
+
+      fiatProperties = new FiatProperties(accountNumber, sortCode, bic, iban);
+    }
+
+    String accountId = map.getString("id");
+    String currencyType = map.getString("currencyType");
+    String currencyCode = map.getString("currencyCode");
+    String network = map.getString("network");
+    String type = map.getString("type");
+    String balance = map.getString("balance");
+
+    return new Account(accountId, currencyType, currencyCode, network, type, balance, cryptoProperties, fiatProperties);
   }
 
   public static ExchangeRate unboxExchangeRate(ReadableMap map) {
@@ -1167,15 +1293,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String withdrawFee = map.getString("withdrawFee");
     long timestamp = map.getInt("timestamp");
 
-    HashMap<NetworkType, String> depositAddress = new HashMap<NetworkType, String>();
+    HashMap<String, String> depositAddress = new HashMap<>();
 
     ReadableMap depositAddressMap = map.getMap("depositAddress");
     ReadableMapKeySetIterator iterator = depositAddressMap.keySetIterator();
     while (iterator.hasNextKey()) {
-      String key = iterator.nextKey();
-      String value = depositAddressMap.getString(key);
+      String network = iterator.nextKey();
+      String address = depositAddressMap.getString(network);
 
-      depositAddress.put(NetworkType.valueOf(key), value);
+      depositAddress.put(network, address);
     }
 
     return new ExchangeSettings(id, depositAddress, depositCurrency, withdrawCurrency, minExchangeAmount, feeRate, depositFeeRate, withdrawFee, timestamp);

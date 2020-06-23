@@ -21,8 +21,15 @@ class User {
      */
     hasWallet;
 
+    /**
+     * Whether the user is a Modulr customer.
+     *
+     * @memberof User
+     */
+    isModulrCustomer;
+
     constructor(json) {
-        if(json.id) this.id = json.id;
+        if (json.id) this.id = json.id;
         this.hasWallet = (json.hasWallet) ? true : false;
     }
 
@@ -117,6 +124,42 @@ class User {
     async getTransactions() {
         const array = await RNZumoKit.getTransactions();
         return array.map((json) => new Transaction(json));
+    }
+
+    /**
+     * Checks if user is a Modulr customer
+     *
+     * @param {string} network
+     * @returns bool
+     * @memberof User
+     */
+    async isModulrCustomer(network) {
+        return RNZumoKit.isModulrCustomer(network);
+    }
+
+    /**
+     * Make user Modulr customer
+     *
+     * @param {string} network
+     * @param {object} customerData
+     * @returns
+     * @memberof User
+     */
+    async makeModulrCustomer(network, customerData) {
+        return RNZumoKit.makeModulrCustomer(network, customerData);
+    }
+
+    /**
+   * Create fiat account
+   *
+   * @param {string} network
+   * @param {string} currencyCode
+   * @returns Account
+   * @memberof User
+   */
+    async createFiatAccount(network, currencyCode) {
+        const json = await RNZumoKit.createFiatAccount(network, currencyCode);
+        return new Account(json);
     }
 
 }

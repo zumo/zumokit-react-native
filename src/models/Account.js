@@ -1,81 +1,18 @@
 import { Decimal } from 'decimal.js';
+import CryptoProperties from './CryptoProperties';
+import FiatProperties from './FiatProperties';
 
 export default class Account {
-
-    /**
-     * Unique ID of the account
-     *
-     * @memberof Account
-     */
-    id;
-
-    /**
-     * Path to the account
-     *
-     * @memberof Account
-     */
-    path;
-
-    /**
-     * Coin symbol e.g. ETH, BTC
-     *
-     * @memberof Account
-     */
-    symbol;
-
-    /**
-     * Name of the coin e.g. Ethereum, Bitcoin
-     *
-     * @memberof Account
-     */
-    coin;
-
-    /**
-     * The blockchain address of the account
-     *
-     * @memberof Account
-     */
-    address;
-
-    /**
-     * The current balance of the account
-     *
-     * @memberof Account
-     */
-    balance;
-
-    /**
-     * The Chain ID to be used when sending transactions
-     *
-     * @memberof Account
-     */
-    chainId;
-
-    /**
-     * Number of transactions on the account to-date; used to sign outgoing transactions
-     *
-     * @memberof Account
-     */
-    nonce;
-
-    /**
-     * JSON representation of Account object
-     *
-     * @memberof Account
-     */
-    json;
-
     constructor(json) {
         this.json = json;
-        if(json.id) this.id = json.id;
-        if(json.path) this.path = json.path;
-        if(json.symbol) this.symbol = json.symbol;
-        if(json.coin) this.coin = json.coin;
-        if(json.address) this.address = json.address;
-        if(json.balance) this.balance = json.balance;
-        if(json.network) this.network = json.network;
-        if(json.type) this.type = json.type;
-        if(json.nonce) this.nonce = json.nonce;
+        this.id = json.id;
+        this.currencyCode = json.currencyCode;
+        this.currencyType = json.currencyType;
+        this.network = json.network;
+        this.type = json.type;
+        this.balance = new Decimal(json.balance);
+        this.cryptoProperties = json.cryptoProperties ? new CryptoProperties(json.cryptoProperties) : null;
+        this.fiatProperties = json.fiatProperties ? new FiatProperties(json.fiatProperties) : null;
     }
 
 }
