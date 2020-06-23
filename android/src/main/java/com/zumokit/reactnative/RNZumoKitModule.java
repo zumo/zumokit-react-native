@@ -350,7 +350,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String signedTransaction = composedTransactionMap.getString("signedTransaction");
     Account account = RNZumoKitModule.unboxAccount(composedTransactionMap.getMap("account"));
     String destination = composedTransactionMap.getString("destination");
-    String value = composedTransactionMap.getString("value");
+    String amount = composedTransactionMap.getString("amount");
     String data = composedTransactionMap.getString("data");
     String fee = composedTransactionMap.getString("fee");
 
@@ -896,9 +896,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     if (transaction.getAmount() == null){
-      map.putNull("value");
+      map.putNull("amount");
     } else {
-      map.putString("value", transaction.getAmount());
+      map.putString("amount", transaction.getAmount());
     }
 
     if (transaction.getData() == null){
@@ -969,7 +969,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     } else {
       WritableMap cryptoDetails = Arguments.createMap();
 
-      cryptoDetails.putString("txHash", transaction.getCryptoDetails().getTxHash());
+      if(transaction.getCryptoDetails().getTxHash() == null) {
+        cryptoDetails.putNull("txHash");
+      } else {
+        cryptoDetails.putString("txHash", transaction.getCryptoDetails().getTxHash();
+      }
 
       if(transaction.getCryptoDetails().getNonce() == null) {
         cryptoDetails.putNull("nonce");

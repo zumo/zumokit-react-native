@@ -299,11 +299,11 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
         NSString * signedTransaction = composedTransactionData[@"signedTransaction"];
         ZKAccount *account = [self unboxAccount:composedTransactionData[@"account"]];
         NSString * destination = (composedTransactionData[@"destination"] == [NSNull null]) ? NULL : composedTransactionData[@"destination"];
-        NSString * value = (composedTransactionData[@"value"] == [NSNull null]) ? NULL : composedTransactionData[@"value"];
+        NSString * amount = (composedTransactionData[@"amount"] == [NSNull null]) ? NULL : composedTransactionData[@"amount"];
         NSString * data = (composedTransactionData[@"data"] == [NSNull null]) ? NULL : composedTransactionData[@"data"];
         NSString * fee = composedTransactionData[@"fee"];
 
-        ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithSignedTransaction:signedTransaction account:account destination:destination value:value data:data fee:fee];
+        ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithSignedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee];
 
         [_wallet submitTransaction:composedTransaction completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
@@ -625,7 +625,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"signedTransaction": [composedTransaction signedTransaction],
         @"account": [self mapAccount:[composedTransaction account]],
         @"destination": [composedTransaction destination]  ? [composedTransaction destination] :  [NSNull null],
-        @"value": [composedTransaction value] ? [composedTransaction value] :  [NSNull null],
+        @"amount": [composedTransaction amount] ? [composedTransaction amount] :  [NSNull null],
         @"data": [composedTransaction data] ? [composedTransaction data] :  [NSNull null],
         @"fee": [composedTransaction fee]
     } mutableCopy];
@@ -650,74 +650,37 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     };
 }
 
-
-- (NSString *)mapTransactionType:(ZKTransactionType)transacationType {
-
-    switch (transacationType) {
-        case ZKTransactionTypeEXCHANGE:
-            return @"EXCHANGE";
-
-        default:
-            return @"NORMAL";
-
-    }
-
-}
-
 - (NSDictionary *)mapTransaction:(ZKTransaction *)transaction {
-
-    NSString *status;
-
-    switch ([transaction status]) {
-       case ZKTransactionStatusCONFIRMED:
-           status = @"CONFIRMED";
-           break;
-
-       case ZKTransactionStatusFAILED:
-           status = @"FAILED";
-           break;
-
-        case ZKTransactionStatusRESUBMITTED:
-            status = @"RESUBMITTED";
-            break;
-
-        case ZKTransactionStatusCANCELLED:
-            status = @"CANCELLED";
-            break;
-
-       default:
-           status = @"PENDING";
-           break;
-
+    NSMutableDictionary *cryptoDetails = [[NSMutableDictionary alloc] init];
+    if ([transaction cryptoDetails]) {
+        cryptoDetails[@"txHash"] = transaction.cryptoDetails.txHash ? transaction.cryptoDetails.txHash : [NSNull null];
+        cryptoDetails[@"nonce"] = transaction.cryptoDetails.nonce ? transaction.cryptoDetails.nonce : [NSNull null];
+        cryptoDetails[@"fromAddress"] = transaction.cryptoDetails.fromAddress;
+        cryptoDetails[@"toAddress"] = transaction.cryptoDetails.toAddress ? transaction.cryptoDetails.toAddress : [NSNull null];
+        cryptoDetails[@"data"] = transaction.cryptoDetails.data ? transaction.cryptoDetails.data : [NSNull null];
+        cryptoDetails[@"gasPrice"] = transaction.cryptoDetails.gasPrice ? transaction.cryptoDetails.gasPrice : [NSNull null];
+        cryptoDetails[@"gasLimit"] = transaction.cryptoDetails.gasLimit ? transaction.cryptoDetails.gasLimit : [NSNull null];
+        cryptoDetails[@"fiatAmount"] = transaction.cryptoDetails.fiatAmount ? transaction.cryptoDetails.fiatAmount : [NSNull null];
+        cryptoDetails[@"fiatFee"] = transaction.cryptoDetails.fiatFee ? transaction.cryptoDetails.fiatFee : [NSNull null];
     }
 
     NSMutableDictionary *dict = [@{
         @"id": [transaction id],
-        @"type": [self mapTransactionType:[transaction type]],
-        @"direction": [transaction direction] == ZKTransactionDirectionOUTGOING ? @"OUTGOING" : @"INCOMING",
-        @"txHash": [transaction txHash],
-        @"accountId": [transaction accountId],
-        @"symbol": [transaction symbol],
-        @"coin": [transaction coin],
+        @"type": [transaction type],
+        @"currencyCode": [transaction currencyCode],
+        @"fromUserId": [transaction fromUserId] ? [transaction fromUserId] : [NSNull null],
+        @"toUserId": [transaction toUserId] ? [transaction toUserId] : [NSNull null],
+        @"fromAccountId": [transaction fromAccountId] ? [transaction fromAccountId] : [NSNull null],
+        @"toAccountId": [transaction toAccountId] ? [transaction toAccountId] : [NSNull null],
         @"network": [transaction network],
-        @"status": status,
-        @"fromAddress": [transaction fromAddress],
-        @"toAddress": [transaction toAddress],
-        @"value": [transaction value],
+        @"status": [transaction status],
+        @"amount": [transaction amount] ? [transaction amount] : [NSNull null],
+        @"fee": [transaction fee] ? [transaction fee] : [NSNull null],
+        @"cryptoDetails": [transaction cryptoDetails] ? cryptoDetails : [NSNull null],
+        @"submittedAt": [transaction submittedAt] ? [transaction submittedAt] : [NSNull null],
+        @"confirmedAt": [transaction confirmedAt] ? [transaction confirmedAt] : [NSNull null],
         @"timestamp": @([transaction timestamp])
     } mutableCopy];
-
-    if([transaction nonce]) dict[@"nonce"] = [transaction nonce];
-    if([transaction fromUserId]) dict[@"fromUserId"] = [transaction fromUserId];
-    if([transaction toUserId]) dict[@"toUserId"] = [transaction toUserId];
-    if([transaction data]) dict[@"data"] = [transaction data];
-    if([transaction gasPrice]) dict[@"gasPrice"] = [transaction gasPrice];
-    if([transaction gasLimit]) dict[@"gasLimit"] = [transaction gasLimit];
-    if([transaction submittedAt]) dict[@"submittedAt"] = [transaction submittedAt];
-    if([transaction confirmedAt]) dict[@"confirmedAt"] = [transaction confirmedAt];
-    if([transaction fiatValue]) dict[@"fiatValue"] = [transaction fiatValue];
-    if([transaction fee]) dict[@"fee"] = [transaction fee];
-    if([transaction fiatFee]) dict[@"fiatFee"] = [transaction fiatFee];
 
     return dict;
 }

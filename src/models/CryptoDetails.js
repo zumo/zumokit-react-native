@@ -9,9 +9,9 @@ export default class CryptoDetails {
         this.toAddress = json.toAddress;
         this.data = json.data;
         this.gasPrice = (json.gasPrice) ? new Decimal(json.gasPrice) : null;
-        this.gasLimit = json.gasLimit;
+        this.gasLimit = parseInt(json.gasLimit);
         this.fiatFee = json.fiatFee;
-        this.fiatValue = json.fiatValue;
+        this.fiatAmount = json.fiatAmount;
     }
 
 }
