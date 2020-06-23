@@ -127,6 +127,18 @@ class User {
     }
 
     /**
+    * Loads an array of transactions for specific user account
+    *
+    * @param {string} accountId
+    * @returns
+    * @memberof User
+    */
+    async getAccountTransactions(accountId) {
+        const array = await RNZumoKit.getAccountTransactions(accountId);
+        return array.map((json) => new Transaction(json));
+    }
+
+    /**
      * Checks if user is a Modulr customer
      *
      * @param {string} network
