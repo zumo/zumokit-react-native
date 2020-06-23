@@ -895,10 +895,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("destination", transaction.getDestination());
     }
 
-    if (transaction.getValue() == null){
+    if (transaction.getAmount() == null){
       map.putNull("value");
     } else {
-      map.putString("value", transaction.getValue());
+      map.putString("value", transaction.getAmount());
     }
 
     if (transaction.getData() == null){
@@ -929,63 +929,80 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WritableMap map = Arguments.createMap();
 
     map.putString("id", transaction.getId());
-    map.putString("type", transaction.getType().toString());
-    map.putString("direction", transaction.getDirection().toString());
-    map.putString("txHash", transaction.getTxHash());
-    map.putString("accountId", transaction.getAccountId());
-    map.putString("symbol", transaction.getSymbol());
-    map.putString("coin", transaction.getCoin());
-    map.putString("network", transaction.getNetwork().toString());
+    map.putString("type", transaction.getType());
+    map.putString("currencyCode", transaction.getCurrencyCode());
+    map.putString("fromUserId", transaction.getFromUserId());
+    map.putString("toUserId", transaction.getToUserId());
+    map.putString("fromAccountId", transaction.getFromAccountId());
+    map.putString("toAccountId", transaction.getToAccountId());
+    map.putString("network", transaction.getNetwork());
+    map.putString("status", transaction.getStatus());
 
-    if(transaction.getNonce() != null) {
-      map.putInt("nonce", transaction.getNonce().intValue());
+    if(transaction.getAmount() == null) {
+      map.putNull("amount");
+    } else {
+      map.putString("amount", transaction.getAmount());
     }
 
-    map.putString("status", transaction.getStatus().toString());
-    map.putString("fromAddress", transaction.getFromAddress());
-    map.putString("fromUserId", transaction.getFromUserId());
-    map.putString("toAddress", transaction.getToAddress());
-    map.putString("toUserId", transaction.getToUserId());
-    map.putString("value", transaction.getValue());
-    map.putString("data", transaction.getData());
-    map.putString("gasPrice", transaction.getGasPrice());
-    map.putString("gasLimit", transaction.getGasLimit());
-
-    if(transaction.getFee() != null) {
+    if(transaction.getFee() == null) {
+      map.putNull("fee");
+    } else {
       map.putString("fee", transaction.getFee());
     }
 
-    if(transaction.getSubmittedAt() != null) {
+    if(transaction.getSubmittedAt() == null) {
+      map.putNull("submittedAt");
+    } else {
       map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
     }
 
-    if(transaction.getConfirmedAt() != null) {
+    if(transaction.getConfirmedAt() == null) {
+      map.putNull("confirmedAt");
+    } else {
       map.putInt("confirmedAt", transaction.getConfirmedAt().intValue());
     }
 
     map.putInt("timestamp", (int) transaction.getTimestamp());
 
-    WritableMap fiatValues = Arguments.createMap();
+    if (transaction.getCryptoDetails() == null) {
+      map.putNull("cryptoDetails");
+    } else {
+      WritableMap cryptoDetails = Arguments.createMap();
 
-    for (HashMap.Entry entry : transaction.getFiatValue().entrySet()) {
-      fiatValues.putString(
-        (String) entry.getKey(),
-        (String) entry.getValue()
-      );
+      cryptoDetails.putString("txHash", transaction.getCryptoDetails().getTxHash());
+
+      if(transaction.getCryptoDetails().getNonce() == null) {
+        cryptoDetails.putNull("nonce");
+      } else {
+        cryptoDetails.putInt("nonce", transaction.getCryptoDetails().getNonce().intValue());
+      }
+
+      cryptoDetails.putString("fromAddress", transaction.getCryptoDetails().getFromAddress());
+      cryptoDetails.putString("toAddress", transaction.getCryptoDetails().getToAddress());
+      cryptoDetails.putString("data", transaction.getCryptoDetails().getData());
+      cryptoDetails.putString("gasPrice", transaction.getCryptoDetails().getGasPrice());
+      cryptoDetails.putString("gasLimit", transaction.getCryptoDetails().getGasLimit());
+
+      WritableMap fiatAmounts = Arguments.createMap();
+      for (HashMap.Entry entry : transaction.getCryptoDetails().getFiatAmount().entrySet()) {
+        fiatAmounts.putString(
+                (String) entry.getKey(),
+                (String) entry.getValue()
+        );
+      }
+      cryptoDetails.putMap("fiatAmount", fiatAmounts);
+
+      WritableMap fiatFee = Arguments.createMap();
+      for (HashMap.Entry entry : transaction.getCryptoDetails().getFiatFee().entrySet()) {
+        fiatFee.putString(
+                (String) entry.getKey(),
+                (String) entry.getValue()
+        );
+      }
+      cryptoDetails.putMap("fiatFee", fiatFee);
+
+      map.putMap("cryptoDetails", cryptoDetails);
     }
-
-    map.putMap("fiatValue", fiatValues);
-
-    WritableMap fiatFee = Arguments.createMap();
-
-    for (HashMap.Entry entry : transaction.getFiatFee().entrySet()) {
-      fiatFee.putString(
-        (String) entry.getKey(),
-        (String) entry.getValue()
-      );
-    }
-
-    map.putMap("fiatFee", fiatFee);
 
     return map;
 
