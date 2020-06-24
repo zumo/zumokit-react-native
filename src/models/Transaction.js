@@ -32,6 +32,7 @@ class Transaction {
         this.status = json.status;
         this.amount = (json.amount) ? new Decimal(json.amount) : null;
         this.fee = (json.fee) ? new Decimal(json.fee) : null;
+        this.nonce = json.nonce;
         this.cryptoDetails = json.cryptoDetails ? new CryptoDetails(json.cryptoDetails) : null;
         this.fiatDetails = null;
         this.submittedAt = json.submittedAt;

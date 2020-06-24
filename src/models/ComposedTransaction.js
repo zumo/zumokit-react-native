@@ -10,5 +10,6 @@ export default class ComposedTransaction {
         this.amount = (json.amount) ? new Decimal(json.amount) : null;
         this.data = json.data;
         this.fee = new Decimal(json.fee);
+        this.nonce = json.nonce;
     }
 }
