@@ -363,9 +363,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String amount = composedTransactionMap.getString("amount");
     String data = composedTransactionMap.getString("data");
     String fee = composedTransactionMap.getString("fee");
+    String nonce = composedTransactionMap.getString("nonce");
 
     ComposedTransaction composedTransaction =
-      new ComposedTransaction(signedTransaction, account, destination, amount, data, fee);
+      new ComposedTransaction(signedTransaction, account, destination, amount, data, fee, nonce);
 
     this.wallet.submitTransaction(composedTransaction, new SubmitTransactionCallback() {
 
@@ -917,6 +918,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("data", transaction.getData());
     }
 
+    map.putString("nonce", transaction.getNonce());
+
     return map;
 
   }
@@ -979,6 +982,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putNull("fee");
     } else {
       map.putString("fee", transaction.getFee());
+    }
+
+    if(transaction.getNonce() == null) {
+      map.putNull("nonce");
+    } else {
+      map.putString("nonce", transaction.getNonce());
     }
 
     if(transaction.getSubmittedAt() == null) {
