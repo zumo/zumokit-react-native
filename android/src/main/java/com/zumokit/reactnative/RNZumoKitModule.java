@@ -1316,7 +1316,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         nonce = Long.valueOf(cryptoPropertiesData.getInt("nonce"));
       }
 
-      String utxoPool =  cryptoPropertiesData.getString("utxoPool");;
+      String utxoPool = null;
+      if(!cryptoPropertiesData.isNull("utxoPool")) {
+        utxoPool = cryptoPropertiesData.getString("utxoPool");
+      }
+
       byte version = Integer.valueOf(map.getInt("version")).byteValue();
 
       cryptoProperties = new CryptoProperties(address, path, nonce, utxoPool, version);
