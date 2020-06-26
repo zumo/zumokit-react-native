@@ -810,7 +810,11 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         dict[key] = @{
             @"slow": [obj slow],
             @"average": [obj average],
-            @"fast": [obj fast]
+            @"fast": [obj fast],
+            @"slowTime": [NSNumber numberWithFloat:[obj slowTime]],
+            @"averageTime": [NSNumber numberWithFloat:[obj averageTime]],
+            @"fastTime": [NSNumber numberWithFloat:[obj fastTime]],
+            @"source": [obj source]
         };
     }];
 
