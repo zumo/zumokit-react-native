@@ -263,6 +263,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void getAccountTransactions(String accountId, Promise promise) {
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
+      return;
+    }
+
+    promise.resolve(mapTransactions(this.user.getAccountTransactions(accountId)));
+  }
+
+  @ReactMethod
   public void revealMnemonic(String password, Promise promise) {
 
     if(this.user == null) {
@@ -350,12 +360,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String signedTransaction = composedTransactionMap.getString("signedTransaction");
     Account account = RNZumoKitModule.unboxAccount(composedTransactionMap.getMap("account"));
     String destination = composedTransactionMap.getString("destination");
-    String value = composedTransactionMap.getString("value");
+    String amount = composedTransactionMap.getString("amount");
     String data = composedTransactionMap.getString("data");
     String fee = composedTransactionMap.getString("fee");
+    String nonce = composedTransactionMap.getString("nonce");
 
     ComposedTransaction composedTransaction =
-      new ComposedTransaction(signedTransaction, account, destination, value, data, fee);
+      new ComposedTransaction(signedTransaction, account, destination, amount, data, fee, nonce);
 
     this.wallet.submitTransaction(composedTransaction, new SubmitTransactionCallback() {
 
@@ -895,10 +906,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("destination", transaction.getDestination());
     }
 
-    if (transaction.getValue() == null){
-      map.putNull("value");
+    if (transaction.getAmount() == null){
+      map.putNull("amount");
     } else {
-      map.putString("value", transaction.getValue());
+      map.putString("amount", transaction.getAmount());
     }
 
     if (transaction.getData() == null){
@@ -906,6 +917,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     } else {
       map.putString("data", transaction.getData());
     }
+
+    map.putString("nonce", transaction.getNonce());
 
     return map;
 
@@ -929,63 +942,131 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WritableMap map = Arguments.createMap();
 
     map.putString("id", transaction.getId());
-    map.putString("type", transaction.getType().toString());
-    map.putString("direction", transaction.getDirection().toString());
-    map.putString("txHash", transaction.getTxHash());
-    map.putString("accountId", transaction.getAccountId());
-    map.putString("symbol", transaction.getSymbol());
-    map.putString("coin", transaction.getCoin());
-    map.putString("network", transaction.getNetwork().toString());
+    map.putString("type", transaction.getType());
+    map.putString("currencyCode", transaction.getCurrencyCode());
 
-    if(transaction.getNonce() != null) {
-      map.putInt("nonce", transaction.getNonce().intValue());
+    if(transaction.getFromUserId() == null) {
+      map.putNull("fromUserId");
+    } else {
+      map.putString("fromUserId", transaction.getFromUserId());
     }
 
-    map.putString("status", transaction.getStatus().toString());
-    map.putString("fromAddress", transaction.getFromAddress());
-    map.putString("fromUserId", transaction.getFromUserId());
-    map.putString("toAddress", transaction.getToAddress());
-    map.putString("toUserId", transaction.getToUserId());
-    map.putString("value", transaction.getValue());
-    map.putString("data", transaction.getData());
-    map.putString("gasPrice", transaction.getGasPrice());
-    map.putString("gasLimit", transaction.getGasLimit());
+    if(transaction.getToUserId() == null) {
+      map.putNull("toUserId");
+    } else {
+      map.putString("toUserId", transaction.getToUserId());
+    }
 
-    if(transaction.getFee() != null) {
+    if(transaction.getFromAccountId() == null) {
+      map.putNull("fromAccountId");
+    } else {
+      map.putString("fromAccountId", transaction.getFromAccountId());
+    }
+
+    if(transaction.getToAccountId() == null) {
+      map.putNull("toAccountId");
+    } else {
+      map.putString("toAccountId", transaction.getToAccountId());
+    }
+
+    map.putString("network", transaction.getNetwork());
+    map.putString("status", transaction.getStatus());
+
+    if(transaction.getAmount() == null) {
+      map.putNull("amount");
+    } else {
+      map.putString("amount", transaction.getAmount());
+    }
+
+    if(transaction.getFee() == null) {
+      map.putNull("fee");
+    } else {
       map.putString("fee", transaction.getFee());
     }
 
-    if(transaction.getSubmittedAt() != null) {
+    if(transaction.getNonce() == null) {
+      map.putNull("nonce");
+    } else {
+      map.putString("nonce", transaction.getNonce());
+    }
+
+    if(transaction.getSubmittedAt() == null) {
+      map.putNull("submittedAt");
+    } else {
       map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
     }
 
-    if(transaction.getConfirmedAt() != null) {
+    if(transaction.getConfirmedAt() == null) {
+      map.putNull("confirmedAt");
+    } else {
       map.putInt("confirmedAt", transaction.getConfirmedAt().intValue());
     }
 
     map.putInt("timestamp", (int) transaction.getTimestamp());
 
-    WritableMap fiatValues = Arguments.createMap();
+    if (transaction.getCryptoDetails() == null) {
+      map.putNull("cryptoDetails");
+    } else {
+      WritableMap cryptoDetails = Arguments.createMap();
 
-    for (HashMap.Entry entry : transaction.getFiatValue().entrySet()) {
-      fiatValues.putString(
-        (String) entry.getKey(),
-        (String) entry.getValue()
-      );
+      if(transaction.getCryptoDetails().getTxHash() == null) {
+        cryptoDetails.putNull("txHash");
+      } else {
+        cryptoDetails.putString("txHash", transaction.getCryptoDetails().getTxHash());
+      }
+
+      if(transaction.getCryptoDetails().getNonce() == null) {
+        cryptoDetails.putNull("nonce");
+      } else {
+        cryptoDetails.putInt("nonce", transaction.getCryptoDetails().getNonce().intValue());
+      }
+
+      cryptoDetails.putString("fromAddress", transaction.getCryptoDetails().getFromAddress());
+
+      if(transaction.getCryptoDetails().getToAddress() == null) {
+        cryptoDetails.putNull("toAddress");
+      } else {
+        cryptoDetails.putString("toAddress", transaction.getCryptoDetails().getToAddress());
+      }
+
+      if(transaction.getCryptoDetails().getData() == null) {
+        cryptoDetails.putNull("data");
+      } else {
+        cryptoDetails.putString("data", transaction.getCryptoDetails().getData());
+      }
+
+      if(transaction.getCryptoDetails().getGasPrice() == null) {
+        cryptoDetails.putNull("gasPrice");
+      } else {
+        cryptoDetails.putString("gasPrice", transaction.getCryptoDetails().getGasPrice());
+      }
+
+      if(transaction.getCryptoDetails().getGasLimit() == null) {
+        cryptoDetails.putNull("gasLimit");
+      } else {
+        cryptoDetails.putString("gasLimit", transaction.getCryptoDetails().getGasLimit());
+      }
+
+      WritableMap fiatAmounts = Arguments.createMap();
+      for (HashMap.Entry entry : transaction.getCryptoDetails().getFiatAmount().entrySet()) {
+        fiatAmounts.putString(
+                (String) entry.getKey(),
+                (String) entry.getValue()
+        );
+      }
+      cryptoDetails.putMap("fiatAmount", fiatAmounts);
+
+      WritableMap fiatFee = Arguments.createMap();
+      for (HashMap.Entry entry : transaction.getCryptoDetails().getFiatFee().entrySet()) {
+        fiatFee.putString(
+                (String) entry.getKey(),
+                (String) entry.getValue()
+        );
+      }
+      cryptoDetails.putMap("fiatFee", fiatFee);
+
+      map.putMap("cryptoDetails", cryptoDetails);
     }
-
-    map.putMap("fiatValue", fiatValues);
-
-    WritableMap fiatFee = Arguments.createMap();
-
-    for (HashMap.Entry entry : transaction.getFiatFee().entrySet()) {
-      fiatFee.putString(
-        (String) entry.getKey(),
-        (String) entry.getValue()
-      );
-    }
-
-    map.putMap("fiatFee", fiatFee);
 
     return map;
 
@@ -1244,7 +1325,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         nonce = Long.valueOf(cryptoPropertiesData.getInt("nonce"));
       }
 
-      String utxoPool =  cryptoPropertiesData.getString("utxoPool");;
+      String utxoPool = null;
+      if(!cryptoPropertiesData.isNull("utxoPool")) {
+        utxoPool = cryptoPropertiesData.getString("utxoPool");
+      }
+
       byte version = Integer.valueOf(map.getInt("version")).byteValue();
 
       cryptoProperties = new CryptoProperties(address, path, nonce, utxoPool, version);
