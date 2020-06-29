@@ -14,12 +14,15 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import money.zumo.zumokit.AccountFiatPropertiesCallback;
 import money.zumo.zumokit.ComposeExchangeCallback;
 import money.zumo.zumokit.ComposedExchange;
-import money.zumo.zumokit.CryptoProperties;
 import money.zumo.zumokit.Exchange;
 import money.zumo.zumokit.ExchangeSettings;
-import money.zumo.zumokit.FiatProperties;
+import money.zumo.zumokit.AccountCryptoProperties;
+import money.zumo.zumokit.AccountFiatProperties;
+import money.zumo.zumokit.TransactionCryptoProperties;
+import money.zumo.zumokit.TransactionFiatProperties;
 import money.zumo.zumokit.HistoricalExchangeRatesCallback;
 import money.zumo.zumokit.SubmitExchangeCallback;
 import money.zumo.zumokit.SuccessCallback;
@@ -263,6 +266,26 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void getNominatedAccountFiatPoperties(String accountId, Promise promise) {
+    if(this.user == null) {
+      rejectPromise(promise, "User not found.");
+      return;
+    }
+
+    this.user.getNominatedAccountFiatProperties(accountId, new AccountFiatPropertiesCallback() {
+      @Override
+      public void onError(Exception e) {
+        rejectPromise(promise, e);
+      }
+
+      @Override
+      public void onSuccess(AccountFiatProperties accountFiatProperties) {
+        promise.resolve(accountFiatProperties == null ? null : mapAccountFiatProperties(accountFiatProperties));
+      }
+    });
+  }
+
+  @ReactMethod
   public void getAccountTransactions(String accountId, Promise promise) {
     if(this.user == null) {
       rejectPromise(promise, "User not found.");
@@ -357,6 +380,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
+    String type = composedTransactionMap.getString("type");
     String signedTransaction = composedTransactionMap.getString("signedTransaction");
     Account account = RNZumoKitModule.unboxAccount(composedTransactionMap.getMap("account"));
     String destination = composedTransactionMap.getString("destination");
@@ -366,7 +390,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String nonce = composedTransactionMap.getString("nonce");
 
     ComposedTransaction composedTransaction =
-      new ComposedTransaction(signedTransaction, account, destination, amount, data, fee, nonce);
+      new ComposedTransaction(type, signedTransaction, account, destination, amount, data, fee, nonce);
 
     this.wallet.submitTransaction(composedTransaction, new SubmitTransactionCallback() {
 
@@ -423,6 +447,56 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     this.wallet.composeBtcTransaction(accountId, changeAccountId, to, value, feeRate, sendMax, new ComposeTransactionCallback() {
+
+      @Override
+      public void onError(Exception error) {
+        rejectPromise(promise, error);
+      }
+
+      @Override
+      public void onSuccess(ComposedTransaction transaction) {
+        WritableMap map = RNZumoKitModule.mapComposedTransaction(transaction);
+        promise.resolve(map);
+      }
+
+    });
+
+  }
+
+  @ReactMethod
+  public void composeInternalFiatTransaction(String fromAccountId, String toAccountId, String value, Boolean sendMax, Promise promise) {
+
+    if(this.wallet == null) {
+      rejectPromise(promise, "Wallet not found.");
+      return;
+    }
+
+    this.wallet.composeInternalFiatTransaction(fromAccountId, toAccountId, value, sendMax, new ComposeTransactionCallback() {
+
+      @Override
+      public void onError(Exception error) {
+        rejectPromise(promise, error);
+      }
+
+      @Override
+      public void onSuccess(ComposedTransaction transaction) {
+        WritableMap map = RNZumoKitModule.mapComposedTransaction(transaction);
+        promise.resolve(map);
+      }
+
+    });
+
+  }
+
+  @ReactMethod
+  public void composeTransactionToNominatedAccount(String fromAccountId, String value, Boolean sendMax, Promise promise) {
+
+    if(this.wallet == null) {
+      rejectPromise(promise, "Wallet not found.");
+      return;
+    }
+
+    this.wallet.composeTransactionToNominatedAccount(fromAccountId, value, sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -806,6 +880,41 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     return result;
   }
 
+  public static WritableMap mapAccountFiatProperties(AccountFiatProperties accountFiatProperties) {
+    WritableMap fiatProperties = Arguments.createMap();
+      if (accountFiatProperties.getAccountNumber() == null) {
+        fiatProperties.putNull("accountNumber");
+      } else {
+        fiatProperties.putString("accountNumber", accountFiatProperties.getAccountNumber());
+      }
+
+      if (accountFiatProperties.getSortCode() == null) {
+        fiatProperties.putNull("sortCode");
+      } else {
+        fiatProperties.putString("sortCode", accountFiatProperties.getSortCode());
+      }
+
+      if (accountFiatProperties.getBic() == null) {
+        fiatProperties.putNull("bic");
+      } else {
+        fiatProperties.putString("bic", accountFiatProperties.getBic());
+      }
+
+      if (accountFiatProperties.getIban() == null) {
+        fiatProperties.putNull("iban");
+      } else {
+        fiatProperties.putString("iban", accountFiatProperties.getIban());
+      }
+
+    if (accountFiatProperties.getCustomerName() == null) {
+      fiatProperties.putNull("customerName");
+    } else {
+      fiatProperties.putString("customerName", accountFiatProperties.getCustomerName());
+    }
+
+      return fiatProperties;
+  }
+
   public static WritableMap mapAccount(Account account) {
 
     WritableMap cryptoProperties = Arguments.createMap();
@@ -828,33 +937,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       cryptoProperties.putInt("version", account.getCryptoProperties().getVersion());
     }
 
-    WritableMap fiatProperties = Arguments.createMap();
-    if (account.getFiatProperties() != null) {
-      if (account.getFiatProperties().getAccountNumber() == null) {
-        fiatProperties.putNull("accountNumber");
-      } else {
-        fiatProperties.putString("accountNumber", account.getFiatProperties().getAccountNumber());
-      }
-
-      if (account.getFiatProperties().getSortCode() == null) {
-        fiatProperties.putNull("sortCode");
-      } else {
-        fiatProperties.putString("sortCode", account.getFiatProperties().getSortCode());
-      }
-
-      if (account.getFiatProperties().getBic() == null) {
-        fiatProperties.putNull("bic");
-      } else {
-        fiatProperties.putString("bic", account.getFiatProperties().getBic());
-      }
-
-      if (account.getFiatProperties().getIban() == null) {
-        fiatProperties.putNull("iban");
-      } else {
-        fiatProperties.putString("iban", account.getFiatProperties().getIban());
-      }
-    }
-
     WritableMap map = Arguments.createMap();
 
     map.putString("id", account.getId());
@@ -873,7 +955,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     if (account.getFiatProperties() == null) {
       map.putNull("fiatProperties");
     } else {
-      map.putMap("fiatProperties", fiatProperties);
+      map.putMap("fiatProperties", mapAccountFiatProperties(account.getFiatProperties()));
     }
 
     return map;
@@ -896,6 +978,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     WritableMap map = Arguments.createMap();
 
+    map.putString("type", transaction.getType());
     map.putString("signedTransaction", transaction.getSignedTransaction());
     map.putMap("account", mapAccount(transaction.getAccount()));
     map.putString("fee", transaction.getFee());
@@ -1004,68 +1087,88 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     map.putInt("timestamp", (int) transaction.getTimestamp());
 
-    if (transaction.getCryptoDetails() == null) {
-      map.putNull("cryptoDetails");
+    if (transaction.getCryptoProperties() == null) {
+      map.putNull("cryptoProperties");
     } else {
-      WritableMap cryptoDetails = Arguments.createMap();
+      WritableMap cryptoProperties = Arguments.createMap();
 
-      if(transaction.getCryptoDetails().getTxHash() == null) {
-        cryptoDetails.putNull("txHash");
+      if(transaction.getCryptoProperties().getTxHash() == null) {
+        cryptoProperties.putNull("txHash");
       } else {
-        cryptoDetails.putString("txHash", transaction.getCryptoDetails().getTxHash());
+        cryptoProperties.putString("txHash", transaction.getCryptoProperties().getTxHash());
       }
 
-      if(transaction.getCryptoDetails().getNonce() == null) {
-        cryptoDetails.putNull("nonce");
+      if(transaction.getCryptoProperties().getNonce() == null) {
+        cryptoProperties.putNull("nonce");
       } else {
-        cryptoDetails.putInt("nonce", transaction.getCryptoDetails().getNonce().intValue());
+        cryptoProperties.putInt("nonce", transaction.getCryptoProperties().getNonce().intValue());
       }
 
-      cryptoDetails.putString("fromAddress", transaction.getCryptoDetails().getFromAddress());
+      cryptoProperties.putString("fromAddress", transaction.getCryptoProperties().getFromAddress());
 
-      if(transaction.getCryptoDetails().getToAddress() == null) {
-        cryptoDetails.putNull("toAddress");
+      if(transaction.getCryptoProperties().getToAddress() == null) {
+        cryptoProperties.putNull("toAddress");
       } else {
-        cryptoDetails.putString("toAddress", transaction.getCryptoDetails().getToAddress());
+        cryptoProperties.putString("toAddress", transaction.getCryptoProperties().getToAddress());
       }
 
-      if(transaction.getCryptoDetails().getData() == null) {
-        cryptoDetails.putNull("data");
+      if(transaction.getCryptoProperties().getData() == null) {
+        cryptoProperties.putNull("data");
       } else {
-        cryptoDetails.putString("data", transaction.getCryptoDetails().getData());
+        cryptoProperties.putString("data", transaction.getCryptoProperties().getData());
       }
 
-      if(transaction.getCryptoDetails().getGasPrice() == null) {
-        cryptoDetails.putNull("gasPrice");
+      if(transaction.getCryptoProperties().getGasPrice() == null) {
+        cryptoProperties.putNull("gasPrice");
       } else {
-        cryptoDetails.putString("gasPrice", transaction.getCryptoDetails().getGasPrice());
+        cryptoProperties.putString("gasPrice", transaction.getCryptoProperties().getGasPrice());
       }
 
-      if(transaction.getCryptoDetails().getGasLimit() == null) {
-        cryptoDetails.putNull("gasLimit");
+      if(transaction.getCryptoProperties().getGasLimit() == null) {
+        cryptoProperties.putNull("gasLimit");
       } else {
-        cryptoDetails.putString("gasLimit", transaction.getCryptoDetails().getGasLimit());
+        cryptoProperties.putString("gasLimit", transaction.getCryptoProperties().getGasLimit());
       }
 
       WritableMap fiatAmounts = Arguments.createMap();
-      for (HashMap.Entry entry : transaction.getCryptoDetails().getFiatAmount().entrySet()) {
+      for (HashMap.Entry entry : transaction.getCryptoProperties().getFiatAmount().entrySet()) {
         fiatAmounts.putString(
                 (String) entry.getKey(),
                 (String) entry.getValue()
         );
       }
-      cryptoDetails.putMap("fiatAmount", fiatAmounts);
+      cryptoProperties.putMap("fiatAmount", fiatAmounts);
 
       WritableMap fiatFee = Arguments.createMap();
-      for (HashMap.Entry entry : transaction.getCryptoDetails().getFiatFee().entrySet()) {
+      for (HashMap.Entry entry : transaction.getCryptoProperties().getFiatFee().entrySet()) {
         fiatFee.putString(
                 (String) entry.getKey(),
                 (String) entry.getValue()
         );
       }
-      cryptoDetails.putMap("fiatFee", fiatFee);
+      cryptoProperties.putMap("fiatFee", fiatFee);
 
-      map.putMap("cryptoDetails", cryptoDetails);
+      map.putMap("cryptoProperties", cryptoProperties);
+    }
+
+    if (transaction.getFiatProperties() == null) {
+      map.putNull("fiatProperties");
+    } else {
+      WritableMap fiatProperties = Arguments.createMap();
+
+      if(transaction.getFiatProperties().getFromFiatAccount() == null) {
+        fiatProperties.putNull("fromFiatAccount");
+      } else {
+        fiatProperties.putMap("fromFiatAccount", mapAccountFiatProperties(transaction.getFiatProperties().getFromFiatAccount()));
+      }
+
+      if(transaction.getFiatProperties().getToFiatAccount() == null) {
+        fiatProperties.putNull("toFiatAccount");
+      } else {
+        fiatProperties.putMap("toFiatAccount", mapAccountFiatProperties(transaction.getFiatProperties().getToFiatAccount()));
+      }
+
+      map.putMap("fiatProperties", fiatProperties);
     }
 
     return map;
@@ -1313,7 +1416,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   public static Account unboxAccount(ReadableMap map) {
-    CryptoProperties cryptoProperties = null;
+    AccountCryptoProperties cryptoProperties = null;
     if(!map.isNull("cryptoProperties")) {
       ReadableMap cryptoPropertiesData = map.getMap("cryptoProperties");
 
@@ -1332,10 +1435,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       byte version = Integer.valueOf(map.getInt("version")).byteValue();
 
-      cryptoProperties = new CryptoProperties(address, path, nonce, utxoPool, version);
+      cryptoProperties = new AccountCryptoProperties(address, path, nonce, utxoPool, version);
     }
 
-    FiatProperties fiatProperties = null;
+    AccountFiatProperties fiatProperties = null;
     if(!map.isNull("fiatProperties")) {
       ReadableMap cryptoPropertiesData = map.getMap("fiatProperties");
 
@@ -1343,8 +1446,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       String sortCode = cryptoPropertiesData.getString("sortCode");
       String bic = cryptoPropertiesData.getString("bic");
       String iban = cryptoPropertiesData.getString("iban");
+      String customerName = cryptoPropertiesData.getString("customerName");
 
-      fiatProperties = new FiatProperties(accountNumber, sortCode, bic, iban);
+      fiatProperties = new AccountFiatProperties(accountNumber, sortCode, bic, iban, customerName);
     }
 
     String accountId = map.getString("id");
