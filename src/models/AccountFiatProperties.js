@@ -1,4 +1,4 @@
-export default class FiatProperties {
+export default class AccountFiatProperties {
   constructor(json) {
     this.json = json;
     this.accountNumber = json.accountNumber;
