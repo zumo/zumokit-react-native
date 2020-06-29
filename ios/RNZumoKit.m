@@ -291,6 +291,24 @@ RCT_EXPORT_METHOD(createFiatAccount:(NSString *)network currencyCode:(NSString *
     }
 }
 
+
+RCT_EXPORT_METHOD(getNominatedAccountFiatPoperties:(NSString *)accountId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user getNominatedAccountFiatProperties:accountId completion:^(ZKAccountFiatProperties * _Nullable accountFiatProperties, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve(accountFiatProperties ? [self mapAccountFiatProperties:accountFiatProperties] : nil);
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
 RCT_EXPORT_METHOD(getAccountTransactions:(NSString *)accountId  resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
@@ -305,6 +323,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
 
     @try {
 
+        NSString * type = composedTransactionData[@"type"];
         NSString * signedTransaction = composedTransactionData[@"signedTransaction"];
         ZKAccount *account = [self unboxAccount:composedTransactionData[@"account"]];
         NSString * destination = (composedTransactionData[@"destination"] == [NSNull null]) ? NULL : composedTransactionData[@"destination"];
@@ -313,7 +332,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
         NSString * fee = composedTransactionData[@"fee"];
         NSString * nonce = composedTransactionData[@"nonce"];
 
-        ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithSignedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee nonce:nonce];
+        ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type signedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee nonce:nonce];
 
         [_wallet submitTransaction:composedTransaction completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
@@ -380,6 +399,54 @@ RCT_EXPORT_METHOD(composeBtcTransaction:(NSString *)accountId changeAccountId:(N
         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
 
     }
+
+}
+
+RCT_EXPORT_METHOD(composeInternalFiatTransaction:(NSString *)fromAccountId toAccountId:(NSString *)toAccountId amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        [_wallet composeInternalFiatTransaction:fromAccountId toAccountId:toAccountId amount:amount sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapComposedTransaction:transaction]);
+
+        }];
+
+    } @catch (NSException *exception) {
+
+       [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+   }
+
+}
+
+RCT_EXPORT_METHOD(composeTransactionToNominatedAccount:(NSString *)fromAccountId amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        [_wallet composeTransactionToNominatedAccount:fromAccountId amount:amount sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapComposedTransaction:transaction]);
+
+        }];
+
+    } @catch (NSException *exception) {
+
+       [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+   }
 
 }
 
@@ -580,6 +647,18 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
 }
 
+- (NSDictionary *)mapAccountFiatProperties:(ZKAccountFiatProperties *)accountFiatProperties {
+
+    return @{
+        @"accountNumber": accountFiatProperties.accountNumber ? accountFiatProperties.accountNumber : [NSNull null],
+        @"sortCode": accountFiatProperties.sortCode ? accountFiatProperties.sortCode : [NSNull null],
+        @"bic": accountFiatProperties.bic ? accountFiatProperties.bic : [NSNull null],
+        @"iban": accountFiatProperties.iban ? accountFiatProperties.iban : [NSNull null],
+        @"customerName": accountFiatProperties.customerName ? accountFiatProperties.customerName : [NSNull null]
+    };
+
+}
+
 - (NSDictionary *)mapAccount:(ZKAccount *)account {
 
     NSMutableDictionary *cryptoProperties = [[NSMutableDictionary alloc] init];
@@ -591,14 +670,6 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         cryptoProperties[@"version"] = [[NSNumber alloc] initWithChar:[account.cryptoProperties version]];
     }
 
-    NSMutableDictionary *fiatProperties = [[NSMutableDictionary alloc] init];
-    if ([account fiatProperties]){
-        fiatProperties[@"accountNumber"] = account.fiatProperties.accountNumber ? account.fiatProperties.accountNumber : [NSNull null];
-        fiatProperties[@"sortCode"] = account.fiatProperties.sortCode ? account.fiatProperties.sortCode : [NSNull null];
-        fiatProperties[@"bic"] = account.fiatProperties.bic ? account.fiatProperties.bic : [NSNull null];
-        fiatProperties[@"iban"] = account.fiatProperties.iban ? account.fiatProperties.iban : [NSNull null];
-    }
-
     NSDictionary *dict = @{
         @"id": [account id],
         @"currencyType": [account currencyType],
@@ -607,7 +678,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"type": [account type],
         @"balance": [account balance],
         @"cryptoProperties": [account cryptoProperties] ? cryptoProperties : [NSNull null],
-        @"fiatProperties": [account fiatProperties] ? fiatProperties : [NSNull null]
+        @"fiatProperties": [account fiatProperties] ? [self mapAccountFiatProperties:account.fiatProperties] : [NSNull null]
     };
 
     return dict;
@@ -632,6 +703,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 - (NSDictionary *)mapComposedTransaction:(ZKComposedTransaction *)composedTransaction {
 
     NSMutableDictionary *dict = [@{
+        @"type": [composedTransaction type],
         @"signedTransaction": [composedTransaction signedTransaction],
         @"account": [self mapAccount:[composedTransaction account]],
         @"destination": [composedTransaction destination]  ? [composedTransaction destination] :  [NSNull null],
@@ -662,17 +734,23 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 }
 
 - (NSDictionary *)mapTransaction:(ZKTransaction *)transaction {
-    NSMutableDictionary *cryptoDetails = [[NSMutableDictionary alloc] init];
-    if ([transaction cryptoDetails]) {
-        cryptoDetails[@"txHash"] = transaction.cryptoDetails.txHash ? transaction.cryptoDetails.txHash : [NSNull null];
-        cryptoDetails[@"nonce"] = transaction.cryptoDetails.nonce ? transaction.cryptoDetails.nonce : [NSNull null];
-        cryptoDetails[@"fromAddress"] = transaction.cryptoDetails.fromAddress;
-        cryptoDetails[@"toAddress"] = transaction.cryptoDetails.toAddress ? transaction.cryptoDetails.toAddress : [NSNull null];
-        cryptoDetails[@"data"] = transaction.cryptoDetails.data ? transaction.cryptoDetails.data : [NSNull null];
-        cryptoDetails[@"gasPrice"] = transaction.cryptoDetails.gasPrice ? transaction.cryptoDetails.gasPrice : [NSNull null];
-        cryptoDetails[@"gasLimit"] = transaction.cryptoDetails.gasLimit ? transaction.cryptoDetails.gasLimit : [NSNull null];
-        cryptoDetails[@"fiatAmount"] = transaction.cryptoDetails.fiatAmount ? transaction.cryptoDetails.fiatAmount : [NSNull null];
-        cryptoDetails[@"fiatFee"] = transaction.cryptoDetails.fiatFee ? transaction.cryptoDetails.fiatFee : [NSNull null];
+    NSMutableDictionary *cryptoProperties = [[NSMutableDictionary alloc] init];
+    if ([transaction cryptoProperties]) {
+        cryptoProperties[@"txHash"] = transaction.cryptoProperties.txHash ? transaction.cryptoProperties.txHash : [NSNull null];
+        cryptoProperties[@"nonce"] = transaction.cryptoProperties.nonce ? transaction.cryptoProperties.nonce : [NSNull null];
+        cryptoProperties[@"fromAddress"] = transaction.cryptoProperties.fromAddress;
+        cryptoProperties[@"toAddress"] = transaction.cryptoProperties.toAddress ? transaction.cryptoProperties.toAddress : [NSNull null];
+        cryptoProperties[@"data"] = transaction.cryptoProperties.data ? transaction.cryptoProperties.data : [NSNull null];
+        cryptoProperties[@"gasPrice"] = transaction.cryptoProperties.gasPrice ? transaction.cryptoProperties.gasPrice : [NSNull null];
+        cryptoProperties[@"gasLimit"] = transaction.cryptoProperties.gasLimit ? transaction.cryptoProperties.gasLimit : [NSNull null];
+        cryptoProperties[@"fiatAmount"] = transaction.cryptoProperties.fiatAmount ? transaction.cryptoProperties.fiatAmount : [NSNull null];
+        cryptoProperties[@"fiatFee"] = transaction.cryptoProperties.fiatFee ? transaction.cryptoProperties.fiatFee : [NSNull null];
+    }
+
+    NSMutableDictionary *fiatProperties = [[NSMutableDictionary alloc] init];
+    if ([transaction fiatProperties]) {
+        fiatProperties[@"fromFiatAccount"] = transaction.fiatProperties.fromFiatAccount ? [self mapAccountFiatProperties:transaction.fiatProperties.fromFiatAccount] : [NSNull null];
+        fiatProperties[@"toFiatAccount"] = transaction.fiatProperties.toFiatAccount ? [self mapAccountFiatProperties:transaction.fiatProperties.toFiatAccount] : [NSNull null];
     }
 
     NSMutableDictionary *dict = [@{
@@ -688,7 +766,8 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"amount": [transaction amount] ? [transaction amount] : [NSNull null],
         @"fee": [transaction fee] ? [transaction fee] : [NSNull null],
         @"nonce": [transaction nonce] ? [transaction nonce] : [NSNull null],
-        @"cryptoDetails": [transaction cryptoDetails] ? cryptoDetails : [NSNull null],
+        @"cryptoProperties": [transaction cryptoProperties] ? cryptoProperties : [NSNull null],
+        @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
         @"submittedAt": [transaction submittedAt] ? [transaction submittedAt] : [NSNull null],
         @"confirmedAt": [transaction confirmedAt] ? [transaction confirmedAt] : [NSNull null],
         @"timestamp": @([transaction timestamp])
@@ -872,7 +951,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 #pragma mark - Unboxing
 
 - (ZKAccount *)unboxAccount:(NSDictionary *)accountData {
-    ZKCryptoProperties *cryptoProperties;
+    ZKAccountCryptoProperties *cryptoProperties;
     if (accountData[@"cryptoProperties"] != [NSNull null]){
         NSDictionary *cryptoPropertiesData = accountData[@"cryptoProperties"];
 
@@ -882,19 +961,20 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         NSString *accountUtxoPool = (cryptoPropertiesData[@"utxoPool"] == [NSNull null]) ? NULL : cryptoPropertiesData[@"utxoPool"];
         NSNumber *accountVersion = cryptoPropertiesData[@"version"];
 
-        cryptoProperties = [[ZKCryptoProperties alloc] initWithAddress:accountAddress path:accountPath nonce:accountNonce utxoPool:accountUtxoPool version:accountVersion.charValue];
+        cryptoProperties = [[ZKAccountCryptoProperties alloc] initWithAddress:accountAddress path:accountPath nonce:accountNonce utxoPool:accountUtxoPool version:accountVersion.charValue];
     }
 
-    ZKFiatProperties *fiatProperties;
-    if (accountData[@"fiatProperties"] != [NSNull null]){
+    ZKAccountFiatProperties *fiatProperties;
+    if (accountData[@"accountFiatProperties"] != [NSNull null]){
         NSDictionary *fiatPropertiesData = accountData[@"fiatProperties"];
 
         NSString *accountNumber = (fiatPropertiesData[@"accountNumber"] == [NSNull null]) ? NULL : fiatPropertiesData[@"accountNumber"];
         NSString *sortCode = (fiatPropertiesData[@"sortCode"] == [NSNull null]) ? NULL : fiatPropertiesData[@"sortCode"];
         NSString *bic = (fiatPropertiesData[@"bic"] == [NSNull null]) ? NULL : fiatPropertiesData[@"bic"];
         NSString *iban = (fiatPropertiesData[@"iban"] == [NSNull null]) ? NULL : fiatPropertiesData[@"iban"];
+        NSString *customerName = (fiatPropertiesData[@"customerName"] == [NSNull null]) ? NULL : fiatPropertiesData[@"customerName"];
 
-        fiatProperties = [[ZKFiatProperties alloc] initWithAccountNumber:accountNumber sortCode:sortCode bic:bic iban:iban];
+        fiatProperties = [[ZKAccountFiatProperties alloc] initWithAccountNumber:accountNumber sortCode:sortCode bic:bic iban:iban customerName:customerName];
     }
 
     NSString *accountId = accountData[@"id"];

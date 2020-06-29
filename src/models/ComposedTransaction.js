@@ -4,6 +4,7 @@ import { Decimal } from 'decimal.js';
 export default class ComposedTransaction {
     constructor(json) {
         this.json = json;
+        this.type = json.type;
         this.signedTransaction = json.signedTransaction;
         this.account = new Account(json.account);
         this.destination = json.destination;
