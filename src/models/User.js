@@ -3,6 +3,7 @@ const { RNZumoKit } = NativeModules;
 import Wallet from './Wallet';
 import Account from './Account';
 import Transaction from './Transaction';
+import AccountFiatProperties from './AccountFiatProperties';
 import { tryCatchProxy } from '../ZKErrorProxy';
 
 class User {
@@ -162,18 +163,29 @@ class User {
     }
 
     /**
-   * Create fiat account
-   *
-   * @param {string} network
-   * @param {string} currencyCode
-   * @returns Account
-   * @memberof User
-   */
+    * Create fiat account
+    *
+    * @param {string} network
+    * @param {string} currencyCode
+    * @returns Account
+    * @memberof User
+    */
     async createFiatAccount(network, currencyCode) {
         const json = await RNZumoKit.createFiatAccount(network, currencyCode);
         return new Account(json);
     }
 
+    /**
+    * Get nominated account fiat properties
+    *
+    * @param {string} accountId
+    * @returns AccountFiatProperties
+    * @memberof User
+    */
+    async getNominatedAccountFiatPoperties(accountId) {
+        const json = await RNZumoKit.getNominatedAccountFiatPoperties(accountId);
+        return new AccountFiatProperties(json);
+    }
 }
 
 export default (tryCatchProxy(User))

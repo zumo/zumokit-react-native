@@ -63,6 +63,47 @@ class Wallet {
     }
 
     /**
+     * Composes a new internal fiat transaction.
+     *
+     * @param {string} fromAccountId
+     * @param {string} toAccountId
+     * @param {string} amount
+     * @param {Boolean} sendMax
+     * @returns {ComposedTransaction}
+     * @memberof Wallet
+     */
+    async composeInternalFiatTransaction(fromAccountId, toAccountId, amount, sendMax = false) {
+        const json = await RNZumoKit.composeInternalFiatTransaction(
+            fromAccountId,
+            toAccountId,
+            (amount) ? '' + amount : null,
+            sendMax
+        );
+
+        return new ComposedTransaction(json);
+    }
+
+    /**
+     * Composes a new internal fiat transaction.
+     *
+     * @param {string} fromAccountId
+     * @param {string} toAccountId
+     * @param {string} amount
+     * @param {Boolean} sendMax
+     * @returns {ComposedTransaction}
+     * @memberof Wallet
+     */
+    async composeTransactionToNominatedAccount(fromAccountId, amount, sendMax = false) {
+        const json = await RNZumoKit.composeTransactionToNominatedAccount(
+            fromAccountId,
+            (amount) ? '' + amount : null,
+            sendMax
+        );
+
+        return new ComposedTransaction(json);
+    }
+
+    /**
     * Submits transaction to Transaction Service
     *
     * @param {ComposedTransaction} composedTransaction

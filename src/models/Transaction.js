@@ -2,7 +2,8 @@ import { NativeModules, NativeEventEmitter } from 'react-native';
 import { Decimal } from 'decimal.js';
 const { RNZumoKit } = NativeModules;
 import { tryCatchProxy } from '../ZKErrorProxy';
-import CryptoDetails from './CryptoDetails';
+import TransactionCryptoProperties from './TransactionCryptoProperties';
+import TransactionFiatProperties from './TransactionFiatProperties';
 
 class Transaction {
     /**
@@ -33,8 +34,8 @@ class Transaction {
         this.amount = (json.amount) ? new Decimal(json.amount) : null;
         this.fee = (json.fee) ? new Decimal(json.fee) : null;
         this.nonce = json.nonce;
-        this.cryptoDetails = json.cryptoDetails ? new CryptoDetails(json.cryptoDetails) : null;
-        this.fiatDetails = null;
+        this.cryptoProperties = json.cryptoProperties ? new TransactionCryptoProperties(json.cryptoProperties) : null;
+        this.fiatProperties = json.fiatProperties ? new TransactionFiatProperties(json.fiatProperties) : null;
         this.submittedAt = json.submittedAt;
         this.confirmedAt = json.confirmedAt;
         this.timestamp = json.timestamp;
