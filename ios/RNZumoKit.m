@@ -704,11 +704,11 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     NSMutableDictionary *dict = [@{
         @"type": [composedTransaction type],
-        @"signedTransaction": [composedTransaction signedTransaction],
+        @"signedTransaction": [composedTransaction signedTransaction] ? [composedTransaction signedTransaction] : [NSNull null],
         @"account": [self mapAccount:[composedTransaction account]],
-        @"destination": [composedTransaction destination]  ? [composedTransaction destination] :  [NSNull null],
-        @"amount": [composedTransaction amount] ? [composedTransaction amount] :  [NSNull null],
-        @"data": [composedTransaction data] ? [composedTransaction data] :  [NSNull null],
+        @"destination": [composedTransaction destination] ? [composedTransaction destination] : [NSNull null],
+        @"amount": [composedTransaction amount] ? [composedTransaction amount] : [NSNull null],
+        @"data": [composedTransaction data] ? [composedTransaction data] : [NSNull null],
         @"fee": [composedTransaction fee],
         @"nonce": [composedTransaction nonce]
     } mutableCopy];
