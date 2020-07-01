@@ -979,7 +979,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     WritableMap map = Arguments.createMap();
 
     map.putString("type", transaction.getType());
-    map.putString("signedTransaction", transaction.getSignedTransaction());
+
+    if (transaction.getSignedTransaction() == null){
+      map.putNull("signedTransaction");
+    } else {
+      map.putString("signedTransaction", transaction.getSignedTransaction());
+    }
+
     map.putMap("account", mapAccount(transaction.getAccount()));
     map.putString("fee", transaction.getFee());
 

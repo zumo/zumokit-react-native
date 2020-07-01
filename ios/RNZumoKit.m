@@ -324,7 +324,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
     @try {
 
         NSString * type = composedTransactionData[@"type"];
-        NSString * signedTransaction = composedTransactionData[@"signedTransaction"];
+        NSString * signedTransaction = (composedTransactionData[@"signedTransaction"] == [NSNull null]) ? NULL : composedTransactionData[@"signedTransaction"];
         ZKAccount *account = [self unboxAccount:composedTransactionData[@"account"]];
         NSString * destination = (composedTransactionData[@"destination"] == [NSNull null]) ? NULL : composedTransactionData[@"destination"];
         NSString * amount = (composedTransactionData[@"amount"] == [NSNull null]) ? NULL : composedTransactionData[@"amount"];
@@ -704,11 +704,11 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     NSMutableDictionary *dict = [@{
         @"type": [composedTransaction type],
-        @"signedTransaction": [composedTransaction signedTransaction],
+        @"signedTransaction": [composedTransaction signedTransaction] ? [composedTransaction signedTransaction] : [NSNull null],
         @"account": [self mapAccount:[composedTransaction account]],
-        @"destination": [composedTransaction destination]  ? [composedTransaction destination] :  [NSNull null],
-        @"amount": [composedTransaction amount] ? [composedTransaction amount] :  [NSNull null],
-        @"data": [composedTransaction data] ? [composedTransaction data] :  [NSNull null],
+        @"destination": [composedTransaction destination] ? [composedTransaction destination] : [NSNull null],
+        @"amount": [composedTransaction amount] ? [composedTransaction amount] : [NSNull null],
+        @"data": [composedTransaction data] ? [composedTransaction data] : [NSNull null],
         @"fee": [composedTransaction fee],
         @"nonce": [composedTransaction nonce]
     } mutableCopy];
