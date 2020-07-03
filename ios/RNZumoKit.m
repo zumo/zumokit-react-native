@@ -965,7 +965,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     }
 
     ZKAccountFiatProperties *fiatProperties;
-    if (accountData[@"accountFiatProperties"] != [NSNull null]){
+    if (accountData[@"fiatProperties"] != [NSNull null]){
         NSDictionary *fiatPropertiesData = accountData[@"fiatProperties"];
 
         NSString *accountNumber = (fiatPropertiesData[@"accountNumber"] == [NSNull null]) ? NULL : fiatPropertiesData[@"accountNumber"];
