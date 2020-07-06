@@ -24,6 +24,7 @@ class Exchange {
         this.exchangeRate = new ExchangeRate(json.exchangeRate);
         this.exchangeSettings = new ExchangeSettings(json.exchangeSettings);
         this.exchangeRates = Parser.parseExchangeRates(json.exchangeRates);
+        this.nonce = json.nonce;
         this.submittedAt = json.submittedAt;
         this.confirmedAt = json.confirmedAt;
         this.timestamp = json.submittedAt;

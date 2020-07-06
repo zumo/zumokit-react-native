@@ -18,6 +18,7 @@ export default class ComposedExchange {
         this.returnAmount = new Decimal(json.returnValue);
         this.exchangeFee = new Decimal(json.exchangeFee);
         this.incomingTransactionFee = new Decimal(json.withdrawFee);
+        this.nonce = json.nonce;
     }
 
 }
