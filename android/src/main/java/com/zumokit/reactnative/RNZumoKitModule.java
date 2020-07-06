@@ -928,10 +928,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         cryptoProperties.putInt("nonce", account.getCryptoProperties().getNonce().intValue());
       }
 
-      if (account.getCryptoProperties().getNonce() == null) {
-        cryptoProperties.putNull("nonce");
+      if (account.getCryptoProperties().getUtxoPool() == null) {
+        cryptoProperties.putNull("utxoPool");
       } else {
-        cryptoProperties.putInt("nonce", account.getCryptoProperties().getNonce().intValue());
+        cryptoProperties.putString("utxoPool", account.getCryptoProperties().getUtxoPool());
       }
 
       cryptoProperties.putInt("version", account.getCryptoProperties().getVersion());
@@ -1439,7 +1439,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         utxoPool = cryptoPropertiesData.getString("utxoPool");
       }
 
-      byte version = Integer.valueOf(map.getInt("version")).byteValue();
+      byte version = Integer.valueOf(cryptoPropertiesData.getInt("version")).byteValue();
 
       cryptoProperties = new AccountCryptoProperties(address, path, nonce, utxoPool, version);
     }
