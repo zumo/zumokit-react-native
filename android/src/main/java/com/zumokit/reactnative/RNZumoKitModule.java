@@ -555,6 +555,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String depositFee = composedExchangeMap.getString("depositFee");
     String exchangeFee = composedExchangeMap.getString("exchangeFee");
     String withdrawFee = composedExchangeMap.getString("withdrawFee");
+    String nonce = composedExchangeMap.getString("nonce");
 
     ComposedExchange composedExchange = new ComposedExchange(
             signedTransaction,
@@ -567,7 +568,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             returnValue,
             depositFee,
             exchangeFee,
-            withdrawFee
+            withdrawFee,
+            nonce
     );
 
     this.wallet.submitExchange(composedExchange, new SubmitExchangeCallback() {
@@ -1210,12 +1212,24 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putMap("withdrawAccount", RNZumoKitModule.mapAccount(exchange.getWithdrawAccount()));
     map.putMap("exchangeRate", RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
     map.putMap("exchangeSettings", RNZumoKitModule.mapExchangeSettings(exchange.getExchangeSettings()));
-    map.putString("exchangeAddress", exchange.getExchangeAddress());
+
+    if (exchange.getExchangeAddress() == null) {
+      map.putNull("exchangeAddress");
+    } else {
+      map.putString("exchangeAddress", exchange.getExchangeAddress());
+    }
+
     map.putString("value", exchange.getValue());
     map.putString("returnValue", exchange.getReturnValue());
     map.putString("depositFee", exchange.getDepositFee());
     map.putString("exchangeFee", exchange.getExchangeFee());
     map.putString("withdrawFee", exchange.getWithdrawFee());
+
+    if (exchange.getNonce() == null) {
+      map.putNull("nonce");
+    } else {
+      map.putString("nonce", exchange.getNonce());
+    }
 
     return map;
   }
@@ -1251,6 +1265,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putMap("exchangeRate",  RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
     map.putMap("exchangeRates",  RNZumoKitModule.mapExchangeRates(exchange.getExchangeRates()));
     map.putMap("exchangeSettings", RNZumoKitModule.mapExchangeSettings(exchange.getExchangeSettings()));
+
+    if (exchange.getNonce() == null) {
+      map.putNull("nonce");
+    } else {
+      map.putString("nonce", exchange.getNonce());
+    }
+
     map.putInt("submittedAt", exchange.getSubmittedAt().intValue());
 
     if(exchange.getConfirmedAt() == null) {

@@ -492,8 +492,9 @@ RCT_EXPORT_METHOD(submitExchange:(NSDictionary *)composedExchangeData resolver:(
         NSString * depositFee = composedExchangeData[@"depositFee"];
         NSString * exchangeFee = composedExchangeData[@"exchangeFee"];
         NSString * withdrawFee = composedExchangeData[@"withdrawFee"];
+        NSString *nonce = (composedExchangeData[@"nonce"] == [NSNull null]) ? NULL : composedExchangeData[@"nonce"];
 
-        ZKComposedExchange * composedExchange = [[ZKComposedExchange alloc] initWithSignedTransaction:signedTransaction depositAccount:depositAccount withdrawAccount:withdrawAccount exchangeRate:exchangeRate exchangeSettings:exchangeSettings exchangeAddress:exchangeAddress value:value returnValue:returnValue depositFee:depositFee exchangeFee:exchangeFee withdrawFee:withdrawFee];
+        ZKComposedExchange * composedExchange = [[ZKComposedExchange alloc] initWithSignedTransaction:signedTransaction depositAccount:depositAccount withdrawAccount:withdrawAccount exchangeRate:exchangeRate exchangeSettings:exchangeSettings exchangeAddress:exchangeAddress value:value returnValue:returnValue depositFee:depositFee exchangeFee:exchangeFee withdrawFee:withdrawFee nonce:nonce];
 
        [_wallet submitExchange:composedExchange completion:^(ZKExchange * _Nullable exchange, NSError * _Nullable error) {
 
@@ -724,12 +725,13 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
          @"withdrawAccount": [self mapAccount:[exchange withdrawAccount]],
          @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
          @"exchangeSettings": [self mapExchangeSettings:[exchange exchangeSettings]],
-         @"exchangeAddress": [exchange exchangeAddress],
+         @"exchangeAddress": [exchange exchangeAddress] ? [exchange exchangeAddress] : [NSNull null],
          @"value": [exchange value],
          @"returnValue": [exchange returnValue],
          @"depositFee": [exchange depositFee],
          @"exchangeFee": [exchange exchangeFee],
          @"withdrawFee": [exchange withdrawFee],
+         @"nonce": [exchange nonce] ? [exchange nonce] : [NSNull null]
     };
 }
 
@@ -794,6 +796,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
          @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
          @"exchangeRates": [self mapExchangeRatesDict:[exchange exchangeRates]],
          @"exchangeSettings": [self mapExchangeSettings:[exchange exchangeSettings]],
+         @"nonce": [exchange nonce] ? [exchange nonce] : [NSNull null],
          @"submittedAt": [exchange submittedAt],
          @"confirmedAt": [exchange confirmedAt] ? [exchange confirmedAt] : [NSNull null],
     };
