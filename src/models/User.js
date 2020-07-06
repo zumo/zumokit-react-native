@@ -179,12 +179,16 @@ class User {
     * Get nominated account fiat properties
     *
     * @param {string} accountId
-    * @returns AccountFiatProperties
+    * @returns AccountFiatProperties | null
     * @memberof User
     */
     async getNominatedAccountFiatPoperties(accountId) {
-        const json = await RNZumoKit.getNominatedAccountFiatPoperties(accountId);
-        return new AccountFiatProperties(json);
+        try {
+            const json = await RNZumoKit.getNominatedAccountFiatPoperties(accountId);
+            return new AccountFiatProperties(json);
+        } catch (error) {
+            return null;
+        }
     }
 }
 
