@@ -23,15 +23,24 @@ class User {
     hasWallet;
 
     /**
-     * Whether the user is a Modulr customer.
+     * Whether the user is a Modulr testnet customer.
      *
      * @memberof User
      */
-    isModulrCustomer;
+    isModulrTestnetCustomer;
+
+     /**
+     * Whether the user is a Modulr mainnet customer.
+     *
+     * @memberof User
+     */
+    isModulrMainnetCustomer;
 
     constructor(json) {
         if (json.id) this.id = json.id;
         this.hasWallet = (json.hasWallet) ? true : false;
+        this.isModulrTestnetCustomer = (json.isModulrTestnetCustomer) ? true : false;
+        this.isModulrMainnetCustomer = (json.isModulrMainnetCustomer) ? true : false;
     }
 
     /**
@@ -146,8 +155,13 @@ class User {
      * @returns bool
      * @memberof User
      */
-    async isModulrCustomer(network) {
-        return RNZumoKit.isModulrCustomer(network);
+    isModulrCustomer(network) {
+        if (network == 'MAINNET')
+            return this.isModulrMainnetCustomer;
+        else if (network == 'TESTNET')
+            return this.isModulrTestnetCustomer;
+        else
+            return false;
     }
 
     /**
@@ -159,7 +173,11 @@ class User {
      * @memberof User
      */
     async makeModulrCustomer(network, customerData) {
-        return RNZumoKit.makeModulrCustomer(network, customerData);
+        await RNZumoKit.makeModulrCustomer(network, customerData);
+        if (network == 'MAINNET')
+            return this.isModulrMainnetCustomer = true;
+        else if (network == 'TESTNET')
+            return this.isModulrTestnetCustomer = true;
     }
 
     /**

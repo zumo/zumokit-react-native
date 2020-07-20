@@ -135,6 +135,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
         map.putString("id", user.getId());
         map.putBoolean("hasWallet", user.hasWallet());
+        map.putBoolean("isModulrMainnetCustomer", this.user.isModulrCustomer(NetworkType.MAINNET));
+        map.putBoolean("isModulrTestnetCustomer", this.user.isModulrCustomer(NetworkType.TESTNET));
 
         promise.resolve(map);
       }
@@ -201,16 +203,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     });
 
-  }
-
-  @ReactMethod
-  public void isModulrCustomer(String network, Promise promise) {
-    if(this.user == null) {
-      rejectPromise(promise, "User not found.");
-      return;
-    }
-
-    promise.resolve(this.user.isModulrCustomer(network));
   }
 
   @ReactMethod

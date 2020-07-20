@@ -116,7 +116,9 @@ RCT_EXPORT_METHOD(getUser:(NSString *)tokenSet resolver:(RCTPromiseResolveBlock)
 
             resolve(@{
                 @"id": [user getId],
-                @"hasWallet": @([user hasWallet])
+                @"hasWallet": @([user hasWallet]),
+                @"isModulrMainnetCustomer": @([user isModulrCustomer:ZKNetworkTypeMAINNET]),
+                @"isModulrTestnetCustomer": @([user isModulrCustomer:ZKNetworkTypeTESTNET])
             });
 
         }];
@@ -230,19 +232,6 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)password resolver:(RCTPromiseResolveB
 
     }
 
-}
-
-RCT_EXPORT_METHOD(isModulrCustomer:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    @try {
-        if ([_user isModulrCustomer:network]){
-            resolve(@(YES));
-        } else {
-            resolve(@(NO));
-        }
-    } @catch (NSException *exception) {
-        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
-    }
 }
 
 RCT_EXPORT_METHOD(makeModulrCustomer:(NSString *)network data:(NSDictionary *)data resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
