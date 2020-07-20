@@ -46,6 +46,7 @@ import money.zumo.zumokit.TransactionListener;
 import money.zumo.zumokit.AccountCallback;
 import money.zumo.zumokit.FeeRates;
 import money.zumo.zumokit.ExchangeRate;
+import money.zumo.zumokit.NetworkType;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
 import java.util.Map;
@@ -135,8 +136,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
         map.putString("id", user.getId());
         map.putBoolean("hasWallet", user.hasWallet());
-        map.putBoolean("isModulrMainnetCustomer", this.user.isModulrCustomer(NetworkType.MAINNET));
-        map.putBoolean("isModulrTestnetCustomer", this.user.isModulrCustomer(NetworkType.TESTNET));
+        map.putBoolean("isModulrMainnetCustomer", user.isModulrCustomer(NetworkType.MAINNET));
+        map.putBoolean("isModulrTestnetCustomer", user.isModulrCustomer(NetworkType.TESTNET));
 
         promise.resolve(map);
       }

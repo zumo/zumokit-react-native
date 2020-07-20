@@ -175,9 +175,9 @@ class User {
     async makeModulrCustomer(network, customerData) {
         await RNZumoKit.makeModulrCustomer(network, customerData);
         if (network == 'MAINNET')
-            return this.isModulrMainnetCustomer = true;
+            this.isModulrMainnetCustomer = true;
         else if (network == 'TESTNET')
-            return this.isModulrTestnetCustomer = true;
+            this.isModulrTestnetCustomer = true;
     }
 
     /**
