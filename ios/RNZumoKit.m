@@ -720,7 +720,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
 - (NSDictionary *)mapComposedExchange:(ZKComposedExchange *)exchange {
     return @{
-         @"signedTransaction": [exchange signedTransaction],
+        @"signedTransaction": [exchange signedTransaction] ? [exchange signedTransaction] : [NSNull null],
          @"depositAccount": [self mapAccount:[exchange depositAccount]],
          @"withdrawAccount": [self mapAccount:[exchange withdrawAccount]],
          @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
