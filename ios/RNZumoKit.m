@@ -481,12 +481,12 @@ RCT_EXPORT_METHOD(submitExchange:(NSDictionary *)composedExchangeData resolver:(
 
     @try {
 
-        NSString * signedTransaction = composedExchangeData[@"signedTransaction"];
+        NSString * signedTransaction = (composedExchangeData[@"signedTransaction"] == [NSNull null]) ? NULL : composedExchangeData[@"signedTransaction"];
         ZKAccount *depositAccount = [self unboxAccount:composedExchangeData[@"depositAccount"]];
         ZKAccount *withdrawAccount = [self unboxAccount:composedExchangeData[@"withdrawAccount"]];
         ZKExchangeRate *exchangeRate = [self unboxExchangeRate:composedExchangeData[@"exchangeRate"]];
         ZKExchangeSettings *exchangeSettings = [self unboxExchangeSettings:composedExchangeData[@"exchangeSettings"]];
-        NSString * exchangeAddress = composedExchangeData[@"exchangeAddress"];
+        NSString * exchangeAddress = (composedExchangeData[@"exchangeAddress"] == [NSNull null]) ? NULL : composedExchangeData[@"exchangeAddress"];
         NSString * value = composedExchangeData[@"value"];
         NSString * returnValue = composedExchangeData[@"returnValue"];
         NSString * depositFee = composedExchangeData[@"depositFee"];
