@@ -1196,6 +1196,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       mappedRates.putString("slow", rates.getSlow());
       mappedRates.putString("average", rates.getAverage());
       mappedRates.putString("fast", rates.getFast());
+      mappedRates.putDouble("slowTime", rates.getSlowTime());
+      mappedRates.putDouble("averageTime", rates.getAverageTime());
+      mappedRates.putDouble("fastTime", rates.getFastTime());
+      mappedRates.putString("source", rates.getSource());
 
       map.putMap(key, mappedRates);
     }
