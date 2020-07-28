@@ -3,8 +3,9 @@ import ZumoKitError from './ZumoKitError';
 function handler(fun: any) {
   return function bar() {
     try {
+      // eslint-disable-next-line prefer-rest-params
       const res = fun.apply(this, arguments);
-      if (Promise.resolve(res) == res) {
+      if (Promise.resolve(res) === res) {
         return res.catch((e: any) => {
           return e instanceof Error ? Promise.reject(e) : Promise.reject(new ZumoKitError(e));
         });
