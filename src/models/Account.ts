@@ -18,6 +18,8 @@ export default class Account {
 
   balance: Decimal;
 
+  hasNominatedAccount: boolean;
+
   cryptoProperties: AccountCryptoProperties | null;
 
   fiatProperties: AccountFiatProperties | null;
@@ -30,6 +32,7 @@ export default class Account {
     this.network = json.network as Network;
     this.type = json.type as AccountType;
     this.balance = new Decimal(json.balance);
+    this.hasNominatedAccount = !!json.hasNominatedAccount;
     this.cryptoProperties = json.cryptoProperties
       ? new AccountCryptoProperties(json.cryptoProperties)
       : null;
