@@ -52,6 +52,7 @@ export interface AccountJSON {
   network: string;
   type: string;
   balance: string;
+  hasNominatedAccount: boolean;
   cryptoProperties: AccountCryptoPropertiesJSON;
   fiatProperties: AccountFiatPropertiesJSON;
 }
@@ -202,4 +203,13 @@ export interface ModulrCustomerData {
   country: string;
   postCode: string;
   postTown: string;
+}
+
+export interface StateJSON {
+  accounts: Array<AccountJSON>;
+  transactions: Array<TransactionJSON>;
+  exchanges: Array<ExchangeJSON>;
+  feeRates: Dictionary<CurrencyCode, FeeRatesJSON>;
+  exchangeRates: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRateJSON>>;
+  exchangeSettings: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeSettingsJSON>>;
 }

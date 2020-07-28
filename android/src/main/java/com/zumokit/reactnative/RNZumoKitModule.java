@@ -947,6 +947,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("network", account.getNetwork());
     map.putString("type", account.getType());
     map.putString("balance", account.getBalance());
+    map.putBoolean("hasNominatedAccount", account.getHasNominatedAccount());
 
     if (account.getCryptoProperties() == null) {
       map.putNull("cryptoProperties");
@@ -1488,8 +1489,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String network = map.getString("network");
     String type = map.getString("type");
     String balance = map.getString("balance");
+    Boolean hasNominatedAccount = map.getBoolean("hasNominatedAccount");
 
-    return new Account(accountId, currencyType, currencyCode, network, type, balance, cryptoProperties, fiatProperties);
+    return new Account(accountId, currencyType, currencyCode, network, type, balance, hasNominatedAccount, cryptoProperties, fiatProperties);
   }
 
   public static ExchangeRate unboxExchangeRate(ReadableMap map) {

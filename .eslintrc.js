@@ -13,6 +13,7 @@ module.exports = {
     "no-underscore-dangle": 0,
     "class-methods-use-this": 0,
     "@typescript-eslint/indent": 0,
+    '@typescript-eslint/no-implicit-any': 2,
     "prettier/prettier": [
       "error",
       {

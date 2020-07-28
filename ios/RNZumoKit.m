@@ -678,6 +678,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"network": [account network],
         @"type": [account type],
         @"balance": [account balance],
+        @"hasNominatedAccount": @([account hasNominatedAccount]),
         @"cryptoProperties": [account cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [account fiatProperties] ? [self mapAccountFiatProperties:account.fiatProperties] : [NSNull null]
     };
@@ -990,8 +991,9 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     NSString *accountNetwork = accountData[@"network"];
     NSString *accountType = accountData[@"type"];
     NSString *accountBalance = accountData[@"balance"];
+    BOOL accountHasNominatedAccount = accountData[@"hasNominatedAccount"];
 
-    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:accountBalance cryptoProperties:cryptoProperties fiatProperties:fiatProperties];
+    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:accountBalance hasNominatedAccount:accountHasNominatedAccount cryptoProperties:cryptoProperties fiatProperties:fiatProperties];
 }
 
 - (ZKExchangeRate *)unboxExchangeRate:(NSDictionary *)exchangeRate {
