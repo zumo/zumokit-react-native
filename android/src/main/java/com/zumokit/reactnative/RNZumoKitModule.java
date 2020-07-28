@@ -1471,13 +1471,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     AccountFiatProperties fiatProperties = null;
     if(!map.isNull("fiatProperties")) {
-      ReadableMap cryptoPropertiesData = map.getMap("fiatProperties");
+      ReadableMap fiatPropertiesData = map.getMap("fiatProperties");
 
-      String accountNumber = cryptoPropertiesData.getString("accountNumber");
-      String sortCode = cryptoPropertiesData.getString("sortCode");
-      String bic = cryptoPropertiesData.getString("bic");
-      String iban = cryptoPropertiesData.getString("iban");
-      String customerName = cryptoPropertiesData.getString("customerName");
+      String accountNumber = fiatPropertiesData.getString("accountNumber");
+      String sortCode = fiatPropertiesData.getString("sortCode");
+      String bic = fiatPropertiesData.getString("bic");
+      String iban = fiatPropertiesData.getString("iban");
+      String customerName = fiatPropertiesData.getString("customerName");
 
       fiatProperties = new AccountFiatProperties(accountNumber, sortCode, bic, iban, customerName);
     }
