@@ -52,6 +52,7 @@ export interface AccountJSON {
   network: string;
   type: string;
   balance: string;
+  hasNominatedAccount: boolean;
   cryptoProperties: AccountCryptoPropertiesJSON;
   fiatProperties: AccountFiatPropertiesJSON;
 }
