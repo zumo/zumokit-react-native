@@ -6,7 +6,7 @@ import { Network } from './types';
 const { RNZumoKit } = NativeModules;
 
 @tryCatchProxy
-export default class ZKUtility {
+class ZKUtility {
   async generateMnemonic(wordCount: number) {
     return RNZumoKit.generateMnemonic(wordCount);
   }
@@ -35,3 +35,5 @@ export default class ZKUtility {
     return RNZumoKit.weiToEth(wei.toString());
   }
 }
+
+export default new ZKUtility();
