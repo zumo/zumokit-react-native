@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+// eslint-disable-next-line import/no-cycle
 import TransactionCryptoProperties from './TransactionCryptoProperties';
 import TransactionFiatProperties from './TransactionFiatProperties';
 import {

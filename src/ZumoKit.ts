@@ -1,11 +1,11 @@
-import { NativeModules, NativeEventEmitter, EmitterSubscription } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import User from './models/User';
 import Account from './models/Account';
 import Parser from './util/Parser';
 import tryCatchProxy from './ZKErrorProxy';
 import Transaction from './models/Transaction';
 import Exchange from './models/Exchange';
-import { Dictionary, CurrencyCode, ZumoKitConfig, TokenSet } from './types';
+import { Dictionary, CurrencyCode, ZumoKitConfig, TokenSet, StateJSON } from './types';
 import FeeRates from './models/FeeRates';
 import ExchangeRate from './models/ExchangeRate';
 import ExchangeSettings from './models/ExchangeSettings';
@@ -49,22 +49,13 @@ class ZumoKit {
     const { apiKey, apiRoot, txServiceUrl } = config;
     RNZumoKit.init(apiKey, apiRoot, txServiceUrl);
 
-    this.stateListener = this.emitter.addListener('StateChanged', (state) => {
-      // eslint-disable-next-line no-console
-      console.log('ZumoKitStateChanged');
-
-      if (state.accounts) this.state.accounts = Parser.parseAccounts(state.accounts);
-      if (state.transactions)
-        this.state.transactions = Parser.parseTransactions(state.transactions);
-      if (state.exchanges) this.state.exchanges = Parser.parseExchanges(state.exchanges);
-      if (state.exchangeRates)
-        this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
-      if (state.feeRates) this.state.feeRates = Parser.parseFeeRates(state.feeRates);
-      if (state.exchangeSettings)
-        this.state.exchangeSettings = Parser.parseExchangeSettings(state.exchangeSettings);
-
-      // eslint-disable-next-line no-console
-      console.log(this.state);
+    this.emitter.addListener('StateChanged', (state: StateJSON) => {
+      this.state.accounts = Parser.parseAccounts(state.accounts);
+      this.state.transactions = Parser.parseTransactions(state.transactions);
+      this.state.exchanges = Parser.parseExchanges(state.exchanges);
+      this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
+      this.state.feeRates = Parser.parseFeeRates(state.feeRates);
+      this.state.exchangeSettings = Parser.parseExchangeSettings(state.exchangeSettings);
 
       this.notifyStateListeners();
     });

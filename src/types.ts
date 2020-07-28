@@ -204,3 +204,12 @@ export interface ModulrCustomerData {
   postCode: string;
   postTown: string;
 }
+
+export interface StateJSON {
+  accounts: Array<AccountJSON>;
+  transactions: Array<TransactionJSON>;
+  exchanges: Array<ExchangeJSON>;
+  feeRates: Dictionary<CurrencyCode, FeeRatesJSON>;
+  exchangeRates: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRateJSON>>;
+  exchangeSettings: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeSettingsJSON>>;
+}
