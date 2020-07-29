@@ -129,7 +129,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       public void onSuccess(User user) {
 
         module.user = user;
-        module.addUserListener();
 
         WritableMap map = Arguments.createMap();
 
@@ -605,97 +604,98 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     });
   }
 
-  private void addUserListener() {
+  // TODO: Refactor and expose in JS wrapper
+  // private void addUserListener() {
 
-    if(this.user == null) {
-      return;
-    }
+  //   if(this.user == null) {
+  //     return;
+  //   }
 
-    RNZumoKitModule module = this;
+  //   RNZumoKitModule module = this;
 
-    this.user.addListener(new UserListener() {
-      @Override
-        public void update(ArrayList<Account> accounts, ArrayList<Transaction> transactions) {
+  //   this.user.addListener(new UserListener() {
+  //     @Override
+  //       public void update(ArrayList<Account> accounts, ArrayList<Transaction> transactions) {
 
-          WritableMap map = Arguments.createMap();
+  //         WritableMap map = Arguments.createMap();
 
-          WritableArray accs = RNZumoKitModule.mapAccounts(accounts);
-          map.putArray("accounts", accs);
+  //         WritableArray accs = RNZumoKitModule.mapAccounts(accounts);
+  //         map.putArray("accounts", accs);
 
-          WritableArray txns = RNZumoKitModule.mapTransactions(transactions);
-          map.putArray("transactions", txns);
+  //         WritableArray txns = RNZumoKitModule.mapTransactions(transactions);
+  //         map.putArray("transactions", txns);
 
-          module.reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit("StateChanged", map);
+  //         module.reactContext
+  //           .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+  //           .emit("StateChanged", map);
 
-        }
-    });
+  //       }
+  //   });
 
-  }
+  // }
 
-  @ReactMethod
-  public void addAccountListener(String accountId, Promise promise) {
+  // @ReactMethod
+  // public void addAccountListener(String accountId, Promise promise) {
 
-    // - check if a user exists
-    // - add a listener to the account
-    // - bubble up events to JS
-    // - remove the listener when it's all done
-  }
+  //   // - check if a user exists
+  //   // - add a listener to the account
+  //   // - bubble up events to JS
+  //   // - remove the listener when it's all done
+  // }
 
-  @ReactMethod
-  public void addTransactionListener(String transactionId, Promise promise) {
+  // @ReactMethod
+  // public void addTransactionListener(String transactionId, Promise promise) {
 
-    if(this.user == null) {
-      rejectPromise(promise, "User not found.");
-      return;
-    }
+  //   if(this.user == null) {
+  //     rejectPromise(promise, "User not found.");
+  //     return;
+  //   }
 
-    if(this.txListener != null) {
-      this.user.removeTransactionListener(this.txListener);
-      this.txListener = null;
-    }
+  //   if(this.txListener != null) {
+  //     this.user.removeTransactionListener(this.txListener);
+  //     this.txListener = null;
+  //   }
 
-    RNZumoKitModule module = this;
+  //   RNZumoKitModule module = this;
 
-    this.user.addTransactionListener(transactionId, new TransactionListener() {
+  //   this.user.addTransactionListener(transactionId, new TransactionListener() {
 
-      @Override
-      public void update(Transaction transaction) {
+  //     @Override
+  //     public void update(Transaction transaction) {
 
-        WritableMap map = module.mapTransaction(transaction);
+  //       WritableMap map = module.mapTransaction(transaction);
 
-        module.reactContext
-          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-          .emit("TransactionChanged", map);
+  //       module.reactContext
+  //         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+  //         .emit("TransactionChanged", map);
 
-      }
+  //     }
 
-    });
+  //   });
 
-    promise.resolve(true);
+  //   promise.resolve(true);
 
-  }
+  // }
 
-  @ReactMethod
-  public void removeTransactionListener(String transactionId, Promise promise) {
+  // @ReactMethod
+  // public void removeTransactionListener(String transactionId, Promise promise) {
 
-    if(this.user == null) {
-      rejectPromise(promise, "User not found.");
-      return;
-    }
+  //   if(this.user == null) {
+  //     rejectPromise(promise, "User not found.");
+  //     return;
+  //   }
 
-    if(this.txListener == null) {
-      rejectPromise(promise, "Transaction listener not found.");
-      return;
-    }
+  //   if(this.txListener == null) {
+  //     rejectPromise(promise, "Transaction listener not found.");
+  //     return;
+  //   }
 
-    this.user.removeTransactionListener(this.txListener);
-    this.txListener = null;
+  //   this.user.removeTransactionListener(this.txListener);
+  //   this.txListener = null;
 
-    promise.resolve(true);
+  //   promise.resolve(true);
 
-  }
+  // }
 
   // - Wallet Recovery
 
