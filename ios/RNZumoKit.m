@@ -327,9 +327,9 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
         NSString * signedTransaction = (composedTransactionData[@"signedTransaction"] == [NSNull null]) ? NULL : composedTransactionData[@"signedTransaction"];
         ZKAccount *account = [self unboxAccount:composedTransactionData[@"account"]];
         NSString * destination = (composedTransactionData[@"destination"] == [NSNull null]) ? NULL : composedTransactionData[@"destination"];
-        NSString * amount = (composedTransactionData[@"amount"] == [NSNull null]) ? NULL : composedTransactionData[@"amount"];
+        NSDecimalNumber * amount = (composedTransactionData[@"amount"] == [NSNull null]) ? NULL : [NSDecimalNumber decimalNumberWithString:composedTransactionData[@"amount"]];
         NSString * data = (composedTransactionData[@"data"] == [NSNull null]) ? NULL : composedTransactionData[@"data"];
-        NSString * fee = composedTransactionData[@"fee"];
+        NSDecimalNumber * fee = [NSDecimalNumber decimalNumberWithString:composedTransactionData[@"fee"]];
         NSString * nonce = composedTransactionData[@"nonce"];
 
         ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type signedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee nonce:nonce];
@@ -359,7 +359,7 @@ RCT_EXPORT_METHOD(composeEthTransaction:(NSString *)accountId gasPrice:(NSString
 
     @try {
 
-        [_wallet composeEthTransaction:accountId gasPrice:gasPrice gasLimit:gasLimit destination:destination amount:amount data:data nonce:nonce ? @([nonce integerValue]) : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeEthTransaction:accountId gasPrice:[NSDecimalNumber decimalNumberWithString:gasPrice] gasLimit:[NSDecimalNumber decimalNumberWithString:gasLimit] destination:destination amount:[NSDecimalNumber decimalNumberWithString:amount] data:data nonce:nonce ? @([nonce integerValue]) : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -383,7 +383,7 @@ RCT_EXPORT_METHOD(composeBtcTransaction:(NSString *)accountId changeAccountId:(N
 
     @try {
 
-        [_wallet composeBtcTransaction:accountId changeAccountId:changeAccountId destination:destination amount:amount feeRate:feeRate sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeBtcTransaction:accountId changeAccountId:changeAccountId destination:destination amount:[NSDecimalNumber decimalNumberWithString:amount] feeRate:[NSDecimalNumber decimalNumberWithString:feeRate] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -407,7 +407,7 @@ RCT_EXPORT_METHOD(composeInternalFiatTransaction:(NSString *)fromAccountId toAcc
 
     @try {
 
-        [_wallet composeInternalFiatTransaction:fromAccountId toAccountId:toAccountId amount:amount sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeInternalFiatTransaction:fromAccountId toAccountId:toAccountId amount:[NSDecimalNumber decimalNumberWithString:amount] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -431,7 +431,7 @@ RCT_EXPORT_METHOD(composeTransactionToNominatedAccount:(NSString *)fromAccountId
 
     @try {
 
-        [_wallet composeTransactionToNominatedAccount:fromAccountId amount:amount sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeTransactionToNominatedAccount:fromAccountId amount:[NSDecimalNumber decimalNumberWithString:amount] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -450,14 +450,14 @@ RCT_EXPORT_METHOD(composeTransactionToNominatedAccount:(NSString *)fromAccountId
 
 }
 
-RCT_EXPORT_METHOD(composeExchange:(NSString *)depositAccountId withdrawAccountId:(NSString *)withdrawAccountId exchangeRate:(NSDictionary *)exchangeRate exchangeSettings:(NSDictionary *)exchangeSettings value:(NSString *)value sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(composeExchange:(NSString *)depositAccountId withdrawAccountId:(NSString *)withdrawAccountId exchangeRate:(NSDictionary *)exchangeRate exchangeSettings:(NSDictionary *)exchangeSettings amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
     @try {
         ZKExchangeRate *rate = [self unboxExchangeRate:exchangeRate];
         ZKExchangeSettings *fees = [self unboxExchangeSettings:exchangeSettings];
 
-        [_wallet composeExchange:depositAccountId withdrawAccountId:withdrawAccountId exchangeRate:rate exchangeSettings:fees value:value sendMax:sendMax completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
+        [_wallet composeExchange:depositAccountId withdrawAccountId:withdrawAccountId exchangeRate:rate exchangeSettings:fees amount:[NSDecimalNumber decimalNumberWithString:amount] sendMax:sendMax completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -487,11 +487,11 @@ RCT_EXPORT_METHOD(submitExchange:(NSDictionary *)composedExchangeData resolver:(
         ZKExchangeRate *exchangeRate = [self unboxExchangeRate:composedExchangeData[@"exchangeRate"]];
         ZKExchangeSettings *exchangeSettings = [self unboxExchangeSettings:composedExchangeData[@"exchangeSettings"]];
         NSString * exchangeAddress = (composedExchangeData[@"exchangeAddress"] == [NSNull null]) ? NULL : composedExchangeData[@"exchangeAddress"];
-        NSString * value = composedExchangeData[@"value"];
-        NSString * returnValue = composedExchangeData[@"returnValue"];
-        NSString * depositFee = composedExchangeData[@"depositFee"];
-        NSString * exchangeFee = composedExchangeData[@"exchangeFee"];
-        NSString * withdrawFee = composedExchangeData[@"withdrawFee"];
+        NSDecimalNumber * value = [NSDecimalNumber decimalNumberWithString:composedExchangeData[@"value"]];
+        NSDecimalNumber * returnValue = [NSDecimalNumber decimalNumberWithString:composedExchangeData[@"returnValue"]];
+        NSDecimalNumber * depositFee = [NSDecimalNumber decimalNumberWithString:composedExchangeData[@"depositFee"]];
+        NSDecimalNumber * exchangeFee = [NSDecimalNumber decimalNumberWithString:composedExchangeData[@"exchangeFee"]];
+        NSDecimalNumber * withdrawFee = [NSDecimalNumber decimalNumberWithString:composedExchangeData[@"withdrawFee"]];
         NSString *nonce = (composedExchangeData[@"nonce"] == [NSNull null]) ? NULL : composedExchangeData[@"nonce"];
 
         ZKComposedExchange * composedExchange = [[ZKComposedExchange alloc] initWithSignedTransaction:signedTransaction depositAccount:depositAccount withdrawAccount:withdrawAccount exchangeRate:exchangeRate exchangeSettings:exchangeSettings exchangeAddress:exchangeAddress value:value returnValue:returnValue depositFee:depositFee exchangeFee:exchangeFee withdrawFee:withdrawFee nonce:nonce];
@@ -598,25 +598,25 @@ RCT_EXPORT_METHOD(isValidBtcAddress:(NSString *)address network:(NSString *)netw
 
 RCT_EXPORT_METHOD(ethToGwei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *gwei = [[_zumoKit utils] ethToGwei:eth];
+    NSString *gwei = [[_zumoKit utils] ethToGwei:[NSDecimalNumber decimalNumberWithString:eth]].description;
     resolve(gwei);
 }
 
 RCT_EXPORT_METHOD(gweiToEth:(NSString *)gwei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *eth = [[_zumoKit utils] gweiToEth:gwei];
+    NSString *eth = [[_zumoKit utils] gweiToEth:[NSDecimalNumber decimalNumberWithString:gwei]].description;
     resolve(eth);
 }
 
 RCT_EXPORT_METHOD(ethToWei:(NSString *)eth resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *wei = [[_zumoKit utils] ethToWei:eth];
+    NSString *wei = [[_zumoKit utils] ethToWei:[NSDecimalNumber decimalNumberWithString:eth]].description;
     resolve(wei);
 }
 
 RCT_EXPORT_METHOD(weiToEth:(NSString *)wei resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    NSString *eth = [[_zumoKit utils] weiToEth:wei];
+    NSString *eth = [[_zumoKit utils] weiToEth:[NSDecimalNumber decimalNumberWithString:wei]].description;
     resolve(eth);
 }
 
@@ -993,7 +993,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     NSString *accountBalance = accountData[@"balance"];
     BOOL accountHasNominatedAccount = accountData[@"hasNominatedAccount"];
 
-    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:accountBalance hasNominatedAccount:accountHasNominatedAccount cryptoProperties:cryptoProperties fiatProperties:fiatProperties];
+    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:[NSDecimalNumber decimalNumberWithString:accountBalance] hasNominatedAccount:accountHasNominatedAccount cryptoProperties:cryptoProperties fiatProperties:fiatProperties];
 }
 
 - (ZKExchangeRate *)unboxExchangeRate:(NSDictionary *)exchangeRate {
@@ -1004,7 +1004,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
     NSNumber *exchangeRateValidTo = exchangeRate[@"validTo"];
     NSNumber *exchangeRateTimestamp = exchangeRate[@"timestamp"];
 
-    return [[ZKExchangeRate alloc] initWithId:exchangeRateId depositCurrency:exchangeRateDepositCurrency withdrawCurrency:exchangeRateWithdrawCurrency value:exchangeRateValue validTo:exchangeRateValidTo.longLongValue timestamp:exchangeRateTimestamp.longLongValue];
+    return [[ZKExchangeRate alloc] initWithId:exchangeRateId depositCurrency:exchangeRateDepositCurrency withdrawCurrency:exchangeRateWithdrawCurrency value:[NSDecimalNumber decimalNumberWithString:exchangeRateValue] validTo:exchangeRateValidTo.longLongValue timestamp:exchangeRateTimestamp.longLongValue];
 }
 
 
@@ -1025,7 +1025,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         depositAddress[network] = address;
     }];
 
-    return [[ZKExchangeSettings alloc] initWithId:exchangeSettingsId depositAddress:depositAddress depositCurrency:exchangeSettingsDepositCurrency withdrawCurrency:exchangeSettingsWithdrawCurrency minExchangeAmount:minExchangeAmount feeRate:exchangeSettingsFeeRate depositFeeRate:exchangeSettingsDepositFeeRate withdrawFee:exchangeSettingsWithdrawFee timestamp:exchangeSettingsTimestamp.longLongValue];
+    return [[ZKExchangeSettings alloc] initWithId:exchangeSettingsId depositAddress:depositAddress depositCurrency:exchangeSettingsDepositCurrency withdrawCurrency:exchangeSettingsWithdrawCurrency minExchangeAmount:[NSDecimalNumber decimalNumberWithString:minExchangeAmount] feeRate:[NSDecimalNumber decimalNumberWithString:exchangeSettingsFeeRate] depositFeeRate:[NSDecimalNumber decimalNumberWithString:exchangeSettingsDepositFeeRate] withdrawFee:[NSDecimalNumber decimalNumberWithString:exchangeSettingsWithdrawFee] timestamp:exchangeSettingsTimestamp.longLongValue];
 }
 
 @end
