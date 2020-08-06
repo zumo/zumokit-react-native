@@ -1,5 +1,6 @@
 import ZumoKitError from './ZumoKitError';
 
+/** @internal */
 function handler(fun: any) {
   return function bar() {
     try {
@@ -21,6 +22,7 @@ function handler(fun: any) {
   };
 }
 
+/** @internal */
 export default function tryCatchProxy(constructor: Function) {
   const { prototype } = constructor;
 
