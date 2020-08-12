@@ -2,11 +2,12 @@
   "name": "ZumoKit",
   "includeVersion": true,
   "inputFiles": [
-    "./src"
+    "./src",
+    "./src/models"
   ],
   "mode": "file",
   "out": "docs",
   "theme": "minimal",
-  "excludeExternals": true,
+  "excludeExternals": false,
   "stripInternal": true
 }

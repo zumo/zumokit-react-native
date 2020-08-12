@@ -1,13 +1,18 @@
 import AccountFiatProperties from './AccountFiatProperties';
 import { TransactionFiatPropertiesJSON } from '../types';
 
+/** Record containing transaction fiat properties. */
 export default class TransactionFiatProperties {
+  /** @internal */
   json: TransactionFiatPropertiesJSON;
 
+  /** Sender fiat account properties. */
   fromFiatAccount: AccountFiatProperties;
 
+  /** Recipient fiat account properties. */
   toFiatAccount: AccountFiatProperties;
 
+  /** @internal */
   constructor(json: TransactionFiatPropertiesJSON) {
     this.json = json;
     this.fromFiatAccount = new AccountFiatProperties(json.fromFiatAccount);

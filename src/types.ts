@@ -31,12 +31,42 @@ export type ExchangeStatus =
 
 export type TimeInterval = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
 
+export interface ZumoKitConfig {
+  apiKey: string;
+  apiRoot: string;
+  txServiceUrl: string;
+}
+
+export interface TokenSet {
+  accessToken: string;
+  expiresIn: number;
+  refreshToken: string;
+}
+
+export interface ModulrCustomerData {
+  firstName: string;
+  middleName: string | null;
+  lastName: string;
+  /** date of birty in ISO 8601 format, e.g '2020-08-12' */
+  dateOfBirth: string;
+  email: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2: string | null;
+  /** date of birty in ISO 8601 format, e.g '2020-08-12' */
+  country: string;
+  postCode: string;
+  postTown: string;
+}
+
+/** @internal */
 export interface AccountCryptoPropertiesJSON {
   address: string;
   path: string;
   nonce: number | null;
 }
 
+/** @internal */
 export interface AccountFiatPropertiesJSON {
   accountNumber: string | null;
   sortCode: string | null;
@@ -45,6 +75,7 @@ export interface AccountFiatPropertiesJSON {
   customerName: string | null;
 }
 
+/** @internal */
 export interface AccountJSON {
   id: string;
   currencyType: string;
@@ -57,6 +88,7 @@ export interface AccountJSON {
   fiatProperties: AccountFiatPropertiesJSON;
 }
 
+/** @internal */
 export interface ExchangeRateJSON {
   id: string;
   depositCurrency: string;
@@ -66,6 +98,7 @@ export interface ExchangeRateJSON {
   timestamp: number;
 }
 
+/** @internal */
 export interface ExchangeSettingsJSON {
   id: string;
   depositCurrency: string;
@@ -78,6 +111,7 @@ export interface ExchangeSettingsJSON {
   timestamp: number;
 }
 
+/** @internal */
 export interface ComposedTransactionJSON {
   type: string;
   signedTransaction: string | null;
@@ -89,6 +123,7 @@ export interface ComposedTransactionJSON {
   nonce: string;
 }
 
+/** @internal */
 export interface ComposedExchangeJSON {
   signedTransaction: string | null;
   depositAccount: AccountJSON;
@@ -104,6 +139,7 @@ export interface ComposedExchangeJSON {
   nonce: string;
 }
 
+/** @internal */
 export interface FeeRatesJSON {
   slow: string;
   average: string;
@@ -114,6 +150,7 @@ export interface FeeRatesJSON {
   source: string;
 }
 
+/** @internal */
 export interface TransactionCryptoPropertiesJSON {
   txHash: string | null;
   nonce: string | null;
@@ -126,11 +163,13 @@ export interface TransactionCryptoPropertiesJSON {
   fiatAmount: Record<string, string>;
 }
 
+/** @internal */
 export interface TransactionFiatPropertiesJSON {
   fromFiatAccount: AccountFiatPropertiesJSON;
   toFiatAccount: AccountFiatPropertiesJSON;
 }
 
+/** @internal */
 export interface TransactionJSON {
   id: string;
   type: string;
@@ -151,6 +190,7 @@ export interface TransactionJSON {
   timestamp: number;
 }
 
+/** @internal */
 export interface ExchangeJSON {
   id: string;
   status: string;
@@ -174,37 +214,13 @@ export interface ExchangeJSON {
   timestamp: number;
 }
 
+/** @internal */
 export interface UserJSON {
   id: string;
   hasWallet: boolean;
 }
 
-export interface ZumoKitConfig {
-  apiKey: string;
-  apiRoot: string;
-  txServiceUrl: string;
-}
-
-export interface TokenSet {
-  accessToken: string;
-  expiresIn: number;
-  refreshToken: string;
-}
-
-export interface ModulrCustomerData {
-  firstName: string;
-  middleName: string | null;
-  lastName: string;
-  dateOfBirth: string;
-  email: string;
-  phone: string;
-  addressLine1: string;
-  addressLine2: string | null;
-  country: string;
-  postCode: string;
-  postTown: string;
-}
-
+/** @internal */
 export interface StateJSON {
   accounts: Array<AccountJSON>;
   transactions: Array<TransactionJSON>;
