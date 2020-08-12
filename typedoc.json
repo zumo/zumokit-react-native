@@ -2,8 +2,7 @@
   "name": "ZumoKit",
   "includeVersion": true,
   "inputFiles": [
-    "./src",
-    "./src/models"
+    "./src"
   ],
   "mode": "file",
   "out": "docs",
