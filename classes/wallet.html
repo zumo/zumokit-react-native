@@ -2708,6 +2708,8 @@ img {
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -2720,6 +2722,45 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
+		<li class=" tsd-kind-class">
+			<a href="account.html" class="tsd-kind-icon">Account</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="accountcryptoproperties.html" class="tsd-kind-icon">Account<wbr>Crypto<wbr>Properties</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="accountfiatproperties.html" class="tsd-kind-icon">Account<wbr>Fiat<wbr>Properties</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="composedexchange.html" class="tsd-kind-icon">Composed<wbr>Exchange</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="composedtransaction.html" class="tsd-kind-icon">Composed<wbr>Transaction</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="exchange.html" class="tsd-kind-icon">Exchange</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="exchangerate.html" class="tsd-kind-icon">Exchange<wbr>Rate</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="exchangesettings.html" class="tsd-kind-icon">Exchange<wbr>Settings</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="feerates.html" class="tsd-kind-icon">Fee<wbr>Rates</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="transaction.html" class="tsd-kind-icon">Transaction</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="transactioncryptoproperties.html" class="tsd-kind-icon">Transaction<wbr>Crypto<wbr>Properties</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="transactionfiatproperties.html" class="tsd-kind-icon">Transaction<wbr>Fiat<wbr>Properties</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="user.html" class="tsd-kind-icon">User</a>
+		</li>
 		<li class="current tsd-kind-class">
 			<a href="wallet.html" class="tsd-kind-icon">Wallet</a>
 			<ul>
@@ -2746,10 +2787,75 @@ img {
 				</li>
 			</ul>
 		</li>
+		<li class=" tsd-kind-class">
+			<a href="zkutility.html" class="tsd-kind-icon">ZKUtility</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="zumokit.html" class="tsd-kind-icon">Zumo<wbr>Kit</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="zumokiterror.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Error</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/modulrcustomerdata.html" class="tsd-kind-icon">Modulr<wbr>Customer<wbr>Data</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/state.html" class="tsd-kind-icon">State</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/tokenset.html" class="tsd-kind-icon">Token<wbr>Set</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/zumokitconfig.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Config</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#accounttype" class="tsd-kind-icon">Account<wbr>Type</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#currencycode" class="tsd-kind-icon">Currency<wbr>Code</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#currencytype" class="tsd-kind-icon">Currency<wbr>Type</a>
+		</li>
+		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+			<a href="../globals.html#dictionary" class="tsd-kind-icon">Dictionary</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#exchangestatus" class="tsd-kind-icon">Exchange<wbr>Status</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#network" class="tsd-kind-icon">Network</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#timeinterval" class="tsd-kind-icon">Time<wbr>Interval</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#transactionstatus" class="tsd-kind-icon">Transaction<wbr>Status</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#transactiontype" class="tsd-kind-icon">Transaction<wbr>Type</a>
+		</li>
+		<li class=" tsd-kind-variable">
+			<a href="../globals.html#rnzumokit" class="tsd-kind-icon">RNZumo<wbr>Kit</a>
+		</li>
 	</ul>
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
+		<section class="tsd-panel tsd-comment">
+			<div class="tsd-comment tsd-typography">
+				<div class="lead">
+					<p>User wallet provides methods for transfer and exchange of fiat and cryptocurrency funds.
+						Sending a transaction or making an exchange is a two step process. First a transaction or
+						exchange has to be composed via one of the compose method, then <a href="composedtransaction.html">ComposedTransaction</a> or
+					<a href="composedexchange.html">ComposedExchange</a> can be submitted.</p>
+					<p>
+						User wallet instance can be obtained by creating, unlocking or recovering user wallet.
+						<p>
+							See <a href="user.html">User</a>.
+				</div>
+			</div>
+		</section>
 		<section class="tsd-panel tsd-hierarchy">
 			<h3>Hierarchy</h3>
 			<ul class="tsd-hierarchy">
@@ -2783,34 +2889,57 @@ img {
 				<a name="composebtctransaction" class="tsd-anchor"></a>
 				<h3>compose<wbr>Btc<wbr>Transaction</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">compose<wbr>Btc<wbr>Transaction<span class="tsd-signature-symbol">(</span>accountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, changeAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, destinationAddresss<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, feeRate<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span>, sendMax<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">compose<wbr>Btc<wbr>Transaction<span class="tsd-signature-symbol">(</span>fromAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, changeAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, destinationAddress<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, feeRate<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span>, sendMax<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L39">src/models/Wallet.ts:39</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L71">src/models/Wallet.ts:71</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Compose Bitcoin transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#bitcoin">Send Transactions</a> guide for usage details.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>accountId: <span class="tsd-signature-type">string</span></h5>
+								<h5>fromAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p><a href="account.html">Account</a> identifier</p>
+								</div>
 							</li>
 							<li>
 								<h5>changeAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>change <a href="account.html">Account</a> identifier, which can be the same as fromAccountId</p>
+								</div>
 							</li>
 							<li>
-								<h5>destinationAddresss: <span class="tsd-signature-type">string</span></h5>
+								<h5>destinationAddress: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>destination wallet address</p>
+								</div>
 							</li>
 							<li>
 								<h5>amount: <span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>amount in BTC</p>
+								</div>
 							</li>
 							<li>
 								<h5>feeRate: <span class="tsd-signature-type">Decimal</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>fee rate in satoshis/byte</p>
+								</div>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> sendMax: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>send maximum possible funds to destination</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -2821,40 +2950,69 @@ img {
 				<a name="composeethtransaction" class="tsd-anchor"></a>
 				<h3>compose<wbr>Eth<wbr>Transaction</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">compose<wbr>Eth<wbr>Transaction<span class="tsd-signature-symbol">(</span>accountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span>, gasLimit<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, destinationAddresss<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, nonce<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, sendMax<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">compose<wbr>Eth<wbr>Transaction<span class="tsd-signature-symbol">(</span>fromAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span>, gasLimit<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, destinationAddress<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, nonce<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, sendMax<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L15">src/models/Wallet.ts:15</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L37">src/models/Wallet.ts:37</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Compose Ethereum transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#ethereum">Send Transactions</a> guide for usage details.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>accountId: <span class="tsd-signature-type">string</span></h5>
+								<h5>fromAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p><a href="account.html">Account</a> identifier</p>
+								</div>
 							</li>
 							<li>
 								<h5>gasPrice: <span class="tsd-signature-type">Decimal</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>gas price in gwei</p>
+								</div>
 							</li>
 							<li>
 								<h5>gasLimit: <span class="tsd-signature-type">number</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>gas limit</p>
+								</div>
 							</li>
 							<li>
-								<h5>destinationAddresss: <span class="tsd-signature-type">string</span></h5>
+								<h5>destinationAddress: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>destination wallet address</p>
+								</div>
 							</li>
 							<li>
 								<h5>amount: <span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>amount in ETH</p>
+								</div>
 							</li>
 							<li>
 								<h5>data: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>data in string format or null</p>
+								</div>
 							</li>
 							<li>
 								<h5>nonce: <span class="tsd-signature-type">number</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>next transaction nonce or null</p>
+								</div>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> sendMax: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>send maximum possible funds to destination</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -2871,28 +3029,51 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L95">src/models/Wallet.ts:95</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L158">src/models/Wallet.ts:158</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Compose exchange asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/make-exchanges#compose-exchange">Make Exchanges</a> guide for usage details.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>fromAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p><a href="account.html">Account</a> identifier</p>
+								</div>
 							</li>
 							<li>
 								<h5>toAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p><a href="account.html">Account</a> identifier</p>
+								</div>
 							</li>
 							<li>
 								<h5>exchangeRate: <a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Zumo exchange rate obtained from ZumoKit state</p>
+								</div>
 							</li>
 							<li>
 								<h5>exchangeSettings: <a href="exchangesettings.html" class="tsd-signature-type">ExchangeSettings</a></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Zumo exchange settings obtained from ZumoKit state</p>
+								</div>
 							</li>
 							<li>
 								<h5>amount: <span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>amount in deposit account currency</p>
+								</div>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> sendMax: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>exchange maximum possible funds</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedexchange.html" class="tsd-signature-type">ComposedExchange</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -2909,22 +3090,39 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L59">src/models/Wallet.ts:59</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L99">src/models/Wallet.ts:99</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Compose fiat transaction between users in Zumo ecosystem asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#internal-fiat-transaction">Send Transactions</a> guide for usage details.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>fromAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p><a href="account.html">Account</a> identifier</p>
+								</div>
 							</li>
 							<li>
 								<h5>toAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p><a href="account.html">Account</a> identifier</p>
+								</div>
 							</li>
 							<li>
 								<h5>amount: <span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>amount in source account currency</p>
+								</div>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> sendMax: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>send maximum possible funds to destination</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -2941,19 +3139,33 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L75">src/models/Wallet.ts:75</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L122">src/models/Wallet.ts:122</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Compose transaction to nominated account asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#external-fiat-transaction">Send Transactions</a> guide for usage details.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>fromAccountId: <span class="tsd-signature-type">string</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p><a href="account.html">Account</a> identifier</p>
+								</div>
 							</li>
 							<li>
 								<h5>amount: <span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>amount in source account currency</p>
+								</div>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagDefault value">Default value</span> sendMax: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>send maximum possible funds to destination</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -2970,13 +3182,22 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L115">src/models/Wallet.ts:115</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L184">src/models/Wallet.ts:184</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Submit an exchange asynchronously. <a href="https://developers.zumo.money/docs/guides/make-exchanges#submit-exchange">Make Exchanges</a> guide for usage details.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>composedExchange: <a href="composedexchange.html" class="tsd-signature-type">ComposedExchange</a></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Composed exchange retrieved as the result
+									of <a href="wallet.html#composeexchange">composeExchange</a> method</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="exchange.html" class="tsd-signature-type">Exchange</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -2993,13 +3214,22 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L89">src/models/Wallet.ts:89</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L142">src/models/Wallet.ts:142</a></li>
 							</ul>
 						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Submit a transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#submit-transaction">Send Transactions</a> guide for usage details.</p>
+							</div>
+						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>composedTransaction: <a href="composedtransaction.html" class="tsd-signature-type">ComposedTransaction</a></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Composed transaction retrieved as a result
+									of one of the compose transaction methods</p>
+								</div>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="transaction.html" class="tsd-signature-type">Transaction</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -3012,7 +3242,6 @@ img {
 				<h2>Legend</h2>
 				<div class="tsd-legend-group">
 					<ul class="tsd-legend">
-						<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 						<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 						<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 					</ul>
