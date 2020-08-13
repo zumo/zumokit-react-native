@@ -16,7 +16,7 @@ const { RNZumoKit } = NativeModules;
  * exchange has to be composed via one of the compose methods, then {@link  ComposedTransaction ComposedTransaction} or
  * {@link  ComposedExchange ComposedExchange} can be submitted.
  * <p>
- * User wallet instance can be obtained by creating, unlocking or recovering user wallet.
+ * User wallet instance can be obtained by {@link User.createWallet creating}, {@link User.unlockWallet unlocking} or {@link User.recoverWallet recovering} user wallet.
  * <p>
  * See {@link User}.
  */

@@ -1,7 +1,11 @@
 import AccountFiatProperties from './AccountFiatProperties';
 import { TransactionFiatPropertiesJSON } from '../types';
 
-/** Record containing transaction fiat properties. */
+/**
+ * Record containing transaction fiat properties.
+ * <p>
+ * See {@link Transaction}.
+ * */
 export default class TransactionFiatProperties {
   /** @internal */
   json: TransactionFiatPropertiesJSON;

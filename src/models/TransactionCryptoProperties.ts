@@ -3,7 +3,11 @@ import { TransactionCryptoPropertiesJSON, Dictionary, CurrencyCode } from '../ty
 // eslint-disable-next-line import/no-cycle
 import Parser from '../util/Parser';
 
-/** Record containing transaction crypto properties. */
+/**
+ * Record containing transaction crypto properties.
+ * <p>
+ * See {@link Transaction}.
+ * */
 export default class TransactionCryptoProperties {
   /** @internal */
   json: TransactionCryptoPropertiesJSON;

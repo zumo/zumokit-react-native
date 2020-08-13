@@ -1,7 +1,9 @@
 import { AccountFiatPropertiesJSON } from '../types';
 
 /**
- * {@link Account}'s fiat related properties.
+ * Account's fiat related properties.
+ * <p>
+ * See {@link Account}.
  */
 export default class AccountFiatProperties {
   /** @internal */

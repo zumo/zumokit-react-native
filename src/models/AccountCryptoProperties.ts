@@ -1,7 +1,9 @@
 import { AccountCryptoPropertiesJSON } from '../types';
 
 /**
- * {@link Account}'s crypto related properties.
+ * Account's crypto related properties.
+ * <p>
+ * See {@link Account}.
  */
 export default class AccountCryptoProperties {
   /** @internal */

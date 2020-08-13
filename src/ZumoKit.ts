@@ -41,7 +41,7 @@ type HistoricalExchangeRates = Dictionary<
  * import ZumoKit from 'react-native-zumo-kit';
  * ```
  * Once ZumoKit is {@link init | initialized}, this class provides access to {@Link getUser | user retrieval}, {@link state | ZumoKit state object} and {@link getHistoricalExchangeRates | historical exchange rates}.
- * State change listners can be  {@link addStateListener added} and {@link removeStateListener removed}.
+ * State change listeners can be  {@link addStateListener added} and {@link removeStateListener removed}.
  * <p>
  * See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
  * */

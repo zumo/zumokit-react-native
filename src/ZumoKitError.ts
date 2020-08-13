@@ -1,6 +1,6 @@
 /**
  * ZumoKitError extension to Error class with type, code and message properties.
- * Refer to <a href="https://developers.zumo.money/docs/guides/handling-errors">Handling Error</a>
+ * Refer to <a href="https://developers.zumo.money/docs/guides/handling-errors">Handling Errors</a>
  * guide for details on handling errors.
  */
 export default class ZumoKitError extends Error {
