@@ -112,7 +112,7 @@ class ZumoKit {
   }
 
   /**
-   * Fetch historical exchange rates for supported time intervals corresponding to user token set.
+   * Fetch historical exchange rates for supported time intervals.
    * On success callback returns historical exchange rates are contained in a mapping between
    * time interval on a top level, from currency on second level, to currency on third level and
    * {@link ExchangeRate ExchangeRate} objects.
