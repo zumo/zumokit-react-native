@@ -60,11 +60,11 @@ export default class Exchange {
   /** Exchange rate used. */
   exchangeRate: ExchangeRate;
 
-  /** Echange settings used. */
+  /** Exchange settings used. */
   exchangeSettings: ExchangeSettings;
 
   /**
-   * Echange rates at the time exchange was made.
+   * Exchange rates at the time exchange was made.
    * This can be used to display amounts in local currency to the user.
    */
   exchangeRates: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRate>>;

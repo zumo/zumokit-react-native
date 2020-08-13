@@ -11,7 +11,7 @@ export default class ZumoKitError extends Error {
 
   /**
    * In case an error could be handled programmatically in addition to error type
-   * error code is returne.
+   * error code is returned.
    */
   code: string;
 

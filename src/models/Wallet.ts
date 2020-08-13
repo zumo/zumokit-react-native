@@ -13,7 +13,7 @@ const { RNZumoKit } = NativeModules;
 /**
  * User wallet provides methods for transfer and exchange of fiat and cryptocurrency funds.
  * Sending a transaction or making an exchange is a two step process. First a transaction or
- * exchange has to be composed via one of the compose method, then {@link  ComposedTransaction ComposedTransaction} or
+ * exchange has to be composed via one of the compose methods, then {@link  ComposedTransaction ComposedTransaction} or
  * {@link  ComposedExchange ComposedExchange} can be submitted.
  * <p>
  * User wallet instance can be obtained by creating, unlocking or recovering user wallet.

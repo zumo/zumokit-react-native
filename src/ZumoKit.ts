@@ -5,7 +5,15 @@ import Parser from './util/Parser';
 import tryCatchProxy from './ZKErrorProxy';
 import Transaction from './models/Transaction';
 import Exchange from './models/Exchange';
-import { Dictionary, CurrencyCode, ZumoKitConfig, TokenSet, StateJSON } from './types';
+import {
+  Dictionary,
+  CurrencyCode,
+  ZumoKitConfig,
+  TokenSet,
+  StateJSON,
+  TimeInterval,
+  HistoricalExchangeRatesJSON,
+} from './types';
 import FeeRates from './models/FeeRates';
 import ExchangeRate from './models/ExchangeRate';
 import ExchangeSettings from './models/ExchangeSettings';
@@ -22,7 +30,21 @@ interface State {
   exchangeSettings: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeSettings>>;
 }
 
-/** Entry point to ZumoKit Android SDK. */
+type HistoricalExchangeRates = Dictionary<
+  TimeInterval,
+  Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRate>>
+>;
+
+/**
+ * Entry point to ZumoKit React Native SDK:
+ * ```typescript
+ * import ZumoKit from 'react-native-zumo-kit';
+ * ```
+ * Once ZumoKit is {@link init | initialized}, this class provides access to {@Link getUser | user retrieval}, {@link state | ZumoKit state object} and {@link getHistoricalExchangeRates | historical exchange rates}.
+ * State change listners can be  {@link addStateListener added} and {@link removeStateListener removed}.
+ * <p>
+ * See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
+ * */
 @tryCatchProxy
 class ZumoKit {
   /**
@@ -95,8 +117,15 @@ class ZumoKit {
    * time interval on a top level, from currency on second level, to currency on third level and
    * {@link ExchangeRate ExchangeRate} objects.
    */
-  async getHistoricalExchangeRates() {
-    return RNZumoKit.getHistoricalExchangeRates();
+  async getHistoricalExchangeRates(): Promise<HistoricalExchangeRates> {
+    const historicalExchangeRatesJSON = RNZumoKit.getHistoricalExchangeRates() as HistoricalExchangeRatesJSON;
+    const historicalExchangeRates: HistoricalExchangeRates = {};
+    Object.keys(historicalExchangeRatesJSON).forEach((timeInterval) => {
+      historicalExchangeRates[timeInterval as TimeInterval] = Parser.parseExchangeRates(
+        historicalExchangeRatesJSON[timeInterval]
+      );
+    });
+    return historicalExchangeRates;
   }
 
   /**

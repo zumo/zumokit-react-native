@@ -47,13 +47,13 @@ export interface ModulrCustomerData {
   firstName: string;
   middleName: string | null;
   lastName: string;
-  /** date of birty in ISO 8601 format, e.g '2020-08-12' */
+  /** date of birth in ISO 8601 format, e.g '2020-08-12' */
   dateOfBirth: string;
   email: string;
   phone: string;
   addressLine1: string;
   addressLine2: string | null;
-  /** date of birty in ISO 8601 format, e.g '2020-08-12' */
+  /** country code in ISO 3166-1 Alpha-2 format, e.g. 'GB' */
   country: string;
   postCode: string;
   postTown: string;
@@ -97,6 +97,12 @@ export interface ExchangeRateJSON {
   validTo: number;
   timestamp: number;
 }
+
+/** @internal */
+export type HistoricalExchangeRatesJSON = Record<
+  string,
+  Record<string, Record<string, ExchangeRateJSON>>
+>;
 
 /** @internal */
 export interface ExchangeSettingsJSON {

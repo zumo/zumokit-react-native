@@ -5,11 +5,20 @@ import { Network } from './types';
 
 const { RNZumoKit } = NativeModules;
 
-/** Globally accessible class providing blockchain related utility methods. */
+/**
+ * Crypto utility class can be used once {@link ZumoKit} module is {@link ZumoKit.init initialized}. Access it as follows:
+ *
+ * ```typescript
+ * import { ZKUtility } from 'react-native-zumo-kit';
+ * ```
+ *
+ * This class provides mnemonic phrase generation utility, Bitcoin & Ethereum
+ * address validation utilities and Ethereum unit conversion methods.
+ */
 @tryCatchProxy
 class ZKUtility {
   /**
-   * Generates mnemonic seeed phrase used in wallet creation process.
+   * Generates mnemonic seed phrase used in wallet creation process.
    * @param wordCount   12, 15, 18, 21 or 24
    */
   async generateMnemonic(wordCount: number): Promise<string> {
