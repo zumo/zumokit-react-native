@@ -253,13 +253,13 @@ RCT_EXPORT_METHOD(makeModulrCustomer:(NSString *)network data:(NSDictionary *)da
 {
     @try {
         NSString *firstName = data[@"firstName"];
-        NSString *middleName = data[@"middleName"];
+        NSString *middleName = (data[@"middleName"] == [NSNull null]) ? NULL : data[@"middleName"];
         NSString *lastName = data[@"lastName"];
         NSString *dateOfBirth = data[@"dateOfBirth"];
         NSString *email = data[@"email"];
         NSString *phone = data[@"phone"];
         NSString *addressLine1 = data[@"addressLine1"];
-        NSString *addressLine2 = data[@"addressLine2"];
+        NSString *addressLine2 = (data[@"addressLine2"] == [NSNull null]) ? NULL : data[@"addressLine2"];
         NSString *country = data[@"country"];
         NSString *postCode = data[@"postCode"];
         NSString *postTown = data[@"postTown"];
