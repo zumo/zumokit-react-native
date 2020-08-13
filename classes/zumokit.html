@@ -2836,6 +2836,9 @@ img {
 			<a href="../globals.html#exchangestatus" class="tsd-kind-icon">Exchange<wbr>Status</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#historicalexchangerates" class="tsd-kind-icon">Historical<wbr>Exchange<wbr>Rates</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#network" class="tsd-kind-icon">Network</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
@@ -2857,7 +2860,12 @@ img {
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Entry point to ZumoKit Android SDK.</p>
+					<p>Entry point to ZumoKit React Native SDK:</p>
+					<pre><code class="language-typescript"><span class="hljs-keyword">import</span> ZumoKit <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;</code></pre>
+					<p>Once ZumoKit is <a href="zumokit.html#init">initialized</a>, this class provides access to <a href="zumokit.html#getuser">user retrieval</a>, <a href="zumokit.html#state">ZumoKit state object</a> and <a href="zumokit.html#gethistoricalexchangerates">historical exchange rates</a>.
+					State change listners can be  <a href="zumokit.html#addstatelistener">added</a> and <a href="zumokit.html#removestatelistener">removed</a>.</p>
+					<p>
+						See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
 				</div>
 			</div>
 		</section>
@@ -2905,7 +2913,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NativeEventEmitter</span><span class="tsd-signature-symbol"> = new NativeEventEmitter(RNZumoKit)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L36">src/ZumoKit.ts:36</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L58">src/ZumoKit.ts:58</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2915,7 +2923,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><a href="../interfaces/state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L39">src/ZumoKit.ts:39</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L61">src/ZumoKit.ts:61</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2925,7 +2933,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <a href="../interfaces/state.html" class="tsd-signature-type">State</a></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L33">src/ZumoKit.ts:33</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L55">src/ZumoKit.ts:55</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2942,7 +2950,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = RNZumoKit.version</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L42">src/ZumoKit.ts:42</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L64">src/ZumoKit.ts:64</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2964,7 +2972,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L107">src/ZumoKit.ts:107</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L136">src/ZumoKit.ts:136</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3013,7 +3021,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L131">src/ZumoKit.ts:131</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L160">src/ZumoKit.ts:160</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3029,13 +3037,13 @@ img {
 				<a name="gethistoricalexchangerates" class="tsd-anchor"></a>
 				<h3>get<wbr>Historical<wbr>Exchange<wbr>Rates</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Historical<wbr>Exchange<wbr>Rates<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Historical<wbr>Exchange<wbr>Rates<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#historicalexchangerates" class="tsd-signature-type">HistoricalExchangeRates</a><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L98">src/ZumoKit.ts:98</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L120">src/ZumoKit.ts:120</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3046,7 +3054,7 @@ img {
 								<a href="exchangerate.html">ExchangeRate</a> objects.</p>
 							</div>
 						</div>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#historicalexchangerates" class="tsd-signature-type">HistoricalExchangeRates</a><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -3060,7 +3068,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L81">src/ZumoKit.ts:81</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L103">src/ZumoKit.ts:103</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3092,7 +3100,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L49">src/ZumoKit.ts:49</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L71">src/ZumoKit.ts:71</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3123,7 +3131,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L124">src/ZumoKit.ts:124</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L153">src/ZumoKit.ts:153</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -3140,7 +3148,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L118">src/ZumoKit.ts:118</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L147">src/ZumoKit.ts:147</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">

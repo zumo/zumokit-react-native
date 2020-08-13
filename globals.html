@@ -2801,6 +2801,9 @@ img {
 			<a href="globals.html#exchangestatus" class="tsd-kind-icon">Exchange<wbr>Status</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
+			<a href="globals.html#historicalexchangerates" class="tsd-kind-icon">Historical<wbr>Exchange<wbr>Rates</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
 			<a href="globals.html#network" class="tsd-kind-icon">Network</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
@@ -2820,11 +2823,16 @@ img {
 <div class="container container-main">
 	<div class="content-wrap">
 		<div class="tsd-panel tsd-typography">
-			<a href="#react-native-zumo-kit" id="react-native-zumo-kit" style="color: inherit; text-decoration: none;">
-				<h1>react-native-zumo-kit</h1>
+			<a href="#zumokit-react-native-sdk" id="zumokit-react-native-sdk" style="color: inherit; text-decoration: none;">
+				<h1>ZumoKit React Native SDK</h1>
 			</a>
-			<a href="#setup" id="setup" style="color: inherit; text-decoration: none;">
-				<h2>Setup</h2>
+			<p>ZumoKit is a state of the art wallet architecture underpinning our flagship product <a href="https://www.zumo.money/">Zumo</a> that provides secure transfer and exchange of fiat and cryptocurrency funds.</p>
+			<a href="#docs" id="docs" style="color: inherit; text-decoration: none;">
+				<h2>Docs</h2>
+			</a>
+			<p>Refer to ZumoKit SDK developer <a href="https://developers.zumo.money/docs/intro/">documentation</a> and <a href="https://zumo.github.io/react-native/">reference</a> for usage details.</p>
+			<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+				<h2>Installation</h2>
 			</a>
 			<p>Install the package:</p>
 			<pre><code>yarn <span class="hljs-keyword">add</span><span class="bash"> zumo/zumokit-react-native</span></code></pre><p>Link the library (not required for React Native 0.60 and up):</p>
@@ -2853,10 +2861,11 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<h2>Usage</h2>
 			</a>
 			<p>Import <code>ZumoKit</code> module from <code>react-native-zumo-kit</code> package:</p>
-			<pre><code class="language-js"><span class="hljs-keyword">import</span> ZumoKit <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;</code></pre>
+			<pre><code class="language-typescript"><span class="hljs-keyword">import</span> ZumoKit <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;</code></pre>
 			<p>ZumoKit module is your entrypoint to ZumoKit SDK. Check your SDK version by calling:</p>
-			<pre><code class="language-js"><span class="hljs-built_in">console</span>.log(ZumoKit.version);</code></pre>
-			<p>Refer to ZumoKit SDK developer <a href="https://developers.zumo.money/docs/intro/intro.html">documentation</a> and <a href="https://developers.zumo.money/docs/reference/react-native/overview.html">reference</a> for usage details.</p>
+			<pre><code class="language-typescript"><span class="hljs-built_in">console</span>.log(ZumoKit.version);</code></pre>
+			<p>Once <code>ZumoKit</code> class is initialized via <code>ZumoKit.init</code> method, <code>ZKUtility</code> class with crypto utility classes can be globally accessed:</p>
+			<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ZKUtility } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;</code></pre>
 		</div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
@@ -2901,6 +2910,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 							<li class="tsd-kind-type-alias"><a href="globals.html#currencytype" class="tsd-kind-icon">Currency<wbr>Type</a></li>
 							<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="globals.html#dictionary" class="tsd-kind-icon">Dictionary</a></li>
 							<li class="tsd-kind-type-alias"><a href="globals.html#exchangestatus" class="tsd-kind-icon">Exchange<wbr>Status</a></li>
+							<li class="tsd-kind-type-alias"><a href="globals.html#historicalexchangerates" class="tsd-kind-icon">Historical<wbr>Exchange<wbr>Rates</a></li>
 							<li class="tsd-kind-type-alias"><a href="globals.html#network" class="tsd-kind-icon">Network</a></li>
 							<li class="tsd-kind-type-alias"><a href="globals.html#timeinterval" class="tsd-kind-icon">Time<wbr>Interval</a></li>
 							<li class="tsd-kind-type-alias"><a href="globals.html#transactionstatus" class="tsd-kind-icon">Transaction<wbr>Status</a></li>
@@ -2978,6 +2988,16 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				</aside>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-type-alias">
+				<a name="historicalexchangerates" class="tsd-anchor"></a>
+				<h3>Historical<wbr>Exchange<wbr>Rates</h3>
+				<div class="tsd-signature tsd-kind-icon">Historical<wbr>Exchange<wbr>Rates<span class="tsd-signature-symbol">:</span> <a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#timeinterval" class="tsd-signature-type">TimeInterval</a><span class="tsd-signature-symbol">, </span><a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="classes/exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L33">src/ZumoKit.ts:33</a></li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-type-alias">
 				<a name="network" class="tsd-anchor"></a>
 				<h3>Network</h3>
 				<div class="tsd-signature tsd-kind-icon">Network<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"MAINNET"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"TESTNET"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"RINKEBY"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"ROPSTEN"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"GOERLI"</span></div>
@@ -3028,7 +3048,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 					<ul>
 						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/Wallet.ts#L11">src/models/Wallet.ts:11</a></li>
 						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/models/User.ts#L17">src/models/User.ts:17</a></li>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L13">src/ZumoKit.ts:13</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZumoKit.ts#L21">src/ZumoKit.ts:21</a></li>
 						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L6">src/ZKUtility.ts:6</a></li>
 					</ul>
 				</aside>

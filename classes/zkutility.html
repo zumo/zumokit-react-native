@@ -2824,6 +2824,9 @@ img {
 			<a href="../globals.html#exchangestatus" class="tsd-kind-icon">Exchange<wbr>Status</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
+			<a href="../globals.html#historicalexchangerates" class="tsd-kind-icon">Historical<wbr>Exchange<wbr>Rates</a>
+		</li>
+		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#network" class="tsd-kind-icon">Network</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
@@ -2845,8 +2848,11 @@ img {
 		<section class="tsd-panel tsd-comment">
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
-					<p>Globally accessible class providing blockchain related utility methods.</p>
+					<p>Crypto utility class can be used once <a href="zumokit.html">ZumoKit</a> module is <a href="zumokit.html#init">initialized</a>. Access it as follows:</p>
 				</div>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ZKUtility } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;</code></pre>
+				<p>This class provides mnemonic phrase generation utility, Bitcoin &amp; Ethereum
+				address validation utilities and Ethereum unit conversion methods.</p>
 			</div>
 		</section>
 		<section class="tsd-panel tsd-hierarchy">
@@ -2888,7 +2894,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L40">src/ZKUtility.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L49">src/ZKUtility.ts:49</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2916,7 +2922,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L56">src/ZKUtility.ts:56</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L65">src/ZKUtility.ts:65</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2944,12 +2950,12 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L15">src/ZKUtility.ts:15</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L24">src/ZKUtility.ts:24</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Generates mnemonic seeed phrase used in wallet creation process.</p>
+								<p>Generates mnemonic seed phrase used in wallet creation process.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2975,7 +2981,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L48">src/ZKUtility.ts:48</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L57">src/ZKUtility.ts:57</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3003,7 +3009,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L32">src/ZKUtility.ts:32</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L41">src/ZKUtility.ts:41</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3040,7 +3046,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L23">src/ZKUtility.ts:23</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L32">src/ZKUtility.ts:32</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3071,7 +3077,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L64">src/ZKUtility.ts:64</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/gh-docs-action/src/ZKUtility.ts#L73">src/ZKUtility.ts:73</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
