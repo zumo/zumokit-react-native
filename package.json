@@ -1,10 +1,11 @@
 {
   "name": "react-native-zumo-kit",
-  "version": "2.0.1",
+  "version": "2.1.0-beta.11",
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "typedoc"
   },
   "keywords": [
     "react-native"
@@ -30,6 +31,7 @@
     "eslint-plugin-react": "^7.20.1",
     "eslint-plugin-react-native": "^3.8.1",
     "prettier": "^2.0.5",
+    "typedoc": "^0.17.8",
     "typescript": "^3.9.5"
   }
 }

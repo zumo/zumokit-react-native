@@ -1,7 +1,13 @@
 
-# react-native-zumo-kit
+# ZumoKit React Native SDK
 
-## Setup
+ZumoKit is a state of the art wallet architecture underpinning our flagship product [Zumo](https://www.zumo.money/) that provides secure transfer and exchange of fiat and cryptocurrency funds.
+
+## Docs
+
+Refer to ZumoKit SDK developer [documentation](https://developers.zumo.money/docs/intro/) and [reference](https://zumo.github.io/react-native/) for usage details.
+
+## Installation
 
 Install the package:
 
@@ -43,14 +49,18 @@ Set `minSdkVersion` to 21 in your `android/build.gradle` settings.
 
 Import `ZumoKit` module from `react-native-zumo-kit` package:
 
-```js
+```typescript
 import ZumoKit from 'react-native-zumo-kit';
 ```
 
 ZumoKit module is your entrypoint to ZumoKit SDK. Check your SDK version by calling:
 
-```js
+```typescript
 console.log(ZumoKit.version);
 ```
 
-Refer to ZumoKit SDK developer [documentation](https://developers.zumo.money/docs/intro/intro.html) and [reference](https://developers.zumo.money/docs/reference/react-native/overview.html) for usage details.
+Once `ZumoKit` class is initialized via `ZumoKit.init` method, `ZKUtility` class with crypto utility classes can be globally accessed:
+
+```typescript
+import { ZKUtility } from 'react-native-zumo-kit';
+```

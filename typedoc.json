@@ -1,0 +1,12 @@
+{
+  "name": "ZumoKit",
+  "includeVersion": true,
+  "inputFiles": [
+    "./src"
+  ],
+  "mode": "file",
+  "out": "docs",
+  "theme": "minimal",
+  "excludeExternals": false,
+  "stripInternal": true
+}

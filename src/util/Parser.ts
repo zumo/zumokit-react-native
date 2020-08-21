@@ -19,6 +19,7 @@ import {
   Dictionary,
 } from '../types';
 
+/** @internal */
 export default class Parser {
   static parseAccounts(accounts: Array<AccountJSON>) {
     return accounts.map((json) => new Account(json));

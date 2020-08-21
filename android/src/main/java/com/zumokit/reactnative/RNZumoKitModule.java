@@ -48,6 +48,7 @@ import money.zumo.zumokit.FeeRates;
 import money.zumo.zumokit.ExchangeRate;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -383,9 +384,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String signedTransaction = composedTransactionMap.getString("signedTransaction");
     Account account = RNZumoKitModule.unboxAccount(composedTransactionMap.getMap("account"));
     String destination = composedTransactionMap.getString("destination");
-    String amount = composedTransactionMap.getString("amount");
+    BigDecimal amount = new BigDecimal(composedTransactionMap.getString("amount"));
     String data = composedTransactionMap.getString("data");
-    String fee = composedTransactionMap.getString("fee");
+    BigDecimal fee = new BigDecimal(composedTransactionMap.getString("fee"));
     String nonce = composedTransactionMap.getString("nonce");
 
     ComposedTransaction composedTransaction =
@@ -408,7 +409,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void composeEthTransaction(String accountId, String gasPrice, String gasLimit, String to, String value, String data, String nonce, Boolean sendMax, Promise promise) {
+  public void composeEthTransaction(String accountId, String gasPrice, String gasLimit, String destination, String amount, String data, String nonce, Boolean sendMax, Promise promise) {
 
     if(this.wallet == null) {
       rejectPromise(promise, "Wallet not found.");
@@ -420,7 +421,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       nonceValue = Long.parseLong(nonce);
     }
 
-    this.wallet.composeEthTransaction(accountId, gasPrice, gasLimit, to, value, data, nonceValue, sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeEthTransaction(accountId, new BigDecimal(gasPrice), new BigDecimal(gasLimit), destination, new BigDecimal(amount), data, nonceValue, sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -438,14 +439,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void composeBtcTransaction(String accountId, String changeAccountId, String to, String value, String feeRate, Boolean sendMax, Promise promise) {
+  public void composeBtcTransaction(String accountId, String changeAccountId, String destination, String amount, String feeRate, Boolean sendMax, Promise promise) {
 
     if(this.wallet == null) {
       rejectPromise(promise, "Wallet not found.");
       return;
     }
 
-    this.wallet.composeBtcTransaction(accountId, changeAccountId, to, value, feeRate, sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeBtcTransaction(accountId, changeAccountId, destination, new BigDecimal(amount), new BigDecimal(feeRate), sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -463,14 +464,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void composeInternalFiatTransaction(String fromAccountId, String toAccountId, String value, Boolean sendMax, Promise promise) {
+  public void composeInternalFiatTransaction(String fromAccountId, String toAccountId, String amount, Boolean sendMax, Promise promise) {
 
     if(this.wallet == null) {
       rejectPromise(promise, "Wallet not found.");
       return;
     }
 
-    this.wallet.composeInternalFiatTransaction(fromAccountId, toAccountId, value, sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeInternalFiatTransaction(fromAccountId, toAccountId, new BigDecimal(amount), sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -488,14 +489,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void composeTransactionToNominatedAccount(String fromAccountId, String value, Boolean sendMax, Promise promise) {
+  public void composeTransactionToNominatedAccount(String fromAccountId, String amount, Boolean sendMax, Promise promise) {
 
     if(this.wallet == null) {
       rejectPromise(promise, "Wallet not found.");
       return;
     }
 
-    this.wallet.composeTransactionToNominatedAccount(fromAccountId, value, sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeTransactionToNominatedAccount(fromAccountId, new BigDecimal(amount), sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -522,7 +523,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     ExchangeRate rate = RNZumoKitModule.unboxExchangeRate(exchangeRate);
     ExchangeSettings settings = RNZumoKitModule.unboxExchangeSettings(exchangeSettings);
 
-    this.wallet.composeExchange(fromAccountId, toAccountId, rate, settings, amount, sendMax, new ComposeExchangeCallback() {
+    this.wallet.composeExchange(fromAccountId, toAccountId, rate, settings, new BigDecimal(amount), sendMax, new ComposeExchangeCallback() {
       @Override
       public void onError(Exception e) {
         rejectPromise(promise, e);
@@ -549,11 +550,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     ExchangeRate exchangeRate = RNZumoKitModule.unboxExchangeRate(composedExchangeMap.getMap("exchangeRate"));
     ExchangeSettings exchangeSettings = RNZumoKitModule.unboxExchangeSettings(composedExchangeMap.getMap("exchangeSettings"));
     String exchangeAddress = composedExchangeMap.getString("exchangeAddress");
-    String value = composedExchangeMap.getString("value");
-    String returnValue = composedExchangeMap.getString("returnValue");
-    String depositFee = composedExchangeMap.getString("depositFee");
-    String exchangeFee = composedExchangeMap.getString("exchangeFee");
-    String withdrawFee = composedExchangeMap.getString("withdrawFee");
+    BigDecimal value =  new BigDecimal(composedExchangeMap.getString("value"));
+    BigDecimal returnValue = new BigDecimal(composedExchangeMap.getString("returnValue"));
+    BigDecimal depositFee = new BigDecimal(composedExchangeMap.getString("depositFee"));
+    BigDecimal exchangeFee = new BigDecimal(composedExchangeMap.getString("exchangeFee"));
+    BigDecimal withdrawFee = new BigDecimal(composedExchangeMap.getString("withdrawFee"));
     String nonce = composedExchangeMap.getString("nonce");
 
     ComposedExchange composedExchange = new ComposedExchange(
@@ -811,40 +812,36 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void ethToGwei(String eth, Promise promise) {
 
-    String gwei = this.zumoKit.utils()
-      .ethToGwei(eth);
+    BigDecimal gwei = this.zumoKit.utils().ethToGwei(new BigDecimal(eth));
 
-    promise.resolve(gwei);
+    promise.resolve(gwei.toPlainString());
 
   }
 
   @ReactMethod
   public void gweiToEth(String gwei, Promise promise) {
 
-    String eth = this.zumoKit.utils()
-      .gweiToEth(gwei);
+    BigDecimal eth = this.zumoKit.utils().gweiToEth(new BigDecimal(gwei));
 
-    promise.resolve(eth);
+    promise.resolve(eth.toPlainString());
 
   }
 
   @ReactMethod
   public void ethToWei(String eth, Promise promise) {
 
-    String wei = this.zumoKit.utils()
-      .ethToWei(eth);
+    BigDecimal wei = this.zumoKit.utils().ethToWei(new BigDecimal(eth));
 
-    promise.resolve(wei);
+    promise.resolve(wei.toPlainString());
 
   }
 
   @ReactMethod
   public void weiToEth(String wei, Promise promise) {
 
-    String eth = this.zumoKit.utils()
-      .weiToEth(wei);
+    BigDecimal eth = this.zumoKit.utils().weiToEth(new BigDecimal(wei));
 
-    promise.resolve(eth);
+    promise.resolve(eth.toPlainString());
 
   }
 
@@ -946,7 +943,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     map.putString("currencyCode", account.getCurrencyCode());
     map.putString("network", account.getNetwork());
     map.putString("type", account.getType());
-    map.putString("balance", account.getBalance());
+    map.putString("balance", account.getBalance().toPlainString());
     map.putBoolean("hasNominatedAccount", account.getHasNominatedAccount());
 
     if (account.getCryptoProperties() == null) {
@@ -990,7 +987,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     map.putMap("account", mapAccount(transaction.getAccount()));
-    map.putString("fee", transaction.getFee());
+    map.putString("fee", transaction.getFee().toPlainString());
 
     if (transaction.getDestination() == null){
       map.putNull("destination");
@@ -1001,7 +998,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     if (transaction.getAmount() == null){
       map.putNull("amount");
     } else {
-      map.putString("amount", transaction.getAmount());
+      map.putString("amount", transaction.getAmount().toPlainString());
     }
 
     if (transaction.getData() == null){
@@ -1067,13 +1064,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     if(transaction.getAmount() == null) {
       map.putNull("amount");
     } else {
-      map.putString("amount", transaction.getAmount());
+      map.putString("amount", transaction.getAmount().toPlainString());
     }
 
     if(transaction.getFee() == null) {
       map.putNull("fee");
     } else {
-      map.putString("fee", transaction.getFee());
+      map.putString("fee", transaction.getFee().toPlainString());
     }
 
     if(transaction.getNonce() == null) {
@@ -1130,30 +1127,24 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       if(transaction.getCryptoProperties().getGasPrice() == null) {
         cryptoProperties.putNull("gasPrice");
       } else {
-        cryptoProperties.putString("gasPrice", transaction.getCryptoProperties().getGasPrice());
+        cryptoProperties.putString("gasPrice", transaction.getCryptoProperties().getGasPrice().toPlainString());
       }
 
       if(transaction.getCryptoProperties().getGasLimit() == null) {
         cryptoProperties.putNull("gasLimit");
       } else {
-        cryptoProperties.putString("gasLimit", transaction.getCryptoProperties().getGasLimit());
+        cryptoProperties.putString("gasLimit", transaction.getCryptoProperties().getGasLimit().toPlainString());
       }
 
       WritableMap fiatAmounts = Arguments.createMap();
       for (HashMap.Entry entry : transaction.getCryptoProperties().getFiatAmount().entrySet()) {
-        fiatAmounts.putString(
-                (String) entry.getKey(),
-                (String) entry.getValue()
-        );
+        fiatAmounts.putString((String) entry.getKey(), ((BigDecimal)entry.getValue()).toPlainString());
       }
       cryptoProperties.putMap("fiatAmount", fiatAmounts);
 
       WritableMap fiatFee = Arguments.createMap();
       for (HashMap.Entry entry : transaction.getCryptoProperties().getFiatFee().entrySet()) {
-        fiatFee.putString(
-                (String) entry.getKey(),
-                (String) entry.getValue()
-        );
+        fiatFee.putString((String) entry.getKey(), ((BigDecimal)entry.getValue()).toPlainString());
       }
       cryptoProperties.putMap("fiatFee", fiatFee);
 
@@ -1194,9 +1185,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
       WritableMap mappedRates = Arguments.createMap();
 
-      mappedRates.putString("slow", rates.getSlow());
-      mappedRates.putString("average", rates.getAverage());
-      mappedRates.putString("fast", rates.getFast());
+      mappedRates.putString("slow", rates.getSlow().toPlainString());
+      mappedRates.putString("average", rates.getAverage().toPlainString());
+      mappedRates.putString("fast", rates.getFast().toPlainString());
       mappedRates.putDouble("slowTime", rates.getSlowTime());
       mappedRates.putDouble("averageTime", rates.getAverageTime());
       mappedRates.putDouble("fastTime", rates.getFastTime());
@@ -1224,11 +1215,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("exchangeAddress", exchange.getExchangeAddress());
     }
 
-    map.putString("value", exchange.getValue());
-    map.putString("returnValue", exchange.getReturnValue());
-    map.putString("depositFee", exchange.getDepositFee());
-    map.putString("exchangeFee", exchange.getExchangeFee());
-    map.putString("withdrawFee", exchange.getWithdrawFee());
+    map.putString("value", exchange.getValue().toPlainString());
+    map.putString("returnValue", exchange.getReturnValue().toPlainString());
+    map.putString("depositFee", exchange.getDepositFee().toPlainString());
+    map.putString("exchangeFee", exchange.getExchangeFee().toPlainString());
+    map.putString("withdrawFee", exchange.getWithdrawFee().toPlainString());
 
     if (exchange.getNonce() == null) {
       map.putNull("nonce");
@@ -1256,17 +1247,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       map.putString("withdrawTransactionId", exchange.getWithdrawTransactionId());
     }
 
-    map.putString("amount", exchange.getAmount());
+    map.putString("amount", exchange.getAmount().toPlainString());
 
     if (exchange.getDepositFee() == null) {
       map.putNull("depositFee");
     } else {
-      map.putString("depositFee", exchange.getDepositFee());
+      map.putString("depositFee", exchange.getDepositFee().toPlainString());
     }
 
-    map.putString("returnAmount", exchange.getReturnAmount());
-    map.putString("exchangeFee", exchange.getExchangeFee());
-    map.putString("withdrawFee", exchange.getWithdrawFee());
+    map.putString("returnAmount", exchange.getReturnAmount().toPlainString());
+    map.putString("exchangeFee", exchange.getExchangeFee().toPlainString());
+    map.putString("withdrawFee", exchange.getWithdrawFee().toPlainString());
     map.putMap("exchangeRate",  RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
     map.putMap("exchangeRates",  RNZumoKitModule.mapExchangeRates(exchange.getExchangeRates()));
     map.putMap("exchangeSettings", RNZumoKitModule.mapExchangeSettings(exchange.getExchangeSettings()));
@@ -1307,18 +1298,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     mappedSettings.putString("id", settings.getId());
     mappedSettings.putString("depositCurrency", settings.getDepositCurrency());
     mappedSettings.putString("withdrawCurrency", settings.getWithdrawCurrency());
-    mappedSettings.putString("minExchangeAmount", settings.getMinExchangeAmount());
-    mappedSettings.putString("feeRate", settings.getFeeRate());
-    mappedSettings.putString("depositFeeRate", settings.getDepositFeeRate());
-    mappedSettings.putString("withdrawFee", settings.getWithdrawFee());
+    mappedSettings.putString("minExchangeAmount", settings.getMinExchangeAmount().toPlainString());
+    mappedSettings.putString("feeRate", settings.getFeeRate().toPlainString());
+    mappedSettings.putString("depositFeeRate", settings.getDepositFeeRate().toPlainString());
+    mappedSettings.putString("withdrawFee", settings.getWithdrawFee().toPlainString());
     mappedSettings.putInt("timestamp", (int) settings.getTimestamp());
 
     WritableMap depositAddress = Arguments.createMap();
     for (HashMap.Entry entry : settings.getDepositAddress().entrySet()) {
-      depositAddress.putString(
-        entry.getKey().toString(),
-        (String) entry.getValue()
-      );
+      depositAddress.putString(entry.getKey().toString(), (String) entry.getValue());
     }
 
     mappedSettings.putMap("depositAddress", depositAddress);
@@ -1354,7 +1342,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     mappedRate.putString("id", rate.getId());
     mappedRate.putString("depositCurrency", rate.getDepositCurrency());
     mappedRate.putString("withdrawCurrency", rate.getWithdrawCurrency());
-    mappedRate.putString("value", rate.getValue());
+    mappedRate.putString("value", rate.getValue().toPlainString());
     mappedRate.putInt("validTo", (int) rate.getValidTo());
     mappedRate.putInt("timestamp", (int) rate.getTimestamp());
 
@@ -1488,7 +1476,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String currencyCode = map.getString("currencyCode");
     String network = map.getString("network");
     String type = map.getString("type");
-    String balance = map.getString("balance");
+    BigDecimal balance = new BigDecimal(map.getString("balance"));
     Boolean hasNominatedAccount = map.getBoolean("hasNominatedAccount");
 
     return new Account(accountId, currencyType, currencyCode, network, type, balance, hasNominatedAccount, cryptoProperties, fiatProperties);
@@ -1498,7 +1486,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String id = map.getString("id");
     String depositCurrency = map.getString("depositCurrency");
     String withdrawCurrency = map.getString("withdrawCurrency");
-    String value = map.getString("value");
+    BigDecimal value = new BigDecimal(map.getString("value"));
     long validTo = map.getInt("validTo");
     long timestamp = map.getInt("timestamp");
 
@@ -1509,10 +1497,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     String id = map.getString("id");
     String depositCurrency = map.getString("depositCurrency");
     String withdrawCurrency = map.getString("withdrawCurrency");
-    String minExchangeAmount = map.getString("minExchangeAmount");
-    String feeRate = map.getString("feeRate");
-    String depositFeeRate = map.getString("depositFeeRate");
-    String withdrawFee = map.getString("withdrawFee");
+    BigDecimal minExchangeAmount = new BigDecimal(map.getString("minExchangeAmount"));
+    BigDecimal feeRate = new BigDecimal(map.getString("feeRate"));
+    BigDecimal depositFeeRate = new BigDecimal(map.getString("depositFeeRate"));
+    BigDecimal withdrawFee = new BigDecimal(map.getString("withdrawFee"));
     long timestamp = map.getInt("timestamp");
 
     HashMap<String, String> depositAddress = new HashMap<>();
