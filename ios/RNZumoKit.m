@@ -713,9 +713,9 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"signedTransaction": [composedTransaction signedTransaction] ? [composedTransaction signedTransaction] : [NSNull null],
         @"account": [self mapAccount:[composedTransaction account]],
         @"destination": [composedTransaction destination] ? [composedTransaction destination] : [NSNull null],
-        @"amount": [composedTransaction amount] ? [composedTransaction amount] : [NSNull null],
+        @"amount": [composedTransaction amount] ? [[composedTransaction amount] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
         @"data": [composedTransaction data] ? [composedTransaction data] : [NSNull null],
-        @"fee": [composedTransaction fee],
+        @"fee": [[composedTransaction fee] descriptionWithLocale:[self decimalLocale]],
         @"nonce": [composedTransaction nonce]
     } mutableCopy];
 
@@ -731,13 +731,24 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
          @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
          @"exchangeSettings": [self mapExchangeSettings:[exchange exchangeSettings]],
          @"exchangeAddress": [exchange exchangeAddress] ? [exchange exchangeAddress] : [NSNull null],
-         @"value": [exchange value],
-         @"returnValue": [exchange returnValue],
-         @"depositFee": [exchange depositFee],
-         @"exchangeFee": [exchange exchangeFee],
-         @"withdrawFee": [exchange withdrawFee],
+         @"value": [[exchange value] descriptionWithLocale:[self decimalLocale]],
+         @"returnValue": [[exchange returnValue] descriptionWithLocale:[self decimalLocale]],
+         @"depositFee": [[exchange depositFee] descriptionWithLocale:[self decimalLocale]],
+         @"exchangeFee": [[exchange exchangeFee] descriptionWithLocale:[self decimalLocale]],
+         @"withdrawFee": [[exchange withdrawFee] descriptionWithLocale:[self decimalLocale]],
          @"nonce": [exchange nonce] ? [exchange nonce] : [NSNull null]
     };
+}
+
+- (NSDictionary *)mapFiatMap:(NSDictionary<NSString *, NSDecimalNumber *>*)fiatAmountsMap {
+
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+
+    [fiatAmountsMap enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSDecimalNumber * _Nonnull obj, BOOL * _Nonnull stop) {
+        dict[key] = [obj descriptionWithLocale:[self decimalLocale]];
+    }];
+
+    return dict;
 }
 
 - (NSDictionary *)mapTransaction:(ZKTransaction *)transaction {
@@ -748,10 +759,10 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         cryptoProperties[@"fromAddress"] = transaction.cryptoProperties.fromAddress;
         cryptoProperties[@"toAddress"] = transaction.cryptoProperties.toAddress ? transaction.cryptoProperties.toAddress : [NSNull null];
         cryptoProperties[@"data"] = transaction.cryptoProperties.data ? transaction.cryptoProperties.data : [NSNull null];
-        cryptoProperties[@"gasPrice"] = transaction.cryptoProperties.gasPrice ? transaction.cryptoProperties.gasPrice : [NSNull null];
-        cryptoProperties[@"gasLimit"] = transaction.cryptoProperties.gasLimit ? transaction.cryptoProperties.gasLimit : [NSNull null];
-        cryptoProperties[@"fiatAmount"] = transaction.cryptoProperties.fiatAmount ? transaction.cryptoProperties.fiatAmount : [NSNull null];
-        cryptoProperties[@"fiatFee"] = transaction.cryptoProperties.fiatFee ? transaction.cryptoProperties.fiatFee : [NSNull null];
+        cryptoProperties[@"gasPrice"] = transaction.cryptoProperties.gasPrice ? [transaction.cryptoProperties.gasPrice descriptionWithLocale:[self decimalLocale]] : [NSNull null];
+        cryptoProperties[@"gasLimit"] = transaction.cryptoProperties.gasLimit ? [transaction.cryptoProperties.gasLimit descriptionWithLocale:[self decimalLocale]] : [NSNull null];
+        cryptoProperties[@"fiatAmount"] = transaction.cryptoProperties.fiatAmount ? [self mapFiatMap:transaction.cryptoProperties.fiatAmount] : [NSNull null];
+        cryptoProperties[@"fiatFee"] = transaction.cryptoProperties.fiatFee ? [self mapFiatMap:transaction.cryptoProperties.fiatFee] : [NSNull null];
     }
 
     NSMutableDictionary *fiatProperties = [[NSMutableDictionary alloc] init];
@@ -770,8 +781,8 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"toAccountId": [transaction toAccountId] ? [transaction toAccountId] : [NSNull null],
         @"network": [transaction network],
         @"status": [transaction status],
-        @"amount": [transaction amount] ? [transaction amount] : [NSNull null],
-        @"fee": [transaction fee] ? [transaction fee] : [NSNull null],
+        @"amount": [transaction amount] ? [[transaction amount] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
+        @"fee": [transaction fee] ? [[transaction fee] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
         @"nonce": [transaction nonce] ? [transaction nonce] : [NSNull null],
         @"cryptoProperties": [transaction cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
@@ -793,11 +804,11 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
          @"withdrawCurrency": [exchange withdrawCurrency],
          @"withdrawAccountId": [exchange withdrawAccountId],
          @"withdrawTransactionId": [exchange withdrawTransactionId] ? [exchange withdrawTransactionId] : [NSNull null],
-         @"amount": [exchange amount],
-         @"depositFee": [exchange depositFee] ? [exchange depositFee] : [NSNull null],
-         @"returnAmount": [exchange returnAmount],
-         @"exchangeFee": [exchange exchangeFee],
-         @"withdrawFee": [exchange withdrawFee],
+         @"amount": [[exchange amount] descriptionWithLocale:[self decimalLocale]],
+         @"depositFee": [exchange depositFee] ? [[exchange depositFee] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
+         @"returnAmount": [[exchange returnAmount] descriptionWithLocale:[self decimalLocale]],
+         @"exchangeFee": [[exchange exchangeFee] descriptionWithLocale:[self decimalLocale]],
+         @"withdrawFee": [[exchange withdrawFee] descriptionWithLocale:[self decimalLocale]],
          @"exchangeRate": [self mapExchangeRate:[exchange exchangeRate]],
          @"exchangeRates": [self mapExchangeRatesDict:[exchange exchangeRates]],
          @"exchangeSettings": [self mapExchangeSettings:[exchange exchangeSettings]],
@@ -813,9 +824,9 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
 
     [feeRates enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, ZKFeeRates * _Nonnull obj, BOOL * _Nonnull stop) {
         dict[key] = @{
-            @"slow": [obj slow],
-            @"average": [obj average],
-            @"fast": [obj fast],
+            @"slow": [[obj slow] descriptionWithLocale:[self decimalLocale]],
+            @"average": [[obj average] descriptionWithLocale:[self decimalLocale]],
+            @"fast": [[obj fast] descriptionWithLocale:[self decimalLocale]],
             @"slowTime": [NSNumber numberWithFloat:[obj slowTime]],
             @"averageTime": [NSNumber numberWithFloat:[obj averageTime]],
             @"fastTime": [NSNumber numberWithFloat:[obj fastTime]],
@@ -832,7 +843,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"id": [exchangeRates id],
         @"depositCurrency": [exchangeRates depositCurrency],
         @"withdrawCurrency": [exchangeRates withdrawCurrency],
-        @"value": [exchangeRates value],
+        @"value": [[exchangeRates value] descriptionWithLocale:[self decimalLocale]],
         @"validTo": [NSNumber numberWithLongLong:[exchangeRates validTo]],
         @"timestamp": [NSNumber numberWithLongLong:[exchangeRates timestamp]]
     };
@@ -910,10 +921,10 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"depositAddress": depositAddress,
         @"depositCurrency": [exchangeSettings depositCurrency],
         @"withdrawCurrency": [exchangeSettings withdrawCurrency],
-        @"minExchangeAmount": [exchangeSettings minExchangeAmount],
-        @"feeRate": [exchangeSettings feeRate],
-        @"depositFeeRate": [exchangeSettings depositFeeRate],
-        @"withdrawFee": [exchangeSettings withdrawFee],
+        @"minExchangeAmount": [[exchangeSettings minExchangeAmount] descriptionWithLocale:[self decimalLocale]],
+        @"feeRate": [[exchangeSettings feeRate] descriptionWithLocale:[self decimalLocale]],
+        @"depositFeeRate": [[exchangeSettings depositFeeRate] descriptionWithLocale:[self decimalLocale]],
+        @"withdrawFee": [[exchangeSettings withdrawFee] descriptionWithLocale:[self decimalLocale]],
         @"timestamp": [NSNumber numberWithLongLong:[exchangeSettings timestamp]]
     };
 }
