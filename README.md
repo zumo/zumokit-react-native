@@ -5,7 +5,7 @@ ZumoKit is a state of the art wallet architecture underpinning our flagship prod
 
 ## Docs
 
-Refer to ZumoKit SDK developer [documentation](https://developers.zumo.money/docs/intro/) and [reference](https://zumo.github.io/react-native/) for usage details.
+Refer to ZumoKit SDK developer [documentation](https://developers.zumo.money/docs/) and [reference](https://zumo.github.io/react-native/) for usage details.
 
 ## Installation
 
@@ -21,9 +21,28 @@ Link the library (not required for React Native 0.60 and up):
 react-native link react-native-zumo-kit
 ```
 
+If your project does not yet support typescript, you will have to enable it:
+```
+yarn add --dev typescript @types/jest @types/react @types/react-native @types/react-test-renderer
+```
+
+ZumoKit React Native SDK uses experimental TypeScript decorators, support for which has to be enabled:
+```
+yarn add @babel/plugin-proposal-decorators -D
+```
+
+Then, modify `compilerOptions` in _tsconfig.json_:
+```
+"experimentalDecorators": true
+```
+and enable plugin `@babel/plugin-proposal-decorators` in _babel.config.json_:
+```
+plugins: [["@babel/plugin-proposal-decorators", { "legacy": true }]]
+```
+
 ### Extra step for iOS
 
-As ZumoKit is not yet distributed via CocoaPods Trunk, you'll need to include the [ZumoKit Spec](https://github.com/zumo/zumokit-specs) repo in your app's `Podfile` (usually located in the `ios` directory). You'll also need to ensure that the minimum iOS target is 10.0 or higher.
+As ZumoKit is not yet distributed via CocoaPods Trunk, you'll need to include the [ZumoKit Spec](https://github.com/zumo/zumokit-specs) repo in your app's _Podfile_ (usually located in the _ios_ directory). You'll also need to ensure that the minimum iOS target is 10.0 or higher.
 
 ```ruby
 platform :ios, '10.0'
@@ -39,11 +58,11 @@ target 'Demo' do
 end
 ```
 
-You will also need to execute `pod install` manually from the `ios` directory.
+You will also need to execute `pod install` manually from the _ios_ directory.
 
 ### Extra step for Android
 
-Set `minSdkVersion` to 21 in your `android/build.gradle` settings.
+Set `minSdkVersion` to 21 in your _android/build.gradle_ settings.
 
 ## Usage
 
