@@ -681,7 +681,7 @@ RCT_EXPORT_METHOD(clear:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseReje
         @"currencyCode": [account currencyCode],
         @"network": [account network],
         @"type": [account type],
-        @"balance": [account balance],
+        @"balance": [[account balance] descriptionWithLocale:[self decimalLocale]],
         @"hasNominatedAccount": @([account hasNominatedAccount]),
         @"cryptoProperties": [account cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [account fiatProperties] ? [self mapAccountFiatProperties:account.fiatProperties] : [NSNull null]
