@@ -363,7 +363,7 @@ RCT_EXPORT_METHOD(composeEthTransaction:(NSString *)accountId gasPrice:(NSString
 
     @try {
 
-        [_wallet composeEthTransaction:accountId gasPrice:[NSDecimalNumber decimalNumberWithString:gasPrice locale:[self decimalLocale]] gasLimit:[NSDecimalNumber decimalNumberWithString:gasLimit locale:[self decimalLocale]] destination:destination amount:[NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] data:data nonce:nonce ? @([nonce integerValue]) : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeEthTransaction:accountId gasPrice:[NSDecimalNumber decimalNumberWithString:gasPrice locale:[self decimalLocale]] gasLimit:[NSDecimalNumber decimalNumberWithString:gasLimit locale:[self decimalLocale]] destination:destination amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL data:data nonce:nonce ? @([nonce integerValue]) : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -387,7 +387,7 @@ RCT_EXPORT_METHOD(composeBtcTransaction:(NSString *)accountId changeAccountId:(N
 
     @try {
 
-        [_wallet composeBtcTransaction:accountId changeAccountId:changeAccountId destination:destination amount:[NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] feeRate:[NSDecimalNumber decimalNumberWithString:feeRate locale:[self decimalLocale]] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeBtcTransaction:accountId changeAccountId:changeAccountId destination:destination amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL feeRate:[NSDecimalNumber decimalNumberWithString:feeRate locale:[self decimalLocale]] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -411,7 +411,7 @@ RCT_EXPORT_METHOD(composeInternalFiatTransaction:(NSString *)fromAccountId toAcc
 
     @try {
 
-        [_wallet composeInternalFiatTransaction:fromAccountId toAccountId:toAccountId amount:[NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeInternalFiatTransaction:fromAccountId toAccountId:toAccountId amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -435,7 +435,7 @@ RCT_EXPORT_METHOD(composeTransactionToNominatedAccount:(NSString *)fromAccountId
 
     @try {
 
-        [_wallet composeTransactionToNominatedAccount:fromAccountId amount:[NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet composeTransactionToNominatedAccount:fromAccountId amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -461,7 +461,7 @@ RCT_EXPORT_METHOD(composeExchange:(NSString *)depositAccountId withdrawAccountId
         ZKExchangeRate *rate = [self unboxExchangeRate:exchangeRate];
         ZKExchangeSettings *fees = [self unboxExchangeSettings:exchangeSettings];
 
-        [_wallet composeExchange:depositAccountId withdrawAccountId:withdrawAccountId exchangeRate:rate exchangeSettings:fees amount:[NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] sendMax:sendMax completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
+        [_wallet composeExchange:depositAccountId withdrawAccountId:withdrawAccountId exchangeRate:rate exchangeSettings:fees amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
