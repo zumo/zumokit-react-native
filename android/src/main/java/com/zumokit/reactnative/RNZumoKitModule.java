@@ -421,7 +421,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       nonceValue = Long.parseLong(nonce);
     }
 
-    this.wallet.composeEthTransaction(accountId, new BigDecimal(gasPrice), new BigDecimal(gasLimit), destination, new BigDecimal(amount), data, nonceValue, sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeEthTransaction(accountId, new BigDecimal(gasPrice), new BigDecimal(gasLimit), destination, (amount == null) ? null : new BigDecimal(amount), data, nonceValue, sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -446,7 +446,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    this.wallet.composeBtcTransaction(accountId, changeAccountId, destination, new BigDecimal(amount), new BigDecimal(feeRate), sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeBtcTransaction(accountId, changeAccountId, destination, (amount == null) ? null : new BigDecimal(amount), new BigDecimal(feeRate), sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -471,7 +471,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    this.wallet.composeInternalFiatTransaction(fromAccountId, toAccountId, new BigDecimal(amount), sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeInternalFiatTransaction(fromAccountId, toAccountId, (amount == null) ? null : new BigDecimal(amount), sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -496,7 +496,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return;
     }
 
-    this.wallet.composeTransactionToNominatedAccount(fromAccountId, new BigDecimal(amount), sendMax, new ComposeTransactionCallback() {
+    this.wallet.composeTransactionToNominatedAccount(fromAccountId, (amount == null) ? null : new BigDecimal(amount), sendMax, new ComposeTransactionCallback() {
 
       @Override
       public void onError(Exception error) {
@@ -523,7 +523,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     ExchangeRate rate = RNZumoKitModule.unboxExchangeRate(exchangeRate);
     ExchangeSettings settings = RNZumoKitModule.unboxExchangeSettings(exchangeSettings);
 
-    this.wallet.composeExchange(fromAccountId, toAccountId, rate, settings, new BigDecimal(amount), sendMax, new ComposeExchangeCallback() {
+    this.wallet.composeExchange(fromAccountId, toAccountId, rate, settings, (amount == null) ? null : new BigDecimal(amount), sendMax, new ComposeExchangeCallback() {
       @Override
       public void onError(Exception e) {
         rejectPromise(promise, e);
