@@ -31,8 +31,8 @@ export default class ExchangeRate {
   constructor(json: ExchangeRateJSON) {
     this.json = json;
     this.id = json.id;
-    this.fromCurrency = json.depositCurrency as CurrencyCode;
-    this.toCurrency = json.withdrawCurrency as CurrencyCode;
+    this.fromCurrency = json.fromCurrency as CurrencyCode;
+    this.toCurrency = json.toCurrency as CurrencyCode;
     this.value = new Decimal(json.value);
     this.validTo = json.validTo;
     this.timestamp = json.timestamp;

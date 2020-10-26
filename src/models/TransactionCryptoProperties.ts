@@ -1,7 +1,6 @@
 import { Decimal } from 'decimal.js';
 import { TransactionCryptoPropertiesJSON, Dictionary, CurrencyCode } from '../types';
-// eslint-disable-next-line import/no-cycle
-import Parser from '../util/Parser';
+import { parseFiatMap } from '../utils/parse';
 
 /**
  * Record containing transaction crypto properties.
@@ -52,7 +51,7 @@ export default class TransactionCryptoProperties {
     this.data = json.data;
     this.gasPrice = json.gasPrice ? new Decimal(json.gasPrice) : null;
     this.gasLimit = json.gasLimit ? parseInt(json.gasLimit, 10) : null;
-    this.fiatFee = Parser.parseFiatMap(json.fiatFee);
-    this.fiatAmount = Parser.parseFiatMap(json.fiatAmount);
+    this.fiatFee = parseFiatMap(json.fiatFee);
+    this.fiatAmount = parseFiatMap(json.fiatAmount);
   }
 }

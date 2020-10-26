@@ -1,25 +1,25 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import Wallet from './Wallet';
-import Account from './Account';
-import Transaction from './Transaction';
-import AccountFiatProperties from './AccountFiatProperties';
-import tryCatchProxy from '../ZKErrorProxy';
+import Account from './models/Account';
+import AccountFiatProperties from './models/AccountFiatProperties';
+import AccountDataSnapshot from './models/AccountDataSnapshot';
+import tryCatchProxy from './errorProxy';
 import {
   UserJSON,
   CurrencyCode,
   Network,
   AccountType,
   AccountJSON,
-  TransactionJSON,
-  ModulrCustomerData,
-} from '../types';
+  AccountDataSnapshotJSON,
+  FiatCustomerData,
+} from './types';
 
 const { RNZumoKit } = NativeModules;
 
 /**
  * User class provides methods for managing user wallet and accounts.
  * <p>
- * User instance can be obtained via {@link ZumoKit.getUser} method.
+ * User instance can be obtained via {@link ZumoKit.authUser} method.
  * <p>
  * See <a href="https://developers.zumo.money/docs/guides/manage-user-wallet">Manage User Wallet</a>,
  * <a href="https://developers.zumo.money/docs/guides/create-fiat-account">Create Fiat Account</a> and
@@ -28,16 +28,43 @@ const { RNZumoKit } = NativeModules;
  */
 @tryCatchProxy
 export default class User {
-  /** Identifier. */
-  id: string;
+  // User dentifier
+  private id: string;
 
-  /** Indicator if user has wallet. */
-  hasWallet: boolean;
+  // Indicator if user has wallet
+  private walletIndicator: boolean;
+
+  // The emitter that bubbles events from the native side
+  private emitter = new NativeEventEmitter(RNZumoKit);
+
+  // Current user account data snanpshots
+  private accountDataSnapshots: Array<AccountDataSnapshot> = [];
+
+  // Listeners for account data changes
+  private accountDataListeners: Array<(snapshots: Array<AccountDataSnapshot>) => void> = [];
 
   /** @internal */
   constructor(json: UserJSON) {
     this.id = json.id;
-    this.hasWallet = !!json.hasWallet;
+    this.walletIndicator = json.hasWallet;
+
+    this.emitter.addListener('AccountDataChanged', (snapshots: Array<AccountDataSnapshotJSON>) => {
+      this.accountDataSnapshots = snapshots.map(
+        (snapshot: AccountDataSnapshotJSON) => new AccountDataSnapshot(snapshot)
+      );
+
+      this.accountDataListeners.forEach((listener) => listener(this.accountDataSnapshots));
+    });
+  }
+
+  /** Get user dentifier. */
+  getId(): string {
+    return this.id;
+  }
+
+  /** Indicator if user has wallet. */
+  hasWallet(): boolean {
+    return this.walletIndicator;
   }
 
   /**
@@ -49,7 +76,18 @@ export default class User {
    */
   async createWallet(mnemonic: string, password: string) {
     await RNZumoKit.createWallet(mnemonic, password);
-    this.hasWallet = true;
+    this.walletIndicator = true;
+    return new Wallet();
+  }
+
+  /**
+   * Recover user wallet with mnemonic seed phrase corresponding to user's wallet.
+   * This can be used if user forgets his password or wants to change his wallet password.
+   * @param  mnemonic       mnemonic seed phrase corresponding to user's wallet
+   * @param  password       user provided password
+   */
+  async recoverWallet(mnemonic: string, password: string): Promise<Wallet> {
+    await RNZumoKit.recoverWallet(mnemonic, password);
     return new Wallet();
   }
 
@@ -80,17 +118,6 @@ export default class User {
   }
 
   /**
-   * Recover user wallet with mnemonic seed phrase corresponding to user's wallet.
-   * This can be used if user forgets his password or wants to change his wallet password.
-   * @param  mnemonic       mnemonic seed phrase corresponding to user's wallet
-   * @param  password       user provided password
-   */
-  async recoverWallet(mnemonic: string, password: string): Promise<Wallet> {
-    await RNZumoKit.recoverWallet(mnemonic, password);
-    return new Wallet();
-  }
-
-  /**
    * Get account in specific currency, on specific network, with specific type.
    * @param  currencyCode   currency code, e.g. 'BTC', 'ETH' or 'GBP'
    * @param  network        network type, e.g. 'MAINNET', 'TESTNET' or 'RINKEBY'
@@ -110,41 +137,24 @@ export default class User {
   }
 
   /**
-   * Get all user transactions.
-   */
-  async getTransactions(): Promise<Array<Transaction>> {
-    const array = await RNZumoKit.getTransactions();
-    return array.map((json: TransactionJSON) => new Transaction(json));
-  }
-
-  /**
-   * Get account transactions for specified account.
-   * @param accountId {@link  Account Account} identifier
-   */
-  async getAccountTransactions(accountId: string): Promise<Array<Transaction>> {
-    const array = await RNZumoKit.getAccountTransactions(accountId);
-    return array.map((json: TransactionJSON) => new Transaction(json));
-  }
-
-  /**
-   * Check if user is a Modulr customer on 'MAINNET' or 'TESTNET' network.
+   * Check if user is a fiat customer on 'MAINNET' or 'TESTNET' network.
    * @param  network 'MAINNET' or 'TESTNET'
    */
-  async isModulrCustomer(network: Network): Promise<boolean> {
-    return RNZumoKit.isModulrCustomer(network);
+  async isFiatCustomer(network: Network): Promise<boolean> {
+    return RNZumoKit.isFiatCustomer(network);
   }
 
   /**
-   * Make user Modulr customer on specified network by providing user's personal details.
+   * Make user fiat customer on specified network by providing user's personal details.
    * @param  network        'MAINNET' or 'TESTNET'
    * @param  customerData    user's personal details.
    */
-  async makeModulrCustomer(network: Network, customerData: ModulrCustomerData): Promise<void> {
-    return RNZumoKit.makeModulrCustomer(network, customerData);
+  async makeFiatCustomer(network: Network, customerData: FiatCustomerData): Promise<void> {
+    return RNZumoKit.makeFiatCustomer(network, customerData);
   }
 
   /**
-   * Create fiat account on specified network and currency code. User must already be Modulr customer on specified network.
+   * Create fiat account on specified network and currency code. User must already be fiat customer on specified network.
    * @param  network        'MAINNET' or 'TESTNET'
    * @param  currencyCode  country code in ISO 4217 format, e.g. 'GBP'
    */
@@ -166,6 +176,29 @@ export default class User {
       return new AccountFiatProperties(json);
     } catch (error) {
       return null;
+    }
+  }
+
+  /**
+   * Listen to all account data changes.
+   *
+   * @param listener interface to listen to user changes
+   */
+  addAccountDataListener(listener: (snapshots: Array<AccountDataSnapshot>) => void) {
+    this.accountDataListeners.push(listener);
+    listener(this.accountDataSnapshots);
+  }
+
+  /**
+   * Remove listener to state changes.
+   *
+   * @param listener interface to listen to state changes
+   */
+  removeAccountDataListener(listener: (snapshot: Array<AccountDataSnapshot>) => void) {
+    let index = this.accountDataListeners.indexOf(listener);
+    while (index !== -1) {
+      this.accountDataListeners.splice(index, 1);
+      index = this.accountDataListeners.indexOf(listener);
     }
   }
 }
