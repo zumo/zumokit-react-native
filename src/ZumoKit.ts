@@ -75,7 +75,7 @@ class ZumoKit {
    * @return exchange rate or null
    */
   async getExchangeSettings(fromCurrency: CurrencyCode, toCurrency: CurrencyCode) {
-    const json = RNZumoKit.getExchangeSettings(fromCurrency, toCurrency);
+    const json = await RNZumoKit.getExchangeSettings(fromCurrency, toCurrency);
     return json ? new ExchangeSettings(json) : null;
   }
 
@@ -87,7 +87,7 @@ class ZumoKit {
    * @return fee rates or null
    */
   async getFeeRates(currency: CurrencyCode) {
-    const json = RNZumoKit.getFeeRates(currency);
+    const json = await RNZumoKit.getFeeRates(currency);
     return json ? new FeeRates(json) : null;
   }
 
@@ -99,7 +99,7 @@ class ZumoKit {
    * {@link ExchangeRate ExchangeRate} objects.
    */
   async fetchHistoricalExchangeRates(): Promise<HistoricalExchangeRates> {
-    const historicalExchangeRatesJSON = RNZumoKit.fetchHistoricalExchangeRates() as HistoricalExchangeRatesJSON;
+    const historicalExchangeRatesJSON = (await RNZumoKit.fetchHistoricalExchangeRates()) as HistoricalExchangeRatesJSON;
     return parseHistoricalExchangeRates(historicalExchangeRatesJSON);
   }
 }
