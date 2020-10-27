@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TransactionCryptoProperties | ZumoKit - v2.3.0-beta.2</title>
-	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.2">
+	<title>TransactionCryptoProperties | ZumoKit - v2.1.0</title>
+	<meta name="description" content="Documentation for ZumoKit - v2.1.0">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 /* ==========================================================================
@@ -2692,7 +2692,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="../index.html">ZumoKit - v2.3.0-beta.2</a></strong>
+					<strong><a href="../index.html">ZumoKit - v2.1.0</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2727,9 +2727,6 @@ img {
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="accountcryptoproperties.html" class="tsd-kind-icon">Account<wbr>Crypto<wbr>Properties</a>
-		</li>
-		<li class=" tsd-kind-class">
-			<a href="accountdatasnapshot.html" class="tsd-kind-icon">Account<wbr>Data<wbr>Snapshot</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="accountfiatproperties.html" class="tsd-kind-icon">Account<wbr>Fiat<wbr>Properties</a>
@@ -2806,10 +2803,16 @@ img {
 			<a href="zumokiterror.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Error</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="../interfaces/fiatcustomerdata.html" class="tsd-kind-icon">Fiat<wbr>Customer<wbr>Data</a>
+			<a href="../interfaces/modulrcustomerdata.html" class="tsd-kind-icon">Modulr<wbr>Customer<wbr>Data</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/state.html" class="tsd-kind-icon">State</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="../interfaces/tokenset.html" class="tsd-kind-icon">Token<wbr>Set</a>
+		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/zumokitconfig.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="../globals.html#accounttype" class="tsd-kind-icon">Account<wbr>Type</a>
@@ -2843,12 +2846,6 @@ img {
 		</li>
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#rnzumokit" class="tsd-kind-icon">RNZumo<wbr>Kit</a>
-		</li>
-		<li class=" tsd-kind-function">
-			<a href="../globals.html#loadzumokit" class="tsd-kind-icon">load<wbr>Zumo<wbr>Kit</a>
-		</li>
-		<li class=" tsd-kind-function">
-			<a href="../globals.html#parsehistoricalexchangerates" class="tsd-kind-icon">parse<wbr>Historical<wbr>Exchange<wbr>Rates</a>
 		</li>
 	</ul>
 </nav>
@@ -2900,7 +2897,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L30">src/models/TransactionCryptoProperties.ts:30</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L31">src/models/TransactionCryptoProperties.ts:31</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2915,7 +2912,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">fiat<wbr>Amount<span class="tsd-signature-symbol">:</span> <a href="../globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L42">src/models/TransactionCryptoProperties.ts:42</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L43">src/models/TransactionCryptoProperties.ts:43</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2930,7 +2927,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">fiat<wbr>Fee<span class="tsd-signature-symbol">:</span> <a href="../globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L39">src/models/TransactionCryptoProperties.ts:39</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L40">src/models/TransactionCryptoProperties.ts:40</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2945,7 +2942,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">from<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L24">src/models/TransactionCryptoProperties.ts:24</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L25">src/models/TransactionCryptoProperties.ts:25</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2960,7 +2957,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">gas<wbr>Limit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L36">src/models/TransactionCryptoProperties.ts:36</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L37">src/models/TransactionCryptoProperties.ts:37</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2975,7 +2972,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">gas<wbr>Price<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L33">src/models/TransactionCryptoProperties.ts:33</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L34">src/models/TransactionCryptoProperties.ts:34</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2990,7 +2987,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">nonce<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L21">src/models/TransactionCryptoProperties.ts:21</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L22">src/models/TransactionCryptoProperties.ts:22</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -3006,7 +3003,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">to<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L27">src/models/TransactionCryptoProperties.ts:27</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L28">src/models/TransactionCryptoProperties.ts:28</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -3021,7 +3018,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">tx<wbr>Hash<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L15">src/models/TransactionCryptoProperties.ts:15</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/feature/ZUMO-2696/src/models/TransactionCryptoProperties.ts#L16">src/models/TransactionCryptoProperties.ts:16</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -3040,13 +3037,14 @@ img {
 						<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 					</ul>
 					<ul class="tsd-legend">
+						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+					</ul>
+					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
