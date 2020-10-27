@@ -11,7 +11,7 @@ import { CurrencyCode, TokenSet, HistoricalExchangeRatesJSON } from './types';
 const { RNZumoKit } = NativeModules;
 
 /**
- * Entry point to ZumoKit React Native SDK:
+ * ZumoKit instance.
  * ```typescript
  * import ZumoKit from 'react-native-zumo-kit';
  * ```
@@ -73,10 +73,7 @@ class ZumoKit {
    *
    * @return exchange rate or null
    */
-  async getExchangeSettings(
-    fromCurrency: CurrencyCode,
-    toCurrency: CurrencyCode
-  ) {
+  async getExchangeSettings(fromCurrency: CurrencyCode, toCurrency: CurrencyCode) {
     const json = RNZumoKit.getExchangeSettings(fromCurrency, toCurrency);
     return json ? new ExchangeRate(json) : null;
   }
