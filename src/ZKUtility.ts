@@ -1,6 +1,5 @@
 import { NativeModules } from 'react-native';
-import Decimal from 'decimal.js';
-import tryCatchProxy from './ZKErrorProxy';
+import tryCatchProxy from './errorProxy';
 import { Network } from './types';
 
 const { RNZumoKit } = NativeModules;
@@ -12,8 +11,8 @@ const { RNZumoKit } = NativeModules;
  * import { ZKUtility } from 'react-native-zumo-kit';
  * ```
  *
- * This class provides mnemonic phrase generation utility, Bitcoin & Ethereum
- * address validation utilities and Ethereum unit conversion methods.
+ * This class provides mnemonic phrase generation utility and
+ * Bitcoin/Ethereum address validation utilities.
  */
 @tryCatchProxy
 class ZKUtility {
@@ -40,38 +39,6 @@ class ZKUtility {
    */
   async isValidBtcAddress(address: string, network: Network): Promise<boolean> {
     return RNZumoKit.isValidBtcAddress(address, network);
-  }
-
-  /**
-   * Converts ETH value to gwei.
-   * @param number ETH value to be converted
-   */
-  async ethToGwei(eth: Decimal): Promise<Decimal> {
-    return new Decimal(RNZumoKit.ethToGwei(eth.toString()));
-  }
-
-  /**
-   * Converts gwei value to ETH.
-   * @param number gwei value to be converted
-   */
-  async gweiToEth(gwei: Decimal): Promise<Decimal> {
-    return new Decimal(RNZumoKit.gweiToEth(gwei.toString()));
-  }
-
-  /**
-   * Converts ETH value to wei.
-   * @param number ETH value to be converted
-   */
-  async ethToWei(eth: Decimal): Promise<Decimal> {
-    return new Decimal(RNZumoKit.ethToWei(eth.toString()));
-  }
-
-  /**
-   * Converts wei value to ETH.
-   * @param number wei value to be converted
-   */
-  async weiToEth(wei: Decimal): Promise<Decimal> {
-    return new Decimal(RNZumoKit.weiToEth(wei.toString()));
   }
 }
 

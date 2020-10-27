@@ -31,19 +31,13 @@ export type ExchangeStatus =
 
 export type TimeInterval = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
 
-export interface ZumoKitConfig {
-  apiKey: string;
-  apiRoot: string;
-  txServiceUrl: string;
-}
-
 export interface TokenSet {
   accessToken: string;
   expiresIn: number;
   refreshToken: string;
 }
 
-export interface ModulrCustomerData {
+export interface FiatCustomerData {
   firstName: string;
   middleName: string | null;
   lastName: string;
@@ -91,29 +85,23 @@ export interface AccountJSON {
 /** @internal */
 export interface ExchangeRateJSON {
   id: string;
-  depositCurrency: string;
-  withdrawCurrency: string;
+  fromCurrency: string;
+  toCurrency: string;
   value: string;
   validTo: number;
   timestamp: number;
 }
 
 /** @internal */
-export type HistoricalExchangeRatesJSON = Record<
-  string,
-  Record<string, Record<string, ExchangeRateJSON>>
->;
-
-/** @internal */
 export interface ExchangeSettingsJSON {
   id: string;
-  depositCurrency: string;
-  withdrawCurrency: string;
-  depositAddress: string;
+  fromCurrency: string;
+  toCurrency: string;
+  exchangeAddress: Record<string, string>;
   minExchangeAmount: string;
-  depositFeeRate: string;
-  feeRate: string;
-  withdrawFee: string;
+  outgoingTransactionFeeRate: string;
+  exchangeFeeRate: string;
+  returnTransactionFee: string;
   timestamp: number;
 }
 
@@ -132,16 +120,16 @@ export interface ComposedTransactionJSON {
 /** @internal */
 export interface ComposedExchangeJSON {
   signedTransaction: string | null;
-  depositAccount: AccountJSON;
-  withdrawAccount: AccountJSON;
+  fromAccount: AccountJSON;
+  toAccount: AccountJSON;
   exchangeRate: ExchangeRateJSON;
   exchangeSettings: ExchangeSettingsJSON;
   exchangeAddress: string | null;
-  value: string;
-  depositFee: string;
-  returnValue: string;
+  amount: string;
+  outgoingTransactionFee: string;
+  returnAmount: string;
   exchangeFee: string;
-  withdrawFee: string;
+  returnTransactionFee: string;
   nonce: string;
 }
 
@@ -191,6 +179,7 @@ export interface TransactionJSON {
   nonce: string;
   cryptoProperties: TransactionCryptoPropertiesJSON | null;
   fiatProperties: TransactionFiatPropertiesJSON | null;
+  exchange: ExchangeJSON | null;
   submittedAt: number | null;
   confirmedAt: number | null;
   timestamp: number;
@@ -200,14 +189,14 @@ export interface TransactionJSON {
 export interface ExchangeJSON {
   id: string;
   status: string;
-  depositCurrency: string;
-  depositAccountId: string;
-  depositTransactionId: string | null;
-  depositFee: string | null;
-  withdrawCurrency: string;
-  withdrawAccountId: string;
-  withdrawTransactionId: string | null;
-  withdrawFee: string;
+  fromCurrency: string;
+  fromAccountId: string;
+  outgoingTransactionId: string | null;
+  outgoingTransactionFee: string | null;
+  toCurrency: string;
+  toAccountId: string;
+  returnTransactionId: string | null;
+  returnTransactionFee: string;
   amount: string;
   returnAmount: string;
   exchangeFee: string;
@@ -227,11 +216,13 @@ export interface UserJSON {
 }
 
 /** @internal */
-export interface StateJSON {
-  accounts: Array<AccountJSON>;
+export interface AccountDataSnapshotJSON {
+  account: AccountJSON;
   transactions: Array<TransactionJSON>;
-  exchanges: Array<ExchangeJSON>;
-  feeRates: Dictionary<CurrencyCode, FeeRatesJSON>;
-  exchangeRates: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRateJSON>>;
-  exchangeSettings: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeSettingsJSON>>;
 }
+
+/** @internal */
+export type HistoricalExchangeRatesJSON = Record<
+  string,
+  Record<string, Record<string, Array<ExchangeRateJSON>>>
+>;

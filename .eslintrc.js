@@ -9,11 +9,11 @@ module.exports = {
     project: "./tsconfig.json"
   },
   "rules": {
+    "import/prefer-default-export": "off",
     "brace-style": 2,
     "no-underscore-dangle": 0,
     "class-methods-use-this": 0,
     "@typescript-eslint/indent": 0,
-    '@typescript-eslint/no-implicit-any': 2,
     "prettier/prettier": [
       "error",
       {
@@ -25,5 +25,8 @@ module.exports = {
   },
   "plugins": [
     "prettier"
-  ]
+  ],
+  "ignorePatterns": [
+    ".eslintrc.js"
+  ],
 }

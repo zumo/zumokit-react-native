@@ -1,12 +1,12 @@
 import { NativeModules } from 'react-native';
 import Decimal from 'decimal.js';
-import Transaction from './Transaction';
-import ComposedTransaction from './ComposedTransaction';
-import Exchange from './Exchange';
-import ComposedExchange from './ComposedExchange';
-import tryCatchProxy from '../ZKErrorProxy';
-import ExchangeRate from './ExchangeRate';
-import ExchangeSettings from './ExchangeSettings';
+import Transaction from './models/Transaction';
+import ComposedTransaction from './models/ComposedTransaction';
+import Exchange from './models/Exchange';
+import ComposedExchange from './models/ComposedExchange';
+import tryCatchProxy from './errorProxy';
+import ExchangeRate from './models/ExchangeRate';
+import ExchangeSettings from './models/ExchangeSettings';
 
 const { RNZumoKit } = NativeModules;
 
@@ -59,16 +59,16 @@ export default class Wallet {
   }
 
   /**
-   * Compose Bitcoin transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#bitcoin">Send Transactions</a> guide for usage details.
+   * Compose BTC or BSV transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#bitcoin">Send Transactions</a> guide for usage details.
    *
    * @param fromAccountId       {@link  Account Account} identifier
    * @param changeAccountId     change {@link  Account Account} identifier, which can be the same as fromAccountId
    * @param destinationAddress  destination wallet address
-   * @param amount              amount in BTC
+   * @param amount              amount in BTC or BSV
    * @param feeRate             fee rate in satoshis/byte
    * @param sendMax             send maximum possible funds to destination
    */
-  async composeBtcTransaction(
+  async composeTransaction(
     fromAccountId: string,
     changeAccountId: string,
     destinationAddress: string,
