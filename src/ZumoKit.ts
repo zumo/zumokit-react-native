@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
-import ZKUtility from './ZKUtility';
+import Utils from './Utils';
 import User from './User';
 import tryCatchProxy from './errorProxy';
 import FeeRates from './models/FeeRates';
@@ -13,8 +13,6 @@ const { RNZumoKit } = NativeModules;
 
 /**
  * ZumoKit instance.
- * ```typescript
- * import ZumoKit from 'react-native-zumo-kit';
  * ```
  * <p>
  * See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
@@ -49,8 +47,8 @@ class ZumoKit {
   /**
    * Returns crypto utility class.
    */
-  getUtils(): typeof ZKUtility {
-    return ZKUtility;
+  getUtils(): typeof Utils {
+    return Utils;
   }
 
   /**
