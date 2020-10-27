@@ -55,6 +55,13 @@ const parseHistoricalExchangeRates = (
         const array: Array<ExchangeRateJSON> = exchangeRateMapJSON[timeInterval][fromCurrency][
           toCurrency
         ] as Array<ExchangeRateJSON>;
+
+        if (!exchangeRateMap[timeInterval as TimeInterval])
+          exchangeRateMap[timeInterval as TimeInterval] = {};
+
+        if (!exchangeRateMap[timeInterval as TimeInterval][fromCurrency as CurrencyCode])
+          exchangeRateMap[timeInterval as TimeInterval][fromCurrency as CurrencyCode] = {};
+
         exchangeRateMap[timeInterval as TimeInterval][fromCurrency as CurrencyCode][
           toCurrency as CurrencyCode
         ] = array.map((exchangeRateJSON) => new ExchangeRate(exchangeRateJSON));
