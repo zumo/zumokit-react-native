@@ -1,3 +1,1 @@
-import ZumoKit from './src/ZumoKit';
-
-export default ZumoKit;
+export { loadZumoKit } from './src/loadZumoKit';

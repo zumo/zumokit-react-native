@@ -61,8 +61,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     private Wallet wallet;
 
-    private AccountDataListener accountDataListener;
-
     public RNZumoKitModule(ReactApplicationContext reactContext) {
         super(reactContext);
 
@@ -102,14 +100,19 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String apiKey, String apiRoot, String txServiceUrl) {
-        this.zumoKit = new ZumoKit(apiKey, apiRoot, txServiceUrl);
+    public void init(String apiKey, String apiRoot, String txServiceUrl, Promise promise) {
+        try {
+            this.zumoKit = new ZumoKit(apiKey, apiRoot, txServiceUrl);
+            promise.resolve(true);
+        } catch (Exception e) {
+            rejectPromise(promise, e);
+        }
     }
 
     // - Authentication
 
     @ReactMethod
-    public void getUser(String tokenSet, Promise promise) {
+    public void signIn(String tokenSet, Promise promise) {
         if (this.zumoKit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
@@ -127,23 +130,33 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             public void onSuccess(User user) {
                 module.user = user;
 
-                user.addAccountDataListener(new AccountDataListener() {
-                  @Override
-                  public void onDataChange(ArrayList<AccountDataSnapshot> snapshots) {
-                    WritableArray array = RNZumoKitModule.mapAccountData(snapshots);
-
-                    module.reactContext
-                            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit("AccountDataChanged", array);
-                  }
-                });
-
                 WritableMap map = Arguments.createMap();
 
                 map.putString("id", user.getId());
                 map.putBoolean("hasWallet", user.hasWallet());
 
                 promise.resolve(map);
+            }
+        });
+    }
+
+    // - Listeners
+    @ReactMethod
+    public void addAccountDataListener(Promise promise) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        RNZumoKitModule module = this;
+        user.addAccountDataListener(new AccountDataListener() {
+            @Override
+            public void onDataChange(ArrayList<AccountDataSnapshot> snapshots) {
+                WritableArray array = RNZumoKitModule.mapAccountData(snapshots);
+
+                module.reactContext
+                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("AccountDataChanged", array);
             }
         });
     }
@@ -1405,45 +1418,46 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     public static ExchangeRate unboxExchangeRate(ReadableMap map) {
         String id = map.getString("id");
-        String depositCurrency = map.getString("depositCurrency");
-        String withdrawCurrency = map.getString("withdrawCurrency");
+        String fromCurrency = map.getString("fromCurrency");
+        String toCurrency = map.getString("toCurrency");
         BigDecimal value = new BigDecimal(map.getString("value"));
         long validTo = map.getInt("validTo");
         long timestamp = map.getInt("timestamp");
 
-        return new ExchangeRate(id, depositCurrency, withdrawCurrency, value, validTo, timestamp);
+        return new ExchangeRate(id, fromCurrency, toCurrency, value, validTo, timestamp);
     }
 
     public static ExchangeSettings unboxExchangeSettings(ReadableMap map) {
         String id = map.getString("id");
-        String depositCurrency = map.getString("depositCurrency");
-        String withdrawCurrency = map.getString("withdrawCurrency");
+        String fromCurrency = map.getString("fromCurrency");
+        String toCurrency = map.getString("toCurrency");
         BigDecimal minExchangeAmount = new BigDecimal(map.getString("minExchangeAmount"));
-        BigDecimal feeRate = new BigDecimal(map.getString("feeRate"));
-        BigDecimal depositFeeRate = new BigDecimal(map.getString("depositFeeRate"));
-        BigDecimal withdrawFee = new BigDecimal(map.getString("withdrawFee"));
+        BigDecimal exchangeFeeRate = new BigDecimal(map.getString("exchangeFeeRate"));
+        BigDecimal outgoingTransactionFeeRate =
+                new BigDecimal(map.getString("outgoingTransactionFeeRate"));
+        BigDecimal returnTransactionFee = new BigDecimal(map.getString("returnTransactionFee"));
         long timestamp = map.getInt("timestamp");
 
-        HashMap<String, String> depositAddress = new HashMap<>();
+        HashMap<String, String> exchangeAddress = new HashMap<>();
 
-        ReadableMap depositAddressMap = map.getMap("depositAddress");
-        ReadableMapKeySetIterator iterator = depositAddressMap.keySetIterator();
+        ReadableMap exchangeAddressMap = map.getMap("exchangeAddress");
+        ReadableMapKeySetIterator iterator = exchangeAddressMap.keySetIterator();
         while (iterator.hasNextKey()) {
             String network = iterator.nextKey();
-            String address = depositAddressMap.getString(network);
+            String address = exchangeAddressMap.getString(network);
 
-            depositAddress.put(network, address);
+            exchangeAddress.put(network, address);
         }
 
         return new ExchangeSettings(
                 id,
-                depositAddress,
-                depositCurrency,
-                withdrawCurrency,
+                exchangeAddress,
+                fromCurrency,
+                toCurrency,
                 minExchangeAmount,
-                feeRate,
-                depositFeeRate,
-                withdrawFee,
+                exchangeFeeRate,
+                outgoingTransactionFeeRate,
+                returnTransactionFee,
                 timestamp
         );
     }

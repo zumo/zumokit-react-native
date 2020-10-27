@@ -4,6 +4,7 @@ import User from './User';
 import tryCatchProxy from './errorProxy';
 import FeeRates from './models/FeeRates';
 import ExchangeRate from './models/ExchangeRate';
+import ExchangeSettings from './models/ExchangeSettings';
 import HistoricalExchangeRates from './models/HistoricalExchangeRates';
 import { parseHistoricalExchangeRates } from './utils/parse';
 import { CurrencyCode, TokenSet, HistoricalExchangeRatesJSON } from './types';
@@ -32,7 +33,7 @@ class ZumoKit {
    * @param userTokenSet   user token set
    */
   async signIn(userTokenSet: TokenSet) {
-    const json = await RNZumoKit.authUser(JSON.stringify(userTokenSet));
+    const json = await RNZumoKit.signIn(JSON.stringify(userTokenSet));
     this.currentUser = new User(json);
     return this.currentUser;
   }
@@ -75,7 +76,7 @@ class ZumoKit {
    */
   async getExchangeSettings(fromCurrency: CurrencyCode, toCurrency: CurrencyCode) {
     const json = RNZumoKit.getExchangeSettings(fromCurrency, toCurrency);
-    return json ? new ExchangeRate(json) : null;
+    return json ? new ExchangeSettings(json) : null;
   }
 
   /**

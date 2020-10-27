@@ -9,7 +9,6 @@ import {
   CurrencyCode,
   Network,
   AccountType,
-  AccountJSON,
   AccountDataSnapshotJSON,
   FiatCustomerData,
 } from './types';
@@ -34,6 +33,9 @@ export default class User {
   // Indicator if user has wallet
   private walletIndicator: boolean;
 
+  // Listening to account data changes
+  private listeningToChanges = false;
+
   // The emitter that bubbles events from the native side
   private emitter = new NativeEventEmitter(RNZumoKit);
 
@@ -49,10 +51,10 @@ export default class User {
     this.walletIndicator = json.hasWallet;
 
     this.emitter.addListener('AccountDataChanged', (snapshots: Array<AccountDataSnapshotJSON>) => {
+      this.listeningToChanges = true;
       this.accountDataSnapshots = snapshots.map(
         (snapshot: AccountDataSnapshotJSON) => new AccountDataSnapshot(snapshot)
       );
-
       this.accountDataListeners.forEach((listener) => listener(this.accountDataSnapshots));
     });
   }
@@ -186,7 +188,11 @@ export default class User {
    */
   addAccountDataListener(listener: (snapshots: Array<AccountDataSnapshot>) => void) {
     this.accountDataListeners.push(listener);
-    listener(this.accountDataSnapshots);
+    if (this.listeningToChanges) {
+      listener(this.accountDataSnapshots);
+    } else {
+      RNZumoKit.addAccountDataListener();
+    }
   }
 
   /**

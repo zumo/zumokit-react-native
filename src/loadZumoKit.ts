@@ -18,4 +18,4 @@ const loadZumoKit = async (apiKey: string, apiUrl: string, txServiceUrl: string)
   return ZumoKit;
 };
 
-export default loadZumoKit;
+export { loadZumoKit };
