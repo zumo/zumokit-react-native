@@ -552,6 +552,22 @@ RCT_EXPORT_METHOD(recoverWallet:(NSString *)mnemonic password:(NSString *)passwo
 
 #pragma mark - Account Management
 
+RCT_EXPORT_METHOD(getAccounts:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+        NSArray<ZKAccount *> *accounts = [_user getAccounts];
+
+        resolve([self mapAccounts:accounts]);
+
+    } @catch (NSException *exception) {
+
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+    }
+
+}
+
 RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type:(NSString *)type resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
 
@@ -592,6 +608,69 @@ RCT_EXPORT_METHOD(fetchHistoricalExchangeRates:(RCTPromiseResolveBlock)resolve r
             resolve([self mapHistoricalExchangeRates:historicalRates]);
 
         }];
+
+    } @catch (NSException *exception) {
+
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+    }
+
+}
+
+RCT_EXPORT_METHOD(getExchangeRate:(NSString *)fromCurrency toCurrency:(NSString *)toCurrency resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        ZKExchangeRate *exchangeRate = [_zumoKit getExchangeRate:fromCurrency toCurrency:toCurrency];
+
+        if(exchangeRate == nil) {
+            resolve([NSNull null]);
+        } else {
+            resolve([self mapExchangeRate:exchangeRate]);
+        }
+
+    } @catch (NSException *exception) {
+
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+    }
+
+}
+
+RCT_EXPORT_METHOD(getExchangeSettings:(NSString *)fromCurrency toCurrency:(NSString *)toCurrency resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        ZKExchangeSettings *exchangeSettings = [_zumoKit getExchangeSettings:fromCurrency toCurrency:toCurrency];
+
+        if(exchangeSettings == nil) {
+            resolve([NSNull null]);
+        } else {
+            resolve([self mapExchangeSettings:exchangeSettings]);
+        }
+
+    } @catch (NSException *exception) {
+
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+
+    }
+
+}
+
+RCT_EXPORT_METHOD(getFeeRates:(NSString *)currency resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+
+    @try {
+
+        ZKFeeRates *feeRates = [_zumoKit getFeeRates:currency];
+
+        if(feeRates == nil) {
+            resolve([NSNull null]);
+        } else {
+            resolve([self mapFeeRates:feeRates]);
+        }
 
     } @catch (NSException *exception) {
 
@@ -809,23 +888,17 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     };
 }
 
-- (NSDictionary *)mapFeeRates:(NSDictionary<NSString *, ZKFeeRates *>*)feeRates {
+- (NSDictionary *)mapFeeRates:(ZKFeeRates *)feeRates {
 
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-
-    [feeRates enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, ZKFeeRates * _Nonnull obj, BOOL * _Nonnull stop) {
-        dict[key] = @{
-            @"slow": [[obj slow] descriptionWithLocale:[self decimalLocale]],
-            @"average": [[obj average] descriptionWithLocale:[self decimalLocale]],
-            @"fast": [[obj fast] descriptionWithLocale:[self decimalLocale]],
-            @"slowTime": [NSNumber numberWithFloat:[obj slowTime]],
-            @"averageTime": [NSNumber numberWithFloat:[obj averageTime]],
-            @"fastTime": [NSNumber numberWithFloat:[obj fastTime]],
-            @"source": [obj source]
-        };
-    }];
-
-    return dict;
+    return @{
+        @"slow": [[feeRates slow] descriptionWithLocale:[self decimalLocale]],
+        @"average": [[feeRates average] descriptionWithLocale:[self decimalLocale]],
+        @"fast": [[feeRates fast] descriptionWithLocale:[self decimalLocale]],
+        @"slowTime": [NSNumber numberWithFloat:[feeRates slowTime]],
+        @"averageTime": [NSNumber numberWithFloat:[feeRates averageTime]],
+        @"fastTime": [NSNumber numberWithFloat:[feeRates fastTime]],
+        @"source": [feeRates source]
+    };
 }
 
 - (NSDictionary *)mapExchangeRate:(ZKExchangeRate *)exchangeRates {
@@ -1014,8 +1087,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
 
 - (ZKExchangeSettings *)unboxExchangeSettings:(NSDictionary *)exchangeSettings {
     NSString *exchangeSettingsId = exchangeSettings[@"id"];
-    NSString *fromCurrency = exchangeSettings[@"depositCurrency"];
-    NSString *toCurrency = exchangeSettings[@"withdrawCurrency"];
+    NSString *fromCurrency = exchangeSettings[@"fromCurrency"];
+    NSString *toCurrency = exchangeSettings[@"toCurrency"];
     NSString *minExchangeAmount = exchangeSettings[@"minExchangeAmount"];
     NSString *exchangeFeeRate = exchangeSettings[@"exchangeFeeRate"];
     NSString *outgoingTransactionFeeRate = exchangeSettings[@"outgoingTransactionFeeRate"];
