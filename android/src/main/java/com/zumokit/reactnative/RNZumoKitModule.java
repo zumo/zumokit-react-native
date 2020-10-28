@@ -100,13 +100,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String apiKey, String apiRoot, String txServiceUrl, Promise promise) {
-        try {
-            this.zumoKit = new ZumoKit(apiKey, apiRoot, txServiceUrl);
-            promise.resolve(true);
-        } catch (Exception e) {
-            rejectPromise(promise, e);
-        }
+    public void init(String apiKey, String apiUrl, String txServiceUrl)
+        this.zumoKit = new ZumoKit(apiKey, apiUrl, txServiceUrl);
     }
 
     // - Authentication

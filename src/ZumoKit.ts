@@ -12,17 +12,34 @@ import { CurrencyCode, TokenSet, HistoricalExchangeRatesJSON } from './types';
 const { RNZumoKit } = NativeModules;
 
 /**
- * ZumoKit instance.
+ * Entry point to ZumoKit React Native SDK.
  * ```
  * <p>
  * See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
  * */
 @tryCatchProxy
 class ZumoKit {
-  private currentUser: User = null;
-
   /** ZumoKit SDK semantic version tag if exists, commit hash otherwise. */
   version: string = RNZumoKit.version;
+
+  /** Currently authenticated user. */
+  currentUser: User = null;
+
+  /** Crypto utilities. */
+  utils: Utils = new Utils();
+
+  /**
+   * Initializes ZumoKit SDK. Should only be called once.
+   * <p>
+   * This function returns a Promise that resolves once ZumoKit SDK has loaded.
+   *
+   * @param apiKey        ZumoKit Api-Key
+   * @param apiUrl        ZumoKit API url
+   * @param txServiceUrl  ZumoKit Transaction Service url
+   * */
+  init(apiKey: string, apiUrl: string, txServiceUrl: string) {
+    RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
+  }
 
   /**
    * Signs in user corresponding to user token set. Sets current user to the newly signed in user.
@@ -42,13 +59,6 @@ class ZumoKit {
   async signOut() {
     await RNZumoKit.signOut();
     this.currentUser = null;
-  }
-
-  /**
-   * Returns crypto utility class.
-   */
-  getUtils(): typeof Utils {
-    return Utils;
   }
 
   /**
