@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ZumoKit - v2.1.0 | ZumoKit - v2.1.0</title>
-	<meta name="description" content="Documentation for ZumoKit - v2.1.0">
+	<title>ZumoKit - v2.3.0-beta.2 | ZumoKit - v2.3.0-beta.2</title>
+	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.2">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 /* ==========================================================================
@@ -2692,7 +2692,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="index.html">ZumoKit - v2.1.0</a></strong>
+					<strong><a href="index.html">ZumoKit - v2.3.0-beta.2</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2729,6 +2729,9 @@ img {
 			<a href="classes/accountcryptoproperties.html" class="tsd-kind-icon">Account<wbr>Crypto<wbr>Properties</a>
 		</li>
 		<li class=" tsd-kind-class">
+			<a href="classes/accountdatasnapshot.html" class="tsd-kind-icon">Account<wbr>Data<wbr>Snapshot</a>
+		</li>
+		<li class=" tsd-kind-class">
 			<a href="classes/accountfiatproperties.html" class="tsd-kind-icon">Account<wbr>Fiat<wbr>Properties</a>
 		</li>
 		<li class=" tsd-kind-class">
@@ -2762,10 +2765,10 @@ img {
 			<a href="classes/user.html" class="tsd-kind-icon">User</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="classes/wallet.html" class="tsd-kind-icon">Wallet</a>
+			<a href="classes/utils.html" class="tsd-kind-icon">Utils</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="classes/zkutility.html" class="tsd-kind-icon">ZKUtility</a>
+			<a href="classes/wallet.html" class="tsd-kind-icon">Wallet</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="classes/zumokit.html" class="tsd-kind-icon">Zumo<wbr>Kit</a>
@@ -2774,16 +2777,10 @@ img {
 			<a href="classes/zumokiterror.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Error</a>
 		</li>
 		<li class=" tsd-kind-interface">
-			<a href="interfaces/modulrcustomerdata.html" class="tsd-kind-icon">Modulr<wbr>Customer<wbr>Data</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="interfaces/state.html" class="tsd-kind-icon">State</a>
+			<a href="interfaces/fiatcustomerdata.html" class="tsd-kind-icon">Fiat<wbr>Customer<wbr>Data</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="interfaces/tokenset.html" class="tsd-kind-icon">Token<wbr>Set</a>
-		</li>
-		<li class=" tsd-kind-interface">
-			<a href="interfaces/zumokitconfig.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Config</a>
 		</li>
 		<li class=" tsd-kind-type-alias">
 			<a href="globals.html#accounttype" class="tsd-kind-icon">Account<wbr>Type</a>
@@ -2818,6 +2815,9 @@ img {
 		<li class=" tsd-kind-variable">
 			<a href="globals.html#rnzumokit" class="tsd-kind-icon">RNZumo<wbr>Kit</a>
 		</li>
+		<li class=" tsd-kind-function">
+			<a href="globals.html#parsehistoricalexchangerates" class="tsd-kind-icon">parse<wbr>Historical<wbr>Exchange<wbr>Rates</a>
+		</li>
 	</ul>
 </nav>
 <div class="container container-main">
@@ -2836,11 +2836,10 @@ img {
 			</a>
 			<p>Install the package:</p>
 			<pre><code>yarn <span class="hljs-keyword">add</span><span class="bash"> zumo/zumokit-react-native</span></code></pre><p>Link the library (not required for React Native 0.60 and up):</p>
-			<pre><code>react-<span class="hljs-keyword">native</span> link react-<span class="hljs-keyword">native</span>-zumo-kit</code></pre><p>If your project does not yet support typescript, you will have to enable it:</p>
-			<pre><code>yarn add --dev typescript <span class="hljs-meta">@types</span>/jest <span class="hljs-meta">@types</span>/react <span class="hljs-meta">@types</span>/react-<span class="hljs-keyword">native</span> <span class="hljs-meta">@types</span>/react-test-renderer</code></pre><p>ZumoKit React Native SDK uses experimental TypeScript decorators, support for which has to be enabled:</p>
-			<pre><code>yarn <span class="hljs-keyword">add</span><span class="bash"> @babel/plugin-proposal-decorators -D</span></code></pre><p>Then, modify <code>compilerOptions</code> in <em>tsconfig.json</em>:</p>
-			<pre><code><span class="hljs-attr">&quot;experimentalDecorators&quot;:</span> <span class="hljs-literal">true</span></code></pre><p>and enable plugin <code>@babel/plugin-proposal-decorators</code> in <em>babel.config.json</em>:</p>
-			<pre><code>plugins: <span class="hljs-string">[[&quot;@babel/plugin-proposal-decorators&quot;, { &quot;legacy&quot;: true }]]</span></code></pre>
+			<pre><code>react-<span class="hljs-keyword">native</span> link react-<span class="hljs-keyword">native</span>-zumo-kit</code></pre><p>ZumoKit React Native SDK uses experimental TypeScript decorators, support for which has to be enabled:</p>
+			<pre><code>yarn <span class="hljs-keyword">add</span><span class="bash"> @babel/plugin-proposal-decorators -D</span></code></pre><p>Then, enable plugin <code>@babel/plugin-proposal-decorators</code> in <em>babel.config.json</em>:</p>
+			<pre><code>plugins: <span class="hljs-string">[[&quot;@babel/plugin-proposal-decorators&quot;, { &quot;legacy&quot;: true }]]</span></code></pre><p>If your project uses typescript, modify <code>compilerOptions</code> in <em>tsconfig.json</em>:</p>
+			<pre><code><span class="hljs-attr">&quot;experimentalDecorators&quot;:</span> <span class="hljs-literal">true</span></code></pre>
 			<a href="#extra-step-for-ios" id="extra-step-for-ios" style="color: inherit; text-decoration: none;">
 				<h3>Extra step for iOS</h3>
 			</a>
@@ -2864,12 +2863,12 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 			<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 				<h2>Usage</h2>
 			</a>
-			<p>Import <code>ZumoKit</code> module from <code>react-native-zumo-kit</code> package:</p>
-			<pre><code class="language-typescript"><span class="hljs-keyword">import</span> ZumoKit <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;</code></pre>
-			<p>ZumoKit module is your entrypoint to ZumoKit SDK. Check your SDK version by calling:</p>
-			<pre><code class="language-typescript"><span class="hljs-built_in">console</span>.log(ZumoKit.version);</code></pre>
-			<p>Once <code>ZumoKit</code> class is initialized via <code>ZumoKit.init</code> method, <code>ZKUtility</code> class with crypto utility classes can be globally accessed:</p>
-			<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ZKUtility } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;</code></pre>
+			<p>Entry point to ZumoKit SDK is <code>loadZumoKit</code> function. This function returns a Promise that resolves with a newly created ZumoKit object once ZumoKit SDK has loaded.</p>
+			<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { loadZumoKit } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-native-zumo-kit&#x27;</span>;
+
+<span class="hljs-keyword">const</span> zumokit = <span class="hljs-keyword">await</span> loadZumoKit(API_KEY, API_ROOT, TX_SERVICE_URL);
+<span class="hljs-built_in">console</span>.log(zumokit.version)</code></pre>
+			<p> Ask your <a href="mailto:support@zumo.money">account manager</a> to provide you with neccesarry credentials.</p>
 		</div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
@@ -2880,6 +2879,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-class"><a href="classes/account.html" class="tsd-kind-icon">Account</a></li>
 							<li class="tsd-kind-class"><a href="classes/accountcryptoproperties.html" class="tsd-kind-icon">Account<wbr>Crypto<wbr>Properties</a></li>
+							<li class="tsd-kind-class"><a href="classes/accountdatasnapshot.html" class="tsd-kind-icon">Account<wbr>Data<wbr>Snapshot</a></li>
 							<li class="tsd-kind-class"><a href="classes/accountfiatproperties.html" class="tsd-kind-icon">Account<wbr>Fiat<wbr>Properties</a></li>
 							<li class="tsd-kind-class"><a href="classes/composedexchange.html" class="tsd-kind-icon">Composed<wbr>Exchange</a></li>
 							<li class="tsd-kind-class"><a href="classes/composedtransaction.html" class="tsd-kind-icon">Composed<wbr>Transaction</a></li>
@@ -2891,8 +2891,8 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 							<li class="tsd-kind-class"><a href="classes/transactioncryptoproperties.html" class="tsd-kind-icon">Transaction<wbr>Crypto<wbr>Properties</a></li>
 							<li class="tsd-kind-class"><a href="classes/transactionfiatproperties.html" class="tsd-kind-icon">Transaction<wbr>Fiat<wbr>Properties</a></li>
 							<li class="tsd-kind-class"><a href="classes/user.html" class="tsd-kind-icon">User</a></li>
+							<li class="tsd-kind-class"><a href="classes/utils.html" class="tsd-kind-icon">Utils</a></li>
 							<li class="tsd-kind-class"><a href="classes/wallet.html" class="tsd-kind-icon">Wallet</a></li>
-							<li class="tsd-kind-class"><a href="classes/zkutility.html" class="tsd-kind-icon">ZKUtility</a></li>
 							<li class="tsd-kind-class"><a href="classes/zumokit.html" class="tsd-kind-icon">Zumo<wbr>Kit</a></li>
 							<li class="tsd-kind-class"><a href="classes/zumokiterror.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Error</a></li>
 						</ul>
@@ -2900,10 +2900,8 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 					<section class="tsd-index-section ">
 						<h3>Interfaces</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-interface"><a href="interfaces/modulrcustomerdata.html" class="tsd-kind-icon">Modulr<wbr>Customer<wbr>Data</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/state.html" class="tsd-kind-icon">State</a></li>
+							<li class="tsd-kind-interface"><a href="interfaces/fiatcustomerdata.html" class="tsd-kind-icon">Fiat<wbr>Customer<wbr>Data</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/tokenset.html" class="tsd-kind-icon">Token<wbr>Set</a></li>
-							<li class="tsd-kind-interface"><a href="interfaces/zumokitconfig.html" class="tsd-kind-icon">Zumo<wbr>Kit<wbr>Config</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
@@ -2927,6 +2925,12 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 							<li class="tsd-kind-variable"><a href="globals.html#rnzumokit" class="tsd-kind-icon">RNZumo<wbr>Kit</a></li>
 						</ul>
 					</section>
+					<section class="tsd-index-section ">
+						<h3>Functions</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-function"><a href="globals.html#parsehistoricalexchangerates" class="tsd-kind-icon">parse<wbr>Historical<wbr>Exchange<wbr>Rates</a></li>
+						</ul>
+					</section>
 				</div>
 			</section>
 		</section>
@@ -2938,7 +2942,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Account<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"STANDARD"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"COMPATIBILITY"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"SEGWIT"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L9">src/types.ts:9</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L9">src/types.ts:9</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2948,7 +2952,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Currency<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"BTC"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"ETH"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"USD"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"GBP"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"EUR"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L5">src/types.ts:5</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L5">src/types.ts:5</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2958,7 +2962,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Currency<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"CRYPTO"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"FIAT"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L3">src/types.ts:3</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L3">src/types.ts:3</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2968,7 +2972,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Dictionary&lt;K, T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L1">src/types.ts:1</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L1">src/types.ts:1</a></li>
 					</ul>
 				</aside>
 				<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2987,17 +2991,17 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Exchange<wbr>Status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"PENDING"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"DEPOSITED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CONFIRMED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"FAILED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"RESUBMITTED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CANCELLED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PAUSED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"REJECTED"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L22">src/types.ts:22</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L22">src/types.ts:22</a></li>
 					</ul>
 				</aside>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-type-alias">
 				<a name="historicalexchangerates" class="tsd-anchor"></a>
 				<h3>Historical<wbr>Exchange<wbr>Rates</h3>
-				<div class="tsd-signature tsd-kind-icon">Historical<wbr>Exchange<wbr>Rates<span class="tsd-signature-symbol">:</span> <a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#timeinterval" class="tsd-signature-type">TimeInterval</a><span class="tsd-signature-symbol">, </span><a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="classes/exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+				<div class="tsd-signature tsd-kind-icon">Historical<wbr>Exchange<wbr>Rates<span class="tsd-signature-symbol">:</span> <a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#timeinterval" class="tsd-signature-type">TimeInterval</a><span class="tsd-signature-symbol">, </span><a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="classes/exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/ZumoKit.ts#L33">src/ZumoKit.ts:33</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/models/HistoricalExchangeRates.ts#L8">src/models/HistoricalExchangeRates.ts:8</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -3007,7 +3011,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Network<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"MAINNET"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"TESTNET"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"RINKEBY"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"ROPSTEN"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"GOERLI"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L7">src/types.ts:7</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L7">src/types.ts:7</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -3017,7 +3021,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Time<wbr>Interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"hour"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"day"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"week"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"month"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"quarter"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"year"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L32">src/types.ts:32</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L32">src/types.ts:32</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -3027,7 +3031,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Transaction<wbr>Status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"PENDING"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CONFIRMED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"FAILED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"RESUBMITTED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"CANCELLED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"PAUSED"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"REJECTED"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L13">src/types.ts:13</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L13">src/types.ts:13</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -3037,7 +3041,7 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">Transaction<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"CRYPTO"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"EXCHANGE"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"FIAT"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"NOMINATED"</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/types.ts#L11">src/types.ts:11</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/types.ts#L11">src/types.ts:11</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -3050,12 +3054,40 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 				<div class="tsd-signature tsd-kind-icon">RNZumo<wbr>Kit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/models/Wallet.ts#L11">src/models/Wallet.ts:11</a></li>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/models/User.ts#L17">src/models/User.ts:17</a></li>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/ZumoKit.ts#L21">src/ZumoKit.ts:21</a></li>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/heads/release/2.3.0/src/ZKUtility.ts#L6">src/ZKUtility.ts:6</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L11">src/Wallet.ts:11</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L17">src/User.ts:17</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Utils.ts#L5">src/Utils.ts:5</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L12">src/ZumoKit.ts:12</a></li>
 					</ul>
 				</aside>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Functions</h2>
+			<section class="tsd-panel tsd-member tsd-kind-function">
+				<a name="parsehistoricalexchangerates" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagConst">Const</span> parse<wbr>Historical<wbr>Exchange<wbr>Rates</h3>
+				<ul class="tsd-signatures tsd-kind-function">
+					<li class="tsd-signature tsd-kind-icon">parse<wbr>Historical<wbr>Exchange<wbr>Rates<span class="tsd-signature-symbol">(</span>exchangeRateMapJSON<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ExchangeRateJSON</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{}</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/utils/parse.ts#L40">src/utils/parse.ts:40</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>exchangeRateMapJSON: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ExchangeRateJSON</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{}</span></h4>
+						<ul class="tsd-parameters">
+						</ul>
+					</li>
+				</ul>
 			</section>
 		</section>
 		<footer class="with-border-bottom">
@@ -3067,14 +3099,13 @@ target <span class="hljs-string">&#x27;Demo&#x27;</span> <span class="hljs-keywo
 						<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 					</ul>
 					<ul class="tsd-legend">
-						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-					</ul>
-					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
