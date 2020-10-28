@@ -6,6 +6,7 @@ import AccountDataSnapshot from './models/AccountDataSnapshot';
 import tryCatchProxy from './errorProxy';
 import {
   UserJSON,
+  AccountJSON,
   CurrencyCode,
   Network,
   AccountType,
