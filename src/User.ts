@@ -18,7 +18,7 @@ const { RNZumoKit } = NativeModules;
 /**
  * User class provides methods for managing user wallet and accounts.
  * <p>
- * User instance can be obtained via {@link ZumoKit.authUser} method.
+ * User instance can be obtained via {@link ZumoKit.signIn} method.
  * <p>
  * See <a href="https://developers.zumo.money/docs/guides/manage-user-wallet">Manage User Wallet</a>,
  * <a href="https://developers.zumo.money/docs/guides/create-fiat-account">Create Fiat Account</a> and
