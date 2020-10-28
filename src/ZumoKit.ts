@@ -37,8 +37,8 @@ class ZumoKit {
    * @param apiUrl        ZumoKit API url
    * @param txServiceUrl  ZumoKit Transaction Service url
    * */
-  async init(apiKey: string, apiUrl: string, txServiceUrl: string) {
-    await RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
+  init(apiKey: string, apiUrl: string, txServiceUrl: string) {
+    RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
   }
 
   /**
