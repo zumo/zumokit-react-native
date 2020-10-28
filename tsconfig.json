@@ -12,9 +12,5 @@
     "target": "es5",
     "noEmitOnError": true,
     "noImplicitAny": true,
-  },
-  "include": [
-    "./index.ts",
-    "./src/**/*"
-  ]
+  }
 }

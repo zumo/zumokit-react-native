@@ -37,14 +37,14 @@ export default class ComposedExchange {
   outgoingTransactionFee: Decimal;
 
   /**
-   * Amount that user receives, calculated as <code>value X exchangeRate X (1 - feeRate) - withdrawFee</code>.
+   * Amount that user receives, calculated as <code>value X exchangeRate X (1 - feeRate) - returnTransactionFee</code>.
    * <p>
    * See {@link ExchangeSettings}.
    */
   returnAmount: Decimal;
 
   /**
-   * Exchange fee, calculated as <code>value X exchangeRate X feeRate</code>.
+   * Exchange fee, calculated as <code>value X exchangeRate X exchangeFeeRate</code>.
    * <p>
    * See {@link ExchangeSettings}.
    */
@@ -55,7 +55,7 @@ export default class ComposedExchange {
    * <p>
    * See {@link ExchangeSettings}.
    */
-  incomingTransactionFee: Decimal;
+  returnTransactionFee: Decimal;
 
   /** Unique nonce used to prevent double spend. */
   nonce: string;
@@ -64,16 +64,16 @@ export default class ComposedExchange {
   constructor(json: ComposedExchangeJSON) {
     this.json = json;
     this.signedTransaction = json.signedTransaction;
-    this.fromAccount = new Account(json.depositAccount);
-    this.toAccount = new Account(json.withdrawAccount);
+    this.fromAccount = new Account(json.fromAccount);
+    this.toAccount = new Account(json.toAccount);
     this.exchangeRate = new ExchangeRate(json.exchangeRate);
     this.exchangeSettings = new ExchangeSettings(json.exchangeSettings);
     this.exchangeAddress = json.exchangeAddress;
-    this.amount = new Decimal(json.value);
-    this.outgoingTransactionFee = new Decimal(json.depositFee);
-    this.returnAmount = new Decimal(json.returnValue);
+    this.amount = new Decimal(json.amount);
+    this.outgoingTransactionFee = new Decimal(json.outgoingTransactionFee);
+    this.returnAmount = new Decimal(json.returnAmount);
     this.exchangeFee = new Decimal(json.exchangeFee);
-    this.incomingTransactionFee = new Decimal(json.withdrawFee);
+    this.returnTransactionFee = new Decimal(json.returnTransactionFee);
     this.nonce = json.nonce;
   }
 }
