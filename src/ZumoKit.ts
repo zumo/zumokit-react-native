@@ -13,7 +13,6 @@ const { RNZumoKit } = NativeModules;
 
 /**
  * Entry point to ZumoKit React Native SDK.
- * ```
  * <p>
  * See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
  * */

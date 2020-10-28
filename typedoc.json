@@ -7,6 +7,6 @@
   "mode": "file",
   "out": "docs",
   "theme": "minimal",
-  "excludeExternals": false,
+  "excludeExternals": true,
   "stripInternal": true
 }

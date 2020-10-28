@@ -37,6 +37,7 @@ const parseExchangeRates = (
   return exchangeRatesMap;
 };
 
+/** @internal */
 const parseHistoricalExchangeRates = (
   exchangeRateMapJSON: Record<string, Record<string, Record<string, Array<ExchangeRateJSON>>>>
 ) => {
