@@ -9,7 +9,7 @@ const { RNZumoKit } = NativeModules;
  * Bitcoin/Ethereum address validation utilities.
  */
 @tryCatchProxy
-class Utils {
+export default class Utils {
   /**
    * Generates mnemonic seed phrase used in wallet creation process.
    * @param wordCount   12, 15, 18, 21 or 24
@@ -35,5 +35,3 @@ class Utils {
     return RNZumoKit.isValidBtcAddress(address, network);
   }
 }
-
-export default new Utils();

@@ -2,7 +2,7 @@
   "name": "react-native-zumo-kit",
   "version": "2.3.0-beta.2",
   "description": "",
-  "main": "index.ts",
+  "main": "src/ZumoKit.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "typedoc"
