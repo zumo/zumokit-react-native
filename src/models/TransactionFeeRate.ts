@@ -1,10 +1,10 @@
 import { Decimal } from 'decimal.js';
-import { FeeRatesJSON } from '../types';
+import { TransactionFeeRateJSON } from '../types';
 
 /** Crypto transactions fee rates. */
 export default class FeeRates {
   /** @internal */
-  json: FeeRatesJSON;
+  json: TransactionFeeRateJSON;
 
   /** Fee rate resulting in slow confirmation time. */
   slow: Decimal;
@@ -28,7 +28,7 @@ export default class FeeRates {
   source: string;
 
   /** @internal */
-  constructor(json: FeeRatesJSON) {
+  constructor(json: TransactionFeeRateJSON) {
     this.json = json;
     this.slow = new Decimal(json.slow);
     this.average = new Decimal(json.average);

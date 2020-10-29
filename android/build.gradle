@@ -40,5 +40,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'com.android.support:appcompat-v7:21.0.0'
     implementation 'org.java-websocket:Java-WebSocket:1.4.0'
-    implementation 'com.github.zumo:zumokit-android:2.3.0-beta.2'
+    implementation 'com.github.zumo:zumokit-android:2.3.0-beta.3'
 }

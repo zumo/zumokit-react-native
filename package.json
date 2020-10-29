@@ -1,6 +1,6 @@
 {
   "name": "react-native-zumo-kit",
-  "version": "2.3.0-beta.2",
+  "version": "2.3.0-beta.3",
   "description": "ZumoKit is a Wallet as a Service SDK",
   "keywords": [
     "zumo",
@@ -15,13 +15,8 @@
     "bsv",
     "erc20 tokens"
   ],
-  "main": "lib/ZumoKit.js",
-  "types": "lib/ZumoKit.d.ts",
-  "files": ["lib", "RNZumoKit.podspec"],
+  "main": "src/ZumoKit.ts",
   "scripts": {
-    "build": "tsc",
-    "prepare": "npm run build",
-    "prepack": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "typedoc"
   },

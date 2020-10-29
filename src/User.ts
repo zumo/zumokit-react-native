@@ -28,12 +28,6 @@ const { RNZumoKit } = NativeModules;
  */
 @tryCatchProxy
 export default class User {
-  // User dentifier
-  private id: string;
-
-  // Indicator if user has wallet
-  private walletIndicator: boolean;
-
   // Listening to account data changes
   private listeningToChanges = false;
 
@@ -46,28 +40,29 @@ export default class User {
   // Listeners for account data changes
   private accountDataListeners: Array<(snapshots: Array<AccountDataSnapshot>) => void> = [];
 
+  /** User identifier. */
+  id: string;
+
+  /** Indicator if user has wallet. */
+  hasWallet: boolean;
+
+  /** User accounts. */
+  accounts: Array<Account>;
+
   /** @internal */
   constructor(json: UserJSON) {
     this.id = json.id;
-    this.walletIndicator = json.hasWallet;
+    this.hasWallet = json.hasWallet;
+    this.accounts = json.accounts.map((accountJson: AccountJSON) => new Account(accountJson));
 
     this.emitter.addListener('AccountDataChanged', (snapshots: Array<AccountDataSnapshotJSON>) => {
       this.listeningToChanges = true;
       this.accountDataSnapshots = snapshots.map(
         (snapshot: AccountDataSnapshotJSON) => new AccountDataSnapshot(snapshot)
       );
+      this.accounts = this.accountDataSnapshots.map((snapshot) => snapshot.account);
       this.accountDataListeners.forEach((listener) => listener(this.accountDataSnapshots));
     });
-  }
-
-  /** Get user dentifier. */
-  getId(): string {
-    return this.id;
-  }
-
-  /** Indicator if user has wallet. */
-  hasWallet(): boolean {
-    return this.walletIndicator;
   }
 
   /**
@@ -79,7 +74,7 @@ export default class User {
    */
   async createWallet(mnemonic: string, password: string) {
     await RNZumoKit.createWallet(mnemonic, password);
-    this.walletIndicator = true;
+    this.hasWallet = true;
     return new Wallet();
   }
 
@@ -126,17 +121,13 @@ export default class User {
    * @param  network        network type, e.g. 'MAINNET', 'TESTNET' or 'RINKEBY'
    * @param  type           account type, e.g. 'STANDARD', 'COMPATIBILITY' or 'SEGWIT'
    */
-  async getAccount(currencyCode: CurrencyCode, network: Network, type: AccountType) {
-    const json = await RNZumoKit.getAccount(currencyCode, network, type);
-    return new Account(json);
-  }
-
-  /**
-   * Get all user accounts.
-   */
-  async getAccounts(): Promise<Array<Account>> {
-    const array = await RNZumoKit.getAccounts();
-    return array.map((json: AccountJSON) => new Account(json));
+  getAccount(currencyCode: CurrencyCode, network: Network, type: AccountType) {
+    return this.accounts.find(
+      (account) =>
+        account.currencyCode === currencyCode &&
+        account.network === network &&
+        account.type === type
+    );
   }
 
   /**

@@ -2,12 +2,12 @@ import { NativeModules } from 'react-native';
 import Utils from './Utils';
 import User from './User';
 import tryCatchProxy from './errorProxy';
-import FeeRates from './models/FeeRates';
+import TransactionFeeRate from './models/TransactionFeeRate';
 import ExchangeRate from './models/ExchangeRate';
-import ExchangeSettings from './models/ExchangeSettings';
+import ExchangeSetting from './models/ExchangeSetting';
 import HistoricalExchangeRates from './models/HistoricalExchangeRates';
 import { parseHistoricalExchangeRates } from './utils/parse';
-import { CurrencyCode, TokenSet, HistoricalExchangeRatesJSON } from './types';
+import { Dictionary, CurrencyCode, TokenSet, HistoricalExchangeRatesJSON } from './types';
 
 const { RNZumoKit } = NativeModules;
 
@@ -26,6 +26,15 @@ class ZumoKit {
 
   /** Crypto utilities. */
   utils: Utils = new Utils();
+
+  /** Mapping between currency pairs and available exchange rates. */
+  exchangeRates: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRate>> = {};
+
+  /** Mapping between currency pairs and available exchange settings. */
+  exchangeSettings: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeSetting>> = {};
+
+  /** Mapping between cryptocurrencies and available transaction fee rates. */
+  transactionFeeRates: Dictionary<CurrencyCode, TransactionFeeRate> = {};
 
   /**
    * Initializes ZumoKit SDK. Should only be called once.
@@ -83,7 +92,7 @@ class ZumoKit {
    */
   async getExchangeSettings(fromCurrency: CurrencyCode, toCurrency: CurrencyCode) {
     const json = await RNZumoKit.getExchangeSettings(fromCurrency, toCurrency);
-    return json ? new ExchangeSettings(json) : null;
+    return json ? new ExchangeSetting(json) : null;
   }
 
   /**
@@ -95,7 +104,7 @@ class ZumoKit {
    */
   async getFeeRates(currency: CurrencyCode) {
     const json = await RNZumoKit.getFeeRates(currency);
-    return json ? new FeeRates(json) : null;
+    return json ? new TransactionFeeRate(json) : null;
   }
 
   /**

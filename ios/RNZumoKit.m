@@ -1,9 +1,6 @@
 
 #import "RNZumoKit.h"
 #import <ZumoKit/ZumoKit.h>
-#import <ZumoKit/ZKAccountDataSnapshot.h>
-#import <ZumoKit/ZKZumoKitErrorCode.h>
-#import <ZumoKit/ZKZumoKitErrorType.h>
 
 @interface RNZumoKit ()
 
@@ -118,7 +115,8 @@ RCT_EXPORT_METHOD(signIn:(NSString *)tokenSet resolver:(RCTPromiseResolveBlock)r
 
             resolve(@{
                 @"id": [user getId],
-                @"hasWallet": @([user hasWallet])
+                @"hasWallet": @([user hasWallet]),
+                @"accounts": [self mapAccounts:[user getAccounts]]
             });
 
         }];

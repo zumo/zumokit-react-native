@@ -1,11 +1,11 @@
 import { Decimal } from 'decimal.js';
-import { Dictionary, Network, CurrencyCode, ExchangeSettingsJSON } from '../types';
+import { Dictionary, Network, CurrencyCode, ExchangeSettingJSON } from '../types';
 import { parseExchangeAddressMap } from '../utils/parse';
 
 /** Zumo exchange settings used in making exchanges. */
-export default class ExchangeSettings {
+export default class ExchangeSetting {
   /** @internal */
-  json: ExchangeSettingsJSON;
+  json: ExchangeSettingJSON;
 
   /** Identifier. */
   id: string;
@@ -39,7 +39,7 @@ export default class ExchangeSettings {
   timestamp: number;
 
   /** @internal */
-  constructor(json: ExchangeSettingsJSON) {
+  constructor(json: ExchangeSettingJSON) {
     this.json = json;
     this.id = json.id;
     this.fromCurrency = json.fromCurrency as CurrencyCode;

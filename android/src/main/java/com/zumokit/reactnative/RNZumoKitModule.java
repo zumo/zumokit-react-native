@@ -129,6 +129,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
                 map.putString("id", user.getId());
                 map.putBoolean("hasWallet", user.hasWallet());
+                map.putArray("accounts", RNZumoKitModule.mapAccounts(user.getAccounts()));
 
                 promise.resolve(map);
             }
