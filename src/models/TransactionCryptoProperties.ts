@@ -1,6 +1,14 @@
 import { Decimal } from 'decimal.js';
 import { TransactionCryptoPropertiesJSON, Dictionary, CurrencyCode } from '../types';
-import { parseFiatMap } from '../utils/parse';
+
+/** @internal */
+const parseFiatMap = (fiatMapJSON: Record<string, string>) => {
+  const fiatMap: Dictionary<CurrencyCode, Decimal> = {};
+  Object.keys(fiatMapJSON).forEach((currencyCode) => {
+    fiatMap[currencyCode as CurrencyCode] = new Decimal(fiatMapJSON[currencyCode]);
+  });
+  return fiatMap;
+};
 
 /**
  * Record containing transaction crypto properties.

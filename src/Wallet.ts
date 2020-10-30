@@ -6,7 +6,7 @@ import Exchange from './models/Exchange';
 import ComposedExchange from './models/ComposedExchange';
 import tryCatchProxy from './errorProxy';
 import ExchangeRate from './models/ExchangeRate';
-import ExchangeSettings from './models/ExchangeSettings';
+import ExchangeSetting from './models/ExchangeSetting';
 
 const { RNZumoKit } = NativeModules;
 
@@ -151,7 +151,7 @@ export default class Wallet {
    * @param fromAccountId       {@link  Account Account} identifier
    * @param toAccountId         {@link  Account Account} identifier
    * @param exchangeRate        Zumo exchange rate obtained from ZumoKit state
-   * @param exchangeSettings    Zumo exchange settings obtained from ZumoKit state
+   * @param exchangeSetting     Zumo exchange setting obtained from ZumoKit state
    * @param amount              amount in deposit account currency
    * @param sendMax             exchange maximum possible funds
    */
@@ -159,7 +159,7 @@ export default class Wallet {
     fromAccountId: string,
     toAccountId: string,
     exchangeRate: ExchangeRate,
-    exchangeSettings: ExchangeSettings,
+    exchangeSetting: ExchangeSetting,
     amount: Decimal | null,
     sendMax = false
   ) {
@@ -167,7 +167,7 @@ export default class Wallet {
       fromAccountId,
       toAccountId,
       exchangeRate.json,
-      exchangeSettings.json,
+      exchangeSetting.json,
       amount ? amount.toString() : null,
       sendMax
     );

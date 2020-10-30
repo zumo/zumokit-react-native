@@ -1,7 +1,7 @@
 import { Decimal } from 'decimal.js';
 import Account from './Account';
 import ExchangeRate from './ExchangeRate';
-import ExchangeSettings from './ExchangeSettings';
+import ExchangeSetting from './ExchangeSetting';
 import { ComposedExchangeJSON } from '../types';
 
 /** Result of the compose exchange method on {@link  Wallet Wallet} object. */
@@ -22,7 +22,7 @@ export default class ComposedExchange {
   exchangeRate: ExchangeRate;
 
   /** Exchange settings used composing exchange. */
-  exchangeSettings: ExchangeSettings;
+  exchangeSetting: ExchangeSetting;
 
   /**
    * Zumo Exchange Service wallet address where outgoing crypto funds were deposited,
@@ -39,21 +39,21 @@ export default class ComposedExchange {
   /**
    * Amount that user receives, calculated as <code>value X exchangeRate X (1 - feeRate) - returnTransactionFee</code>.
    * <p>
-   * See {@link ExchangeSettings}.
+   * See {@link ExchangeSetting}.
    */
   returnAmount: Decimal;
 
   /**
    * Exchange fee, calculated as <code>value X exchangeRate X exchangeFeeRate</code>.
    * <p>
-   * See {@link ExchangeSettings}.
+   * See {@link ExchangeSetting}.
    */
   exchangeFee: Decimal;
 
   /**
    * Return transaction fee.
    * <p>
-   * See {@link ExchangeSettings}.
+   * See {@link ExchangeSetting}.
    */
   returnTransactionFee: Decimal;
 
@@ -67,7 +67,7 @@ export default class ComposedExchange {
     this.fromAccount = new Account(json.fromAccount);
     this.toAccount = new Account(json.toAccount);
     this.exchangeRate = new ExchangeRate(json.exchangeRate);
-    this.exchangeSettings = new ExchangeSettings(json.exchangeSettings);
+    this.exchangeSetting = new ExchangeSetting(json.exchangeSetting);
     this.exchangeAddress = json.exchangeAddress;
     this.amount = new Decimal(json.amount);
     this.outgoingTransactionFee = new Decimal(json.outgoingTransactionFee);
