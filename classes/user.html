@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>User | ZumoKit - v2.3.0-beta.2</title>
-	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.2">
+	<title>User | ZumoKit - v2.3.0-beta.3</title>
+	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.3">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 /* ==========================================================================
@@ -2692,7 +2692,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="../index.html">ZumoKit - v2.3.0-beta.2</a></strong>
+					<strong><a href="../index.html">ZumoKit - v2.3.0-beta.3</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2708,8 +2708,6 @@ img {
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -2747,16 +2745,16 @@ img {
 			<a href="exchangerate.html" class="tsd-kind-icon">Exchange<wbr>Rate</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="exchangesettings.html" class="tsd-kind-icon">Exchange<wbr>Settings</a>
-		</li>
-		<li class=" tsd-kind-class">
-			<a href="feerates.html" class="tsd-kind-icon">Fee<wbr>Rates</a>
+			<a href="exchangesetting.html" class="tsd-kind-icon">Exchange<wbr>Setting</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transaction.html" class="tsd-kind-icon">Transaction</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transactioncryptoproperties.html" class="tsd-kind-icon">Transaction<wbr>Crypto<wbr>Properties</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="transactionfeerate.html" class="tsd-kind-icon">Transaction<wbr>Fee<wbr>Rate</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transactionfiatproperties.html" class="tsd-kind-icon">Transaction<wbr>Fiat<wbr>Properties</a>
@@ -2770,17 +2768,20 @@ img {
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a href="user.html#accountdatasnapshots" class="tsd-kind-icon">account<wbr>Data<wbr>Snapshots</a>
 				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="user.html#accounts" class="tsd-kind-icon">accounts</a>
+				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a href="user.html#emitter" class="tsd-kind-icon">emitter</a>
 				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="user.html#haswallet" class="tsd-kind-icon">has<wbr>Wallet</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
 					<a href="user.html#id" class="tsd-kind-icon">id</a>
 				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a href="user.html#listeningtochanges" class="tsd-kind-icon">listening<wbr>ToChanges</a>
-				</li>
-				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a href="user.html#walletindicator" class="tsd-kind-icon">wallet<wbr>Indicator</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="user.html#addaccountdatalistener" class="tsd-kind-icon">add<wbr>Account<wbr>Data<wbr>Listener</a>
@@ -2795,16 +2796,7 @@ img {
 					<a href="user.html#getaccount" class="tsd-kind-icon">get<wbr>Account</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="user.html#getaccounts" class="tsd-kind-icon">get<wbr>Accounts</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="user.html#getid" class="tsd-kind-icon">get<wbr>Id</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="user.html#getnominatedaccountfiatpoperties" class="tsd-kind-icon">get<wbr>Nominated<wbr>Account<wbr>Fiat<wbr>Poperties</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="user.html#haswallet" class="tsd-kind-icon">has<wbr>Wallet</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="user.html#isfiatcustomer" class="tsd-kind-icon">is<wbr>Fiat<wbr>Customer</a>
@@ -2880,9 +2872,6 @@ img {
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#rnzumokit" class="tsd-kind-icon">RNZumo<wbr>Kit</a>
 		</li>
-		<li class=" tsd-kind-function">
-			<a href="../globals.html#parsehistoricalexchangerates" class="tsd-kind-icon">parse<wbr>Historical<wbr>Exchange<wbr>Rates</a>
-		</li>
 	</ul>
 </nav>
 <div class="container container-main">
@@ -2913,15 +2902,16 @@ img {
 			<h2>Index</h2>
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
-					<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="user.html#accountdatalisteners" class="tsd-kind-icon">account<wbr>Data<wbr>Listeners</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="user.html#accountdatasnapshots" class="tsd-kind-icon">account<wbr>Data<wbr>Snapshots</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="user.html#accounts" class="tsd-kind-icon">accounts</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="user.html#emitter" class="tsd-kind-icon">emitter</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="user.html#id" class="tsd-kind-icon">id</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="user.html#haswallet" class="tsd-kind-icon">has<wbr>Wallet</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="user.html#id" class="tsd-kind-icon">id</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="user.html#listeningtochanges" class="tsd-kind-icon">listening<wbr>ToChanges</a></li>
-							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="user.html#walletindicator" class="tsd-kind-icon">wallet<wbr>Indicator</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
@@ -2931,10 +2921,7 @@ img {
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#createfiataccount" class="tsd-kind-icon">create<wbr>Fiat<wbr>Account</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#createwallet" class="tsd-kind-icon">create<wbr>Wallet</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#getaccount" class="tsd-kind-icon">get<wbr>Account</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#getaccounts" class="tsd-kind-icon">get<wbr>Accounts</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#getid" class="tsd-kind-icon">get<wbr>Id</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#getnominatedaccountfiatpoperties" class="tsd-kind-icon">get<wbr>Nominated<wbr>Account<wbr>Fiat<wbr>Poperties</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#haswallet" class="tsd-kind-icon">has<wbr>Wallet</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#isfiatcustomer" class="tsd-kind-icon">is<wbr>Fiat<wbr>Customer</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#isrecoverymnemonic" class="tsd-kind-icon">is<wbr>Recovery<wbr>Mnemonic</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="user.html#makefiatcustomer" class="tsd-kind-icon">make<wbr>Fiat<wbr>Customer</a></li>
@@ -2947,7 +2934,7 @@ img {
 				</div>
 			</section>
 		</section>
-		<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 				<a name="accountdatalisteners" class="tsd-anchor"></a>
@@ -2955,7 +2942,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">account<wbr>Data<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">(</span>snapshots<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="accountdatasnapshot.html" class="tsd-signature-type">AccountDataSnapshot</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L47">src/User.ts:47</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L41">src/User.ts:41</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -2965,9 +2952,24 @@ img {
 				<div class="tsd-signature tsd-kind-icon">account<wbr>Data<wbr>Snapshots<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="accountdatasnapshot.html" class="tsd-signature-type">AccountDataSnapshot</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L44">src/User.ts:44</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L38">src/User.ts:38</a></li>
 					</ul>
 				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="accounts" class="tsd-anchor"></a>
+				<h3>accounts</h3>
+				<div class="tsd-signature tsd-kind-icon">accounts<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="account.html" class="tsd-signature-type">Account</a><span class="tsd-signature-symbol">&gt;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L50">src/User.ts:50</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>User accounts.</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 				<a name="emitter" class="tsd-anchor"></a>
@@ -2975,19 +2977,39 @@ img {
 				<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NativeEventEmitter</span><span class="tsd-signature-symbol"> = new NativeEventEmitter(RNZumoKit)</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L41">src/User.ts:41</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L35">src/User.ts:35</a></li>
 					</ul>
 				</aside>
 			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="haswallet" class="tsd-anchor"></a>
+				<h3>has<wbr>Wallet</h3>
+				<div class="tsd-signature tsd-kind-icon">has<wbr>Wallet<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L47">src/User.ts:47</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Indicator if user has wallet.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 				<a name="id" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagPrivate">Private</span> id</h3>
+				<h3>id</h3>
 				<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L32">src/User.ts:32</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L44">src/User.ts:44</a></li>
 					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>User identifier.</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 				<a name="listeningtochanges" class="tsd-anchor"></a>
@@ -2995,17 +3017,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">listening<wbr>ToChanges<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L38">src/User.ts:38</a></li>
-					</ul>
-				</aside>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-				<a name="walletindicator" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagPrivate">Private</span> wallet<wbr>Indicator</h3>
-				<div class="tsd-signature tsd-kind-icon">wallet<wbr>Indicator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
-				<aside class="tsd-sources">
-					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L35">src/User.ts:35</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L32">src/User.ts:32</a></li>
 					</ul>
 				</aside>
 			</section>
@@ -3022,7 +3034,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L190">src/User.ts:190</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L181">src/User.ts:181</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3071,7 +3083,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L164">src/User.ts:164</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L155">src/User.ts:155</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3108,7 +3120,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L80">src/User.ts:80</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L75">src/User.ts:75</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3141,13 +3153,13 @@ img {
 				<a name="getaccount" class="tsd-anchor"></a>
 				<h3>get<wbr>Account</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Account<span class="tsd-signature-symbol">(</span>currencyCode<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a>, network<span class="tsd-signature-symbol">: </span><a href="../globals.html#network" class="tsd-signature-type">Network</a>, type<span class="tsd-signature-symbol">: </span><a href="../globals.html#accounttype" class="tsd-signature-type">AccountType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="account.html" class="tsd-signature-type">Account</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Account<span class="tsd-signature-symbol">(</span>currencyCode<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a>, network<span class="tsd-signature-symbol">: </span><a href="../globals.html#network" class="tsd-signature-type">Network</a>, type<span class="tsd-signature-symbol">: </span><a href="../globals.html#accounttype" class="tsd-signature-type">AccountType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="account.html" class="tsd-signature-type">Account</a></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L129">src/User.ts:129</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L124">src/User.ts:124</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3176,51 +3188,7 @@ img {
 								</div>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="account.html" class="tsd-signature-type">Account</a><span class="tsd-signature-symbol">&gt;</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="getaccounts" class="tsd-anchor"></a>
-				<h3>get<wbr>Accounts</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Accounts<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="account.html" class="tsd-signature-type">Account</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L137">src/User.ts:137</a></li>
-							</ul>
-						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Get all user accounts.</p>
-							</div>
-						</div>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="account.html" class="tsd-signature-type">Account</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="getid" class="tsd-anchor"></a>
-				<h3>get<wbr>Id</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L64">src/User.ts:64</a></li>
-							</ul>
-						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Get user dentifier.</p>
-							</div>
-						</div>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						<h4 class="tsd-returns-title">Returns <a href="account.html" class="tsd-signature-type">Account</a></h4>
 					</li>
 				</ul>
 			</section>
@@ -3234,7 +3202,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L176">src/User.ts:176</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L167">src/User.ts:167</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3259,28 +3227,6 @@ img {
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="haswallet" class="tsd-anchor"></a>
-				<h3>has<wbr>Wallet</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">has<wbr>Wallet<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L69">src/User.ts:69</a></li>
-							</ul>
-						</aside>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Indicator if user has wallet.</p>
-							</div>
-						</div>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="isfiatcustomer" class="tsd-anchor"></a>
 				<h3>is<wbr>Fiat<wbr>Customer</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -3290,7 +3236,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L146">src/User.ts:146</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L137">src/User.ts:137</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3321,7 +3267,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L119">src/User.ts:119</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L114">src/User.ts:114</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3353,7 +3299,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L155">src/User.ts:155</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L146">src/User.ts:146</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3390,7 +3336,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L92">src/User.ts:92</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L87">src/User.ts:87</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3428,7 +3374,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L204">src/User.ts:204</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L195">src/User.ts:195</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3477,7 +3423,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L110">src/User.ts:110</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L105">src/User.ts:105</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3508,7 +3454,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/User.ts#L101">src/User.ts:101</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/User.ts#L96">src/User.ts:96</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3539,13 +3485,14 @@ img {
 						<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 					</ul>
 					<ul class="tsd-legend">
+						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+					</ul>
+					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>

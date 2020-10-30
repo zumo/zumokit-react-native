@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ZumoKit | ZumoKit - v2.3.0-beta.2</title>
-	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.2">
+	<title>ZumoKit | ZumoKit - v2.3.0-beta.3</title>
+	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.3">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 /* ==========================================================================
@@ -2692,7 +2692,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="../index.html">ZumoKit - v2.3.0-beta.2</a></strong>
+					<strong><a href="../index.html">ZumoKit - v2.3.0-beta.3</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2708,8 +2708,6 @@ img {
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -2747,16 +2745,16 @@ img {
 			<a href="exchangerate.html" class="tsd-kind-icon">Exchange<wbr>Rate</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="exchangesettings.html" class="tsd-kind-icon">Exchange<wbr>Settings</a>
-		</li>
-		<li class=" tsd-kind-class">
-			<a href="feerates.html" class="tsd-kind-icon">Fee<wbr>Rates</a>
+			<a href="exchangesetting.html" class="tsd-kind-icon">Exchange<wbr>Setting</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transaction.html" class="tsd-kind-icon">Transaction</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transactioncryptoproperties.html" class="tsd-kind-icon">Transaction<wbr>Crypto<wbr>Properties</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="transactionfeerate.html" class="tsd-kind-icon">Transaction<wbr>Fee<wbr>Rate</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transactionfiatproperties.html" class="tsd-kind-icon">Transaction<wbr>Fiat<wbr>Properties</a>
@@ -2773,8 +2771,23 @@ img {
 		<li class="current tsd-kind-class">
 			<a href="zumokit.html" class="tsd-kind-icon">Zumo<wbr>Kit</a>
 			<ul>
+				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a href="zumokit.html#changelisteners" class="tsd-kind-icon">change<wbr>Listeners</a>
+				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-class">
 					<a href="zumokit.html#currentuser" class="tsd-kind-icon">current<wbr>User</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a href="zumokit.html#emitter" class="tsd-kind-icon">emitter</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="zumokit.html#exchangerates" class="tsd-kind-icon">exchange<wbr>Rates</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="zumokit.html#exchangesettings" class="tsd-kind-icon">exchange<wbr>Settings</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="zumokit.html#transactionfeerates" class="tsd-kind-icon">transaction<wbr>Fee<wbr>Rates</a>
 				</li>
 				<li class=" tsd-kind-property tsd-parent-kind-class">
 					<a href="zumokit.html#utils" class="tsd-kind-icon">utils</a>
@@ -2783,25 +2796,34 @@ img {
 					<a href="zumokit.html#version" class="tsd-kind-icon">version</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="zumokit.html#addchangelistener" class="tsd-kind-icon">add<wbr>Change<wbr>Listener</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="zumokit.html#fetchhistoricalexchangerates" class="tsd-kind-icon">fetch<wbr>Historical<wbr>Exchange<wbr>Rates</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="zumokit.html#getexchangerate" class="tsd-kind-icon">get<wbr>Exchange<wbr>Rate</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="zumokit.html#getexchangesettings" class="tsd-kind-icon">get<wbr>Exchange<wbr>Settings</a>
+					<a href="zumokit.html#getexchangesetting" class="tsd-kind-icon">get<wbr>Exchange<wbr>Setting</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="zumokit.html#getfeerates" class="tsd-kind-icon">get<wbr>Fee<wbr>Rates</a>
+					<a href="zumokit.html#gettransactionfeerate" class="tsd-kind-icon">get<wbr>Transaction<wbr>Fee<wbr>Rate</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="zumokit.html#init" class="tsd-kind-icon">init</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="zumokit.html#removechangelistener" class="tsd-kind-icon">remove<wbr>Change<wbr>Listener</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="zumokit.html#signin" class="tsd-kind-icon">sign<wbr>In</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="zumokit.html#signout" class="tsd-kind-icon">sign<wbr>Out</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a href="zumokit.html#updateauxdata" class="tsd-kind-icon">update<wbr>Aux<wbr>Data</a>
 				</li>
 			</ul>
 		</li>
@@ -2847,9 +2869,6 @@ img {
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#rnzumokit" class="tsd-kind-icon">RNZumo<wbr>Kit</a>
 		</li>
-		<li class=" tsd-kind-function">
-			<a href="../globals.html#parsehistoricalexchangerates" class="tsd-kind-icon">parse<wbr>Historical<wbr>Exchange<wbr>Rates</a>
-		</li>
 	</ul>
 </nav>
 <div class="container container-main">
@@ -2858,7 +2877,6 @@ img {
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
 					<p>Entry point to ZumoKit React Native SDK.</p>
-					<p>```</p>
 					<p>
 						See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
 				</div>
@@ -2879,7 +2897,12 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
+							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="zumokit.html#changelisteners" class="tsd-kind-icon">change<wbr>Listeners</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class"><a href="zumokit.html#currentuser" class="tsd-kind-icon">current<wbr>User</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="zumokit.html#emitter" class="tsd-kind-icon">emitter</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="zumokit.html#exchangerates" class="tsd-kind-icon">exchange<wbr>Rates</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="zumokit.html#exchangesettings" class="tsd-kind-icon">exchange<wbr>Settings</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="zumokit.html#transactionfeerates" class="tsd-kind-icon">transaction<wbr>Fee<wbr>Rates</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class"><a href="zumokit.html#utils" class="tsd-kind-icon">utils</a></li>
 							<li class="tsd-kind-property tsd-parent-kind-class"><a href="zumokit.html#version" class="tsd-kind-icon">version</a></li>
 						</ul>
@@ -2887,13 +2910,16 @@ img {
 					<section class="tsd-index-section ">
 						<h3>Methods</h3>
 						<ul class="tsd-index-list">
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#addchangelistener" class="tsd-kind-icon">add<wbr>Change<wbr>Listener</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#fetchhistoricalexchangerates" class="tsd-kind-icon">fetch<wbr>Historical<wbr>Exchange<wbr>Rates</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#getexchangerate" class="tsd-kind-icon">get<wbr>Exchange<wbr>Rate</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#getexchangesettings" class="tsd-kind-icon">get<wbr>Exchange<wbr>Settings</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#getfeerates" class="tsd-kind-icon">get<wbr>Fee<wbr>Rates</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#getexchangesetting" class="tsd-kind-icon">get<wbr>Exchange<wbr>Setting</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#gettransactionfeerate" class="tsd-kind-icon">get<wbr>Transaction<wbr>Fee<wbr>Rate</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#init" class="tsd-kind-icon">init</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#removechangelistener" class="tsd-kind-icon">remove<wbr>Change<wbr>Listener</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#signin" class="tsd-kind-icon">sign<wbr>In</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="zumokit.html#signout" class="tsd-kind-icon">sign<wbr>Out</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="zumokit.html#updateauxdata" class="tsd-kind-icon">update<wbr>Aux<wbr>Data</a></li>
 						</ul>
 					</section>
 				</div>
@@ -2901,18 +2927,83 @@ img {
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<a name="changelisteners" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> change<wbr>Listeners</h3>
+				<div class="tsd-signature tsd-kind-icon">change<wbr>Listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L38">src/ZumoKit.ts:38</a></li>
+					</ul>
+				</aside>
+			</section>
 			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 				<a name="currentuser" class="tsd-anchor"></a>
 				<h3>current<wbr>User</h3>
 				<div class="tsd-signature tsd-kind-icon">current<wbr>User<span class="tsd-signature-symbol">:</span> <a href="user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol"> = null</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L26">src/ZumoKit.ts:26</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L44">src/ZumoKit.ts:44</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>Currently authenticated user.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+				<a name="emitter" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> emitter</h3>
+				<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NativeEventEmitter</span><span class="tsd-signature-symbol"> = new NativeEventEmitter(RNZumoKit)</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L35">src/ZumoKit.ts:35</a></li>
+					</ul>
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="exchangerates" class="tsd-anchor"></a>
+				<h3>exchange<wbr>Rates</h3>
+				<div class="tsd-signature tsd-kind-icon">exchange<wbr>Rates<span class="tsd-signature-symbol">:</span> <a href="../globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="../globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L50">src/ZumoKit.ts:50</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Mapping between currency pairs and available exchange rates.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="exchangesettings" class="tsd-anchor"></a>
+				<h3>exchange<wbr>Settings</h3>
+				<div class="tsd-signature tsd-kind-icon">exchange<wbr>Settings<span class="tsd-signature-symbol">:</span> <a href="../globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="../globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="exchangesetting.html" class="tsd-signature-type">ExchangeSetting</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L53">src/ZumoKit.ts:53</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Mapping between currency pairs and available exchange settings.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="transactionfeerates" class="tsd-anchor"></a>
+				<h3>transaction<wbr>Fee<wbr>Rates</h3>
+				<div class="tsd-signature tsd-kind-icon">transaction<wbr>Fee<wbr>Rates<span class="tsd-signature-symbol">:</span> <a href="../globals.html#dictionary" class="tsd-signature-type">Dictionary</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">, </span><a href="transactionfeerate.html" class="tsd-signature-type">TransactionFeeRate</a><span class="tsd-signature-symbol">&gt;</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L56">src/ZumoKit.ts:56</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Mapping between cryptocurrencies and available transaction fee rates.</p>
 					</div>
 				</div>
 			</section>
@@ -2922,7 +3013,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">utils<span class="tsd-signature-symbol">:</span> <a href="utils.html" class="tsd-signature-type">Utils</a><span class="tsd-signature-symbol"> = new Utils()</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L29">src/ZumoKit.ts:29</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L47">src/ZumoKit.ts:47</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2937,7 +3028,7 @@ img {
 				<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = RNZumoKit.version</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L23">src/ZumoKit.ts:23</a></li>
+						<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L41">src/ZumoKit.ts:41</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -2950,6 +3041,49 @@ img {
 		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Methods</h2>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="addchangelistener" class="tsd-anchor"></a>
+				<h3>add<wbr>Change<wbr>Listener</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Change<wbr>Listener<span class="tsd-signature-symbol">(</span>listener<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L153">src/ZumoKit.ts:153</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Listen to changes in exchange rates, exchange settings or transaction fee rates.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>listener: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>interface to listen to user changes</p>
+								</div>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-signature">
+										<ul class="tsd-signatures tsd-kind-type-literal">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="fetchhistoricalexchangerates" class="tsd-anchor"></a>
 				<h3>fetch<wbr>Historical<wbr>Exchange<wbr>Rates</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -2959,7 +3093,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L109">src/ZumoKit.ts:109</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L143">src/ZumoKit.ts:143</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2979,13 +3113,13 @@ img {
 				<a name="getexchangerate" class="tsd-anchor"></a>
 				<h3>get<wbr>Exchange<wbr>Rate</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Exchange<wbr>Rate<span class="tsd-signature-symbol">(</span>fromCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a>, toCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Exchange<wbr>Rate<span class="tsd-signature-symbol">(</span>fromCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a>, toCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L72">src/ZumoKit.ts:72</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L105">src/ZumoKit.ts:105</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3008,27 +3142,27 @@ img {
 								</div>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
 						<p>exchange rate or null</p>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="getexchangesettings" class="tsd-anchor"></a>
-				<h3>get<wbr>Exchange<wbr>Settings</h3>
+				<a name="getexchangesetting" class="tsd-anchor"></a>
+				<h3>get<wbr>Exchange<wbr>Setting</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Exchange<wbr>Settings<span class="tsd-signature-symbol">(</span>fromCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a>, toCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="exchangesettings.html" class="tsd-signature-type">ExchangeSettings</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Exchange<wbr>Setting<span class="tsd-signature-symbol">(</span>fromCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a>, toCurrency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="exchangesetting.html" class="tsd-signature-type">ExchangeSetting</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L85">src/ZumoKit.ts:85</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L119">src/ZumoKit.ts:119</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Get exchange settings for selected currency pair.</p>
+								<p>Get exchange setting for selected currency pair.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3046,27 +3180,27 @@ img {
 								</div>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="exchangesettings.html" class="tsd-signature-type">ExchangeSettings</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						<p>exchange rate or null</p>
+						<h4 class="tsd-returns-title">Returns <a href="exchangesetting.html" class="tsd-signature-type">ExchangeSetting</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+						<p>exchange settings or null</p>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="getfeerates" class="tsd-anchor"></a>
-				<h3>get<wbr>Fee<wbr>Rates</h3>
+				<a name="gettransactionfeerate" class="tsd-anchor"></a>
+				<h3>get<wbr>Transaction<wbr>Fee<wbr>Rate</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Fee<wbr>Rates<span class="tsd-signature-symbol">(</span>currency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="feerates.html" class="tsd-signature-type">FeeRates</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Transaction<wbr>Fee<wbr>Rate<span class="tsd-signature-symbol">(</span>currency<span class="tsd-signature-symbol">: </span><a href="../globals.html#currencycode" class="tsd-signature-type">CurrencyCode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="transactionfeerate.html" class="tsd-signature-type">TransactionFeeRate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L97">src/ZumoKit.ts:97</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L132">src/ZumoKit.ts:132</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Get exchange settings for selected currency pair.</p>
+								<p>Get transaction fee rate for selected crypto currency.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -3078,8 +3212,8 @@ img {
 								</div>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="feerates.html" class="tsd-signature-type">FeeRates</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						<p>fee rates or null</p>
+						<h4 class="tsd-returns-title">Returns <a href="transactionfeerate.html" class="tsd-signature-type">TransactionFeeRate</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h4>
+						<p>transaction fee rate or null</p>
 					</li>
 				</ul>
 			</section>
@@ -3093,7 +3227,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L40">src/ZumoKit.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L67">src/ZumoKit.ts:67</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3129,6 +3263,49 @@ img {
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="removechangelistener" class="tsd-anchor"></a>
+				<h3>remove<wbr>Change<wbr>Listener</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">remove<wbr>Change<wbr>Listener<span class="tsd-signature-symbol">(</span>listener<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L162">src/ZumoKit.ts:162</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Remove change listener.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>listener: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>interface to listen to changes</p>
+								</div>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-signature">
+										<ul class="tsd-signatures tsd-kind-type-literal">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="signin" class="tsd-anchor"></a>
 				<h3>sign<wbr>In</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -3138,7 +3315,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L50">src/ZumoKit.ts:50</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L82">src/ZumoKit.ts:82</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3170,7 +3347,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/ZumoKit.ts#L59">src/ZumoKit.ts:59</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L92">src/ZumoKit.ts:92</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3178,6 +3355,23 @@ img {
 								<p>Signs out current user. Should be called when user logs out.</p>
 							</div>
 						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+				<a name="updateauxdata" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> update<wbr>Aux<wbr>Data</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">update<wbr>Aux<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/ZumoKit.ts#L170">src/ZumoKit.ts:170</a></li>
+							</ul>
+						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
@@ -3192,13 +3386,14 @@ img {
 						<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 					</ul>
 					<ul class="tsd-legend">
+						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+					</ul>
+					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>

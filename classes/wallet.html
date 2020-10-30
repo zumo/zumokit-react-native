@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Wallet | ZumoKit - v2.3.0-beta.2</title>
-	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.2">
+	<title>Wallet | ZumoKit - v2.3.0-beta.3</title>
+	<meta name="description" content="Documentation for ZumoKit - v2.3.0-beta.3">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">/*! normalize.css v1.1.3 | MIT License | git.io/normalize */
 /* ==========================================================================
@@ -2692,7 +2692,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="../index.html">ZumoKit - v2.3.0-beta.2</a></strong>
+					<strong><a href="../index.html">ZumoKit - v2.3.0-beta.3</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2708,8 +2708,6 @@ img {
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -2747,16 +2745,16 @@ img {
 			<a href="exchangerate.html" class="tsd-kind-icon">Exchange<wbr>Rate</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="exchangesettings.html" class="tsd-kind-icon">Exchange<wbr>Settings</a>
-		</li>
-		<li class=" tsd-kind-class">
-			<a href="feerates.html" class="tsd-kind-icon">Fee<wbr>Rates</a>
+			<a href="exchangesetting.html" class="tsd-kind-icon">Exchange<wbr>Setting</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transaction.html" class="tsd-kind-icon">Transaction</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transactioncryptoproperties.html" class="tsd-kind-icon">Transaction<wbr>Crypto<wbr>Properties</a>
+		</li>
+		<li class=" tsd-kind-class">
+			<a href="transactionfeerate.html" class="tsd-kind-icon">Transaction<wbr>Fee<wbr>Rate</a>
 		</li>
 		<li class=" tsd-kind-class">
 			<a href="transactionfiatproperties.html" class="tsd-kind-icon">Transaction<wbr>Fiat<wbr>Properties</a>
@@ -2838,9 +2836,6 @@ img {
 		<li class=" tsd-kind-variable">
 			<a href="../globals.html#rnzumokit" class="tsd-kind-icon">RNZumo<wbr>Kit</a>
 		</li>
-		<li class=" tsd-kind-function">
-			<a href="../globals.html#parsehistoricalexchangerates" class="tsd-kind-icon">parse<wbr>Historical<wbr>Exchange<wbr>Rates</a>
-		</li>
 	</ul>
 </nav>
 <div class="container container-main">
@@ -2898,7 +2893,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L37">src/Wallet.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/Wallet.ts#L37">src/Wallet.ts:37</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2965,13 +2960,13 @@ img {
 				<a name="composeexchange" class="tsd-anchor"></a>
 				<h3>compose<wbr>Exchange</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">compose<wbr>Exchange<span class="tsd-signature-symbol">(</span>fromAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, toAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, exchangeRate<span class="tsd-signature-symbol">: </span><a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a>, exchangeSettings<span class="tsd-signature-symbol">: </span><a href="exchangesettings.html" class="tsd-signature-type">ExchangeSettings</a>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, sendMax<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedexchange.html" class="tsd-signature-type">ComposedExchange</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">compose<wbr>Exchange<span class="tsd-signature-symbol">(</span>fromAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, toAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, exchangeRate<span class="tsd-signature-symbol">: </span><a href="exchangerate.html" class="tsd-signature-type">ExchangeRate</a>, exchangeSetting<span class="tsd-signature-symbol">: </span><a href="exchangesetting.html" class="tsd-signature-type">ExchangeSetting</a>, amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Decimal</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span>, sendMax<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="composedexchange.html" class="tsd-signature-type">ComposedExchange</a><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L158">src/Wallet.ts:158</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/Wallet.ts#L158">src/Wallet.ts:158</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3000,9 +2995,9 @@ img {
 								</div>
 							</li>
 							<li>
-								<h5>exchangeSettings: <a href="exchangesettings.html" class="tsd-signature-type">ExchangeSettings</a></h5>
+								<h5>exchangeSetting: <a href="exchangesetting.html" class="tsd-signature-type">ExchangeSetting</a></h5>
 								<div class="tsd-comment tsd-typography">
-									<p>Zumo exchange settings obtained from ZumoKit state</p>
+									<p>Zumo exchange setting obtained from ZumoKit state</p>
 								</div>
 							</li>
 							<li>
@@ -3032,7 +3027,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L99">src/Wallet.ts:99</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/Wallet.ts#L99">src/Wallet.ts:99</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3081,7 +3076,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L71">src/Wallet.ts:71</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/Wallet.ts#L71">src/Wallet.ts:71</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3142,7 +3137,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L122">src/Wallet.ts:122</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/Wallet.ts#L122">src/Wallet.ts:122</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3185,7 +3180,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L184">src/Wallet.ts:184</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/Wallet.ts#L184">src/Wallet.ts:184</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3217,7 +3212,7 @@ img {
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.2.1/src/Wallet.ts#L142">src/Wallet.ts:142</a></li>
+								<li>Defined in <a href="https://github.com/zumo/zumokit-react-native/blob/refs/tags/2.3.0-beta.3/src/Wallet.ts#L142">src/Wallet.ts:142</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -3249,13 +3244,14 @@ img {
 						<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 					</ul>
 					<ul class="tsd-legend">
+						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+						<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+					</ul>
+					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-					</ul>
-					<ul class="tsd-legend">
-						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 					</ul>
 					<ul class="tsd-legend">
 						<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
