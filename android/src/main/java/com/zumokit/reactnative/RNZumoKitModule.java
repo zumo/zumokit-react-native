@@ -16,10 +16,11 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import money.zumo.zumokit.AccountDataSnapshot;
 import money.zumo.zumokit.AccountFiatPropertiesCallback;
+import money.zumo.zumokit.ChangeListener;
 import money.zumo.zumokit.ComposeExchangeCallback;
 import money.zumo.zumokit.ComposedExchange;
 import money.zumo.zumokit.Exchange;
-import money.zumo.zumokit.ExchangeSettings;
+import money.zumo.zumokit.ExchangeSetting;
 import money.zumo.zumokit.AccountCryptoProperties;
 import money.zumo.zumokit.AccountFiatProperties;
 import money.zumo.zumokit.TransactionCryptoProperties;
@@ -42,7 +43,7 @@ import money.zumo.zumokit.ComposeTransactionCallback;
 import money.zumo.zumokit.SubmitTransactionCallback;
 import money.zumo.zumokit.AccountDataListener;
 import money.zumo.zumokit.AccountCallback;
-import money.zumo.zumokit.FeeRates;
+import money.zumo.zumokit.TransactionFeeRate;
 import money.zumo.zumokit.ExchangeRate;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
@@ -55,7 +56,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
 
-    private ZumoKit zumoKit;
+    private ZumoKit zumokit;
 
     private User user;
 
@@ -100,22 +101,21 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String apiKey, String apiUrl, String txServiceUrl)
-        this.zumoKit = new ZumoKit(apiKey, apiUrl, txServiceUrl);
+    public void init(String apiKey, String apiUrl, String txServiceUrl) {
+        this.zumokit = new ZumoKit(apiKey, apiUrl, txServiceUrl);
     }
 
     // - Authentication
 
     @ReactMethod
     public void signIn(String tokenSet, Promise promise) {
-        if (this.zumoKit == null) {
+        if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
         }
 
         RNZumoKitModule module = this;
-
-        this.zumoKit.authUser(tokenSet, new UserCallback() {
+        this.zumokit.authUser(tokenSet, new UserCallback() {
             @Override
             public void onError(Exception error) {
                 rejectPromise(promise, error);
@@ -137,6 +137,24 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     // - Listeners
+    @ReactMethod
+    public void addChangeListener(Promise promise) {
+        if (this.zumokit == null) {
+            rejectPromise(promise, "ZumoKit not initialized.");
+            return;
+        }
+
+        RNZumoKitModule module = this;
+        zumokit.addChangeListener(new ChangeListener() {
+            @Override
+            public void onChange() {
+                module.reactContext
+                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("AuxDataChanged", null);
+            }
+        });
+    }
+
     @ReactMethod
     public void addAccountDataListener(Promise promise) {
         if (this.user == null) {
@@ -167,7 +185,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         RNZumoKitModule module = this;
-
         this.user.createWallet(mnemonic, password, new WalletCallback() {
             @Override
             public void onError(Exception error) {
@@ -190,7 +207,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         RNZumoKitModule module = this;
-
         this.user.unlockWallet(password, new WalletCallback() {
             @Override
             public void onError(Exception error) {
@@ -548,7 +564,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             String fromAccountId,
             String toAccountId,
             ReadableMap exchangeRate,
-            ReadableMap exchangeSettings,
+            ReadableMap exchangeSetting,
             String amount,
             Boolean sendMax,
             Promise promise
@@ -559,7 +575,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         ExchangeRate rate = RNZumoKitModule.unboxExchangeRate(exchangeRate);
-        ExchangeSettings settings = RNZumoKitModule.unboxExchangeSettings(exchangeSettings);
+        ExchangeSetting settings = RNZumoKitModule.unboxExchangeSetting(exchangeSetting);
 
         this.wallet.composeExchange(
                 fromAccountId,
@@ -596,8 +612,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("withdrawAccount"));
         ExchangeRate exchangeRate =
                 RNZumoKitModule.unboxExchangeRate(composedExchangeMap.getMap("exchangeRate"));
-        ExchangeSettings exchangeSettings =
-                RNZumoKitModule.unboxExchangeSettings(composedExchangeMap.getMap("exchangeSettings"));
+        ExchangeSetting exchangeSetting =
+                RNZumoKitModule.unboxExchangeSetting(composedExchangeMap.getMap("exchangeSetting"));
         String exchangeAddress = composedExchangeMap.getString("exchangeAddress");
         BigDecimal value = new BigDecimal(composedExchangeMap.getString("value"));
         BigDecimal returnValue = new BigDecimal(composedExchangeMap.getString("returnValue"));
@@ -611,7 +627,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 depositAccount,
                 withdrawAccount,
                 exchangeRate,
-                exchangeSettings,
+                exchangeSetting,
                 exchangeAddress,
                 value,
                 returnValue,
@@ -656,7 +672,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         RNZumoKitModule module = this;
-
         this.user.recoverWallet(mnemonic, password, new WalletCallback() {
             @Override
             public void onError(Exception error) {
@@ -674,63 +689,43 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // - Utility
 
     @ReactMethod
-    public void getExchangeRate(String fromCurrency, String toCurrency, Promise promise) {
-        if (this.zumoKit == null) {
+    public void getExchangeRates(Promise promise) {
+        if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
         }
 
-        ExchangeRate exchangeRate = this.zumoKit.getExchangeRate(fromCurrency,toCurrency);
-
-        if (exchangeRate == null) {
-            promise.resolve(null);
-        } else {
-            promise.resolve(mapExchangeRate(exchangeRate));
-        }
+        promise.resolve(mapExchangeRates(this.zumokit.getExchangeRates()));
     }
 
     @ReactMethod
-    public void getExchangeSettings(String fromCurrency, String toCurrency, Promise promise) {
-        if (this.zumoKit == null) {
+    public void getExchangeSettings(Promise promise) {
+        if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
         }
 
-        ExchangeSettings exchangeSettings = this.zumoKit.getExchangeSettings(fromCurrency,toCurrency);
-
-        if (exchangeSettings == null) {
-            promise.resolve(null);
-        } else {
-            promise.resolve(mapExchangeSettings(exchangeSettings));
-        }
+        promise.resolve(mapExchangeSettings(this.zumokit.getExchangeSettings()));
     }
 
     @ReactMethod
-    public void getFeeRates(String currency, Promise promise) {
-        if (this.zumoKit == null) {
+    public void getTransactionFeeRates(Promise promise) {
+        if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
         }
 
-        FeeRates feeRates = this.zumoKit.getFeeRates(currency);
-
-        if (feeRates == null) {
-            promise.resolve(null);
-        } else {
-            promise.resolve(mapFeeRates(feeRates));
-        }
+        promise.resolve(mapTransactionFeeRates(this.zumokit.getTransactionFeeRates()));
     }
 
     @ReactMethod
     public void fetchHistoricalExchangeRates(Promise promise) {
-        if (this.zumoKit == null) {
+        if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
         }
 
-        RNZumoKitModule module = this;
-
-        this.zumoKit.fetchHistoricalExchangeRates(new HistoricalExchangeRatesCallback() {
+        this.zumokit.fetchHistoricalExchangeRates(new HistoricalExchangeRatesCallback() {
             @Override
             public void onError(Exception e) {
                 rejectPromise(promise, e);
@@ -747,13 +742,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void generateMnemonic(int wordLength, Promise promise) {
-        if (this.zumoKit == null) {
+        if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
         }
 
         try {
-            String mnemonic = this.zumoKit.getUtils().generateMnemonic(wordLength);
+            String mnemonic = this.zumokit.getUtils().generateMnemonic(wordLength);
             promise.resolve(mnemonic);
         } catch (Exception e) {
             rejectPromise(promise, e);
@@ -763,7 +758,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void isValidEthAddress(String address, Promise promise) {
         try {
-            Boolean valid = this.zumoKit.getUtils().isValidEthAddress(address);
+            Boolean valid = this.zumokit.getUtils().isValidEthAddress(address);
             promise.resolve(valid);
         } catch (Exception e) {
             rejectPromise(promise, e);
@@ -773,7 +768,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void isValidBtcAddress(String address, String network, Promise promise) {
         try {
-            Boolean valid = this.zumoKit.getUtils().isValidBtcAddress(address, network);
+            Boolean valid = this.zumokit.getUtils().isValidBtcAddress(address, network);
             promise.resolve(valid);
         } catch (Exception e) {
             rejectPromise(promise, e);
@@ -1109,18 +1104,31 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         return map;
     }
 
-    public static WritableMap mapFeeRates(FeeRates rates) {
+    public static WritableMap mapTransactionFeeRate(TransactionFeeRate rate) {
        WritableMap mappedRates = Arguments.createMap();
 
-       mappedRates.putString("slow", rates.getSlow().toPlainString());
-       mappedRates.putString("average", rates.getAverage().toPlainString());
-       mappedRates.putString("fast", rates.getFast().toPlainString());
-       mappedRates.putDouble("slowTime", rates.getSlowTime());
-       mappedRates.putDouble("averageTime", rates.getAverageTime());
-       mappedRates.putDouble("fastTime", rates.getFastTime());
-       mappedRates.putString("source", rates.getSource());
+       mappedRates.putString("slow", rate.getSlow().toPlainString());
+       mappedRates.putString("average", rate.getAverage().toPlainString());
+       mappedRates.putString("fast", rate.getFast().toPlainString());
+       mappedRates.putDouble("slowTime", rate.getSlowTime());
+       mappedRates.putDouble("averageTime", rate.getAverageTime());
+       mappedRates.putDouble("fastTime", rate.getFastTime());
+       mappedRates.putString("source", rate.getSource());
 
        return mappedRates;
+    }
+
+    public static WritableMap mapTransactionFeeRates(HashMap<String, TransactionFeeRate> feeRates) {
+        WritableMap map = Arguments.createMap();
+
+        for (HashMap.Entry<String, TransactionFeeRate> entry : feeRates.entrySet()) {
+            String currency = entry.getKey();
+            TransactionFeeRate feeRate = entry.getValue();
+
+            map.putMap(currency, mapTransactionFeeRate(feeRate));
+        }
+
+        return map;
     }
 
     public static WritableMap mapComposedExchange(ComposedExchange exchange) {
@@ -1130,8 +1138,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putMap("fromAccount", RNZumoKitModule.mapAccount(exchange.getFromAccount()));
         map.putMap("toAccount", RNZumoKitModule.mapAccount(exchange.getToAccount()));
         map.putMap("exchangeRate", RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
-        map.putMap("exchangeSettings", RNZumoKitModule.mapExchangeSettings(
-                exchange.getExchangeSettings()));
+        map.putMap("exchangeSetting", RNZumoKitModule.mapExchangeSetting(
+                exchange.getExchangeSetting()));
 
         if (exchange.getExchangeAddress() == null) {
             map.putNull("exchangeAddress");
@@ -1186,8 +1194,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("returnTransactionFee", exchange.getReturnTransactionFee().toPlainString());
         map.putMap("exchangeRate", RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
         map.putMap("exchangeRates", RNZumoKitModule.mapExchangeRates(exchange.getExchangeRates()));
-        map.putMap("exchangeSettings",
-                RNZumoKitModule.mapExchangeSettings(exchange.getExchangeSettings()));
+        map.putMap("exchangeSetting",
+                RNZumoKitModule.mapExchangeSetting(exchange.getExchangeSetting()));
 
         if (exchange.getNonce() == null) {
             map.putNull("nonce");
@@ -1217,24 +1225,24 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         return response;
     }
 
-    public static WritableMap mapExchangeSettings(ExchangeSettings settings) {
+    public static WritableMap mapExchangeSetting(ExchangeSetting setting) {
         WritableMap mappedSettings = Arguments.createMap();
 
-        mappedSettings.putString("id", settings.getId());
-        mappedSettings.putString("fromCurrency", settings.getFromCurrency());
-        mappedSettings.putString("toCurrency", settings.getToCurrency());
+        mappedSettings.putString("id", setting.getId());
+        mappedSettings.putString("fromCurrency", setting.getFromCurrency());
+        mappedSettings.putString("toCurrency", setting.getToCurrency());
         mappedSettings.putString("minExchangeAmount",
-                settings.getMinExchangeAmount().toPlainString());
+                setting.getMinExchangeAmount().toPlainString());
         mappedSettings.putString("exchangeFeeRate",
-                settings.getExchangeFeeRate().toPlainString());
+                setting.getExchangeFeeRate().toPlainString());
         mappedSettings.putString("outgoingTransactionFeeRate",
-                settings.getOutgoingTransactionFeeRate().toPlainString());
+                setting.getOutgoingTransactionFeeRate().toPlainString());
         mappedSettings.putString("returnTransactionFee",
-                settings.getReturnTransactionFee().toPlainString());
-        mappedSettings.putInt("timestamp", (int) settings.getTimestamp());
+                setting.getReturnTransactionFee().toPlainString());
+        mappedSettings.putInt("timestamp", (int) setting.getTimestamp());
 
         WritableMap exchangeAddress = Arguments.createMap();
-        for (HashMap.Entry entry : settings.getExchangeAddress().entrySet()) {
+        for (HashMap.Entry entry : setting.getExchangeAddress().entrySet()) {
           exchangeAddress.putString(entry.getKey().toString(), (String) entry.getValue());
         }
 
@@ -1243,20 +1251,20 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         return mappedSettings;
     }
 
-    public static WritableMap mapExchangeSettingsDict(
-            HashMap<String, HashMap<String, ExchangeSettings>> exchangeSettings
+    public static WritableMap mapExchangeSettings(
+            HashMap<String, HashMap<String, ExchangeSetting>> exchangeSettings
     ) {
         WritableMap outerMap = Arguments.createMap();
 
-        for (HashMap.Entry<String, HashMap<String, ExchangeSettings>> outerEntry :
+        for (HashMap.Entry<String, HashMap<String, ExchangeSetting>> outerEntry :
                 exchangeSettings.entrySet()) {
             String fromCurrency = outerEntry.getKey();
             WritableMap innerMap = Arguments.createMap();
 
-            for (HashMap.Entry<String, ExchangeSettings> innerEntry :
+            for (HashMap.Entry<String, ExchangeSetting> innerEntry :
                     outerEntry.getValue().entrySet()) {
                 String toCurrency = innerEntry.getKey();
-                WritableMap settings = RNZumoKitModule.mapExchangeSettings(innerEntry.getValue());
+                WritableMap settings = RNZumoKitModule.mapExchangeSetting(innerEntry.getValue());
                 innerMap.putMap(toCurrency, settings);
             }
 
@@ -1423,7 +1431,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         return new ExchangeRate(id, fromCurrency, toCurrency, value, validTo, timestamp);
     }
 
-    public static ExchangeSettings unboxExchangeSettings(ReadableMap map) {
+    public static ExchangeSetting unboxExchangeSetting(ReadableMap map) {
         String id = map.getString("id");
         String fromCurrency = map.getString("fromCurrency");
         String toCurrency = map.getString("toCurrency");
@@ -1445,7 +1453,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             exchangeAddress.put(network, address);
         }
 
-        return new ExchangeSettings(
+        return new ExchangeSetting(
                 id,
                 exchangeAddress,
                 fromCurrency,

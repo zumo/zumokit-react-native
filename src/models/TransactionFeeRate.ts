@@ -2,7 +2,7 @@ import { Decimal } from 'decimal.js';
 import { TransactionFeeRateJSON } from '../types';
 
 /** Crypto transactions fee rates. */
-export default class FeeRates {
+export default class TransactionFeeRate {
   /** @internal */
   json: TransactionFeeRateJSON;
 

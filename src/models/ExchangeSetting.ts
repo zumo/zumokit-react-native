@@ -1,6 +1,14 @@
 import { Decimal } from 'decimal.js';
 import { Dictionary, Network, CurrencyCode, ExchangeSettingJSON } from '../types';
-import { parseExchangeAddressMap } from '../utils/parse';
+
+/** @internal */
+const parseExchangeAddressMap = (exchangeAddressMapJSON: Record<string, string>) => {
+  const exchangeAddressMap: Dictionary<Network, string> = {};
+  Object.keys(exchangeAddressMapJSON).forEach((network) => {
+    exchangeAddressMap[network as Network] = exchangeAddressMapJSON[network];
+  });
+  return exchangeAddressMap;
+};
 
 /** Zumo exchange settings used in making exchanges. */
 export default class ExchangeSetting {

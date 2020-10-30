@@ -1,24 +1,14 @@
-import Decimal from 'decimal.js';
 import ExchangeRate from '../models/ExchangeRate';
-import { ExchangeRateJSON, CurrencyCode, Dictionary, TimeInterval, Network } from '../types';
-
-/** @internal */
-const parseFiatMap = (fiatMapJSON: Record<string, string>) => {
-  const fiatMap: Dictionary<CurrencyCode, Decimal> = {};
-  Object.keys(fiatMapJSON).forEach((currencyCode) => {
-    fiatMap[currencyCode as CurrencyCode] = new Decimal(fiatMapJSON[currencyCode]);
-  });
-  return fiatMap;
-};
-
-/** @internal */
-const parseExchangeAddressMap = (exchangeAddressMapJSON: Record<string, string>) => {
-  const exchangeAddressMap: Dictionary<Network, string> = {};
-  Object.keys(exchangeAddressMapJSON).forEach((network) => {
-    exchangeAddressMap[network as Network] = exchangeAddressMapJSON[network];
-  });
-  return exchangeAddressMap;
-};
+import ExchangeSetting from '../models/ExchangeSetting';
+import TransactionFeeRate from '../models/TransactionFeeRate';
+import {
+  ExchangeRateJSON,
+  ExchangeSettingJSON,
+  TransactionFeeRateJSON,
+  CurrencyCode,
+  Dictionary,
+  TimeInterval,
+} from '../types';
 
 /** @internal */
 const parseExchangeRates = (
@@ -35,6 +25,36 @@ const parseExchangeRates = (
     exchangeRatesMap[depositCurrency as CurrencyCode] = innerMap;
   });
   return exchangeRatesMap;
+};
+
+/** @internal */
+const parseExchangeSettings = (
+  exchangeSettingsMapJSON: Record<string, Record<string, ExchangeSettingJSON>>
+) => {
+  const exchangeSettings: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeSetting>> = {};
+  Object.keys(exchangeSettingsMapJSON).forEach((depositCurrency) => {
+    const innerMap: Dictionary<CurrencyCode, ExchangeSetting> = {};
+    Object.keys(exchangeSettingsMapJSON[depositCurrency]).forEach((withdrawCurrency) => {
+      innerMap[withdrawCurrency as CurrencyCode] = new ExchangeSetting(
+        exchangeSettingsMapJSON[depositCurrency][withdrawCurrency]
+      );
+    });
+    exchangeSettings[depositCurrency as CurrencyCode] = innerMap;
+  });
+  return exchangeSettings;
+};
+
+/** @internal */
+const parseTransactionFeeRates = (
+  transactionFeeRatesJSON: Record<string, TransactionFeeRateJSON>
+) => {
+  const feeRates: Dictionary<CurrencyCode, TransactionFeeRate> = {};
+  Object.keys(transactionFeeRatesJSON).forEach((currencyCode) => {
+    feeRates[currencyCode as CurrencyCode] = new TransactionFeeRate(
+      transactionFeeRatesJSON[currencyCode]
+    );
+  });
+  return feeRates;
 };
 
 /** @internal */
@@ -72,4 +92,9 @@ const parseHistoricalExchangeRates = (
   return exchangeRateMap;
 };
 
-export { parseFiatMap, parseExchangeAddressMap, parseExchangeRates, parseHistoricalExchangeRates };
+export {
+  parseExchangeRates,
+  parseExchangeSettings,
+  parseTransactionFeeRates,
+  parseHistoricalExchangeRates,
+};

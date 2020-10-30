@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
 import Utils from './Utils';
 import User from './User';
 import tryCatchProxy from './errorProxy';
@@ -6,8 +6,21 @@ import TransactionFeeRate from './models/TransactionFeeRate';
 import ExchangeRate from './models/ExchangeRate';
 import ExchangeSetting from './models/ExchangeSetting';
 import HistoricalExchangeRates from './models/HistoricalExchangeRates';
-import { parseHistoricalExchangeRates } from './utils/parse';
-import { Dictionary, CurrencyCode, TokenSet, HistoricalExchangeRatesJSON } from './types';
+import {
+  parseExchangeRates,
+  parseExchangeSettings,
+  parseTransactionFeeRates,
+  parseHistoricalExchangeRates,
+} from './utils/parse';
+import {
+  Dictionary,
+  CurrencyCode,
+  TokenSet,
+  HistoricalExchangeRatesJSON,
+  ExchangeRateJSON,
+  ExchangeSettingJSON,
+  TransactionFeeRateJSON,
+} from './types';
 
 const { RNZumoKit } = NativeModules;
 
@@ -18,6 +31,12 @@ const { RNZumoKit } = NativeModules;
  * */
 @tryCatchProxy
 class ZumoKit {
+  // The emitter that bubbles events from the native side
+  private emitter = new NativeEventEmitter(RNZumoKit);
+
+  // Listeners for exchange rates, exchange settings and transaction fee rates changes
+  private changeListeners: Array<() => void> = [];
+
   /** ZumoKit SDK semantic version tag if exists, commit hash otherwise. */
   version: string = RNZumoKit.version;
 
@@ -47,6 +66,11 @@ class ZumoKit {
    * */
   init(apiKey: string, apiUrl: string, txServiceUrl: string) {
     RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
+
+    this.emitter.addListener('AuxDataChanged', async () => {
+      await this.updateAuxData();
+      this.changeListeners.forEach((listener) => listener());
+    });
   }
 
   /**
@@ -58,6 +82,7 @@ class ZumoKit {
   async signIn(userTokenSet: TokenSet) {
     const json = await RNZumoKit.signIn(JSON.stringify(userTokenSet));
     this.currentUser = new User(json);
+    await this.updateAuxData();
     return this.currentUser;
   }
 
@@ -77,34 +102,35 @@ class ZumoKit {
    *
    * @return exchange rate or null
    */
-  async getExchangeRate(fromCurrency: CurrencyCode, toCurrency: CurrencyCode) {
-    const json = await RNZumoKit.getExchangeRate(fromCurrency, toCurrency);
-    return json ? new ExchangeRate(json) : null;
+  getExchangeRate(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeRate | null {
+    return Object.keys(this.exchangeRates).includes(fromCurrency)
+      ? this.exchangeRates[fromCurrency][toCurrency]
+      : null;
   }
 
   /**
-   * Get exchange settings for selected currency pair.
+   * Get exchange setting for selected currency pair.
    *
    * @param fromCurrency   currency code
    * @param toCurrency     currency code
    *
-   * @return exchange rate or null
+   * @return exchange settings or null
    */
-  async getExchangeSettings(fromCurrency: CurrencyCode, toCurrency: CurrencyCode) {
-    const json = await RNZumoKit.getExchangeSettings(fromCurrency, toCurrency);
-    return json ? new ExchangeSetting(json) : null;
+  getExchangeSetting(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeSetting | null {
+    return Object.keys(this.exchangeSettings).includes(fromCurrency)
+      ? this.exchangeSettings[fromCurrency][toCurrency]
+      : null;
   }
 
   /**
-   * Get exchange settings for selected currency pair.
+   * Get transaction fee rate for selected crypto currency.
    *
    * @param currency   currency code
    *
-   * @return fee rates or null
+   * @return transaction fee rate or null
    */
-  async getFeeRates(currency: CurrencyCode) {
-    const json = await RNZumoKit.getFeeRates(currency);
-    return json ? new TransactionFeeRate(json) : null;
+  getTransactionFeeRate(currency: CurrencyCode): TransactionFeeRate | null {
+    return this.transactionFeeRates[currency];
   }
 
   /**
@@ -117,6 +143,47 @@ class ZumoKit {
   async fetchHistoricalExchangeRates(): Promise<HistoricalExchangeRates> {
     const historicalExchangeRatesJSON = (await RNZumoKit.fetchHistoricalExchangeRates()) as HistoricalExchangeRatesJSON;
     return parseHistoricalExchangeRates(historicalExchangeRatesJSON);
+  }
+
+  /**
+   * Listen to changes in exchange rates, exchange settings or transaction fee rates.
+   *
+   * @param listener interface to listen to user changes
+   */
+  addChangeListener(listener: () => void) {
+    this.changeListeners.push(listener);
+  }
+
+  /**
+   * Remove change listener.
+   *
+   * @param listener interface to listen to changes
+   */
+  removeChangeListener(listener: () => void) {
+    let index = this.changeListeners.indexOf(listener);
+    while (index !== -1) {
+      this.changeListeners.splice(index, 1);
+      index = this.changeListeners.indexOf(listener);
+    }
+  }
+
+  private async updateAuxData(): Promise<void> {
+    const exchangeRatesJSON = (await RNZumoKit.getExchangeRates()) as Record<
+      string,
+      Record<string, ExchangeRateJSON>
+    >;
+    const exchangeSettingsJSON = (await RNZumoKit.getExchangeSettings()) as Record<
+      string,
+      Record<string, ExchangeSettingJSON>
+    >;
+    const tranactionFeeRatesJSON = (await RNZumoKit.getTransactionFeeRates()) as Record<
+      string,
+      TransactionFeeRateJSON
+    >;
+
+    this.exchangeRates = parseExchangeRates(exchangeRatesJSON);
+    this.exchangeSettings = parseExchangeSettings(exchangeSettingsJSON);
+    this.transactionFeeRates = parseTransactionFeeRates(tranactionFeeRatesJSON);
   }
 }
 
