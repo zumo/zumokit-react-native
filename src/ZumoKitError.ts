@@ -1,26 +1,8 @@
-/**
- * ZumoKitError extension to Error class with type, code and message properties.
- * Refer to <a href="https://developers.zumo.money/docs/guides/handling-errors">Handling Errors</a>
- * guide for details on handling errors.
- */
-export default class ZumoKitError extends Error {
-  /**
-   * Error type, such as api_connection_error, api_error, wallet_error etc.
-   */
-  type: string;
+import { ZumoKitError as IZumoKitError } from './interfaces';
 
-  /**
-   * In case an error could be handled programmatically in addition to error type
-   * error code is returned.
-   */
-  code: string;
+interface ZumoKitError extends IZumoKitError {}
 
-  /**
-   * Error message.
-   */
-  message: string;
-
-  /** @internal */
+class ZumoKitError extends Error {
   constructor(error: { code: string; message: string; userInfo?: { type: string } }) {
     const { code, message, userInfo } = error;
     super(message);
@@ -30,3 +12,5 @@ export default class ZumoKitError extends Error {
     this.message = message;
   }
 }
+
+export { ZumoKitError };

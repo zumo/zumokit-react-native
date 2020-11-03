@@ -10,6 +10,8 @@
     "outDir": "lib",
     "allowJs": false,
     "target": "es5",
+    "strict": true,
+    "strictPropertyInitialization": true,
     "noEmitOnError": true,
     "noImplicitAny": true,
     "declaration": true
