@@ -108,14 +108,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // - Authentication
 
     @ReactMethod
-    public void signIn(String tokenSet, Promise promise) {
+    public void signIn(String userTokenSet, Promise promise) {
         if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
         }
 
         RNZumoKitModule module = this;
-        this.zumokit.authUser(tokenSet, new UserCallback() {
+        this.zumokit.signIn(userTokenSet, new UserCallback() {
             @Override
             public void onError(Exception error) {
                 rejectPromise(promise, error);
@@ -134,6 +134,19 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 promise.resolve(map);
             }
         });
+    }
+
+    @ReactMethod
+    public void signOut() {
+        if (this.zumokit == null) {
+            rejectPromise(promise, "ZumoKit not initialized.");
+            return;
+        }
+
+        this.zumokit.signOut();
+        this.user = null;
+        this.wallet = null;
+        promise.resolve(true);
     }
 
     // - Listeners
@@ -773,14 +786,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         } catch (Exception e) {
             rejectPromise(promise, e);
         }
-    }
-
-    @ReactMethod
-    public void signOut(Promise promise) {
-        this.user = null;
-        this.wallet = null;
-
-        promise.resolve(true);
     }
 
     // - Helpers
