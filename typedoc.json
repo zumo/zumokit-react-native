@@ -1,12 +1,20 @@
 {
   "name": "ZumoKit",
   "includeVersion": true,
-  "inputFiles": [
-    "./src"
+  "exclude": [
+    "**/models/*",
+    "**/utility/*",
+    "**/index.ts",
+    "**/internal.ts",
+    "src/User.ts",
+    "src/Utils.ts",
+    "src/Wallet.ts",
+    "src/ZumoKitError.ts"
   ],
+  "readme": "README.md",
   "mode": "file",
   "out": "docs",
   "theme": "minimal",
-  "excludeExternals": true,
+  "excludePrivate": true,
   "stripInternal": true
 }
