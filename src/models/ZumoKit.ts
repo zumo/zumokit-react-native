@@ -15,10 +15,10 @@ import {
   TransactionFeeRateJSON,
   Dictionary,
 } from 'zumokit/src/types';
-import { ZumoKit as IZumoKit } from './interfaces';
+import { ZumoKit as IZumoKit } from '../interfaces';
 import { Utils } from './Utils';
 import { User } from './User';
-import { tryCatchProxy } from './utility/errorProxy';
+import { tryCatchProxy } from '../utility/errorProxy';
 
 const {
   /** @internal */

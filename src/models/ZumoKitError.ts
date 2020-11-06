@@ -1,4 +1,4 @@
-import { ZumoKitError as IZumoKitError } from './interfaces';
+import { ZumoKitError as IZumoKitError } from '../interfaces';
 
 interface ZumoKitError extends IZumoKitError {}
 

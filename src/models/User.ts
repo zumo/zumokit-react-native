@@ -2,7 +2,7 @@ import { NativeModules, NativeEventEmitter } from 'react-native';
 import { Account } from 'zumokit/src/models/Account';
 import { AccountFiatProperties } from 'zumokit/src/models/AccountFiatProperties';
 import { AccountDataSnapshot } from 'zumokit/src/models/AccountDataSnapshot';
-import { User as IUser } from './interfaces';
+import { User as IUser } from '../interfaces';
 import {
   AccountJSON,
   CurrencyCode,
@@ -11,9 +11,9 @@ import {
   AccountDataSnapshotJSON,
   FiatCustomerData,
   UserJSON,
-} from './types';
+} from '../types';
 import { Wallet } from './Wallet';
-import { tryCatchProxy } from './utility/errorProxy';
+import { tryCatchProxy } from '../utility/errorProxy';
 
 const { RNZumoKit } = NativeModules;
 

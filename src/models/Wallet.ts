@@ -6,8 +6,8 @@ import { ComposedExchange } from 'zumokit/src/models/ComposedExchange';
 import { ExchangeRate } from 'zumokit/src/models/ExchangeRate';
 import { ExchangeSetting } from 'zumokit/src/models/ExchangeSetting';
 import Decimal from 'decimal.js';
-import { Wallet as IWallet } from './interfaces';
-import { tryCatchProxy } from './utility/errorProxy';
+import { Wallet as IWallet } from '../interfaces';
+import { tryCatchProxy } from '../utility/errorProxy';
 
 const { RNZumoKit } = NativeModules;
 

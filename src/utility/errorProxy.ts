@@ -1,4 +1,4 @@
-import { ZumoKitError } from '../ZumoKitError';
+import { ZumoKitError } from '../models/ZumoKitError';
 
 /** @internal */
 function handler(fun: any) {
