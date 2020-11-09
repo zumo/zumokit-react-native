@@ -15,7 +15,7 @@
     "bsv",
     "erc20 tokens"
   ],
-  "main": "src/ZumoKit.ts",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "typedoc"
