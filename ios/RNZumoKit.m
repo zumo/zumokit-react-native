@@ -134,9 +134,9 @@ RCT_EXPORT_METHOD(signOut:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRe
 {
     @try {
         [_zumoKit signOut];
-        user = nil;
-        wallet = nil;
-        resolve(YES);
+        _user = nil;
+        _wallet = nil;
+        resolve(@(YES));
     } @catch (NSException *exception) {
         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
     }
