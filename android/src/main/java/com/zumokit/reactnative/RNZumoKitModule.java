@@ -137,7 +137,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void signOut() {
+    public void signOut(Promise promise) {
         if (this.zumokit == null) {
             rejectPromise(promise, "ZumoKit not initialized.");
             return;
