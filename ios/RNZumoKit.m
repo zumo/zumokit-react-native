@@ -108,10 +108,10 @@ RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl txServiceUrl
     [_zumoKit addChangeListener:self];
 }
 
-RCT_EXPORT_METHOD(signIn:(NSString *)tokenSet resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(signIn:(NSString *)userTokenSet resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_zumoKit authUser:tokenSet completion:^(ZKUser * _Nullable user, NSError * _Nullable error) {
+        [_zumoKit signIn:userTokenSet completion:^(ZKUser * _Nullable user, NSError * _Nullable error) {
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
                 return;
@@ -132,11 +132,15 @@ RCT_EXPORT_METHOD(signIn:(NSString *)tokenSet resolver:(RCTPromiseResolveBlock)r
 
 RCT_EXPORT_METHOD(signOut:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    _user = NULL;
-    _wallet = NULL;
-    resolve(@(YES));
+    @try {
+        [_zumoKit signOut];
+        _user = nil;
+        _wallet = nil;
+        resolve(@(YES));
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
 }
-
 
 # pragma mark - Listeners
 

@@ -1,5 +1,4 @@
-import { AccountDataSnapshot, Account } from 'zumokit';
-import { AccountFiatProperties } from 'zumokit/src/interfaces';
+import { AccountDataSnapshot, Account, AccountFiatProperties } from 'zumokit';
 import { CurrencyCode, Network, AccountType, FiatCustomerData } from '../types/exported';
 import { Wallet } from './Wallet';
 

@@ -1,7 +1,7 @@
 import { NativeModules } from 'react-native';
 import { Network } from 'zumokit/src/types';
-import { Utils as IUtils } from './interfaces';
-import { tryCatchProxy } from './utility/errorProxy';
+import { Utils as IUtils } from '../interfaces';
+import { tryCatchProxy } from '../utility/errorProxy';
 
 const { RNZumoKit } = NativeModules;
 

@@ -4,17 +4,15 @@
   "exclude": [
     "**/models/*",
     "**/utility/*",
-    "**/index.ts",
     "**/internal.ts",
-    "src/User.ts",
-    "src/Utils.ts",
-    "src/Wallet.ts",
-    "src/ZumoKitError.ts"
+    "node_modules/zumokit/src/interfaces/User.ts",
+    "node_modules/zumokit/src/interfaces/Utils.ts",
+    "node_modules/zumokit/src/interfaces/Wallet.ts",
+    "node_modules/zumokit/src/interfaces/ZumoKit.ts",
+    "node_modules/zumokit/src/interfaces/ZumoKitError.ts"
   ],
   "readme": "README.md",
   "mode": "file",
   "out": "docs",
-  "theme": "minimal",
-  "excludePrivate": true,
-  "stripInternal": true
+  "theme": "minimal"
 }
