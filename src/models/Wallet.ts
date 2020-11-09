@@ -45,7 +45,7 @@ export class Wallet implements IWallet {
     feeRate: Decimal,
     sendMax = false
   ) {
-    const json = await RNZumoKit.composeBtcTransaction(
+    const json = await RNZumoKit.composeTransaction(
       fromAccountId,
       changeAccountId,
       destinationAddress,
