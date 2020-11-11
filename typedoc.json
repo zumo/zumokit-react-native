@@ -2,15 +2,10 @@
   "name": "ZumoKit",
   "includeVersion": true,
   "exclude": [
-    "**/models/*",
-    "**/utility/*",
-    "**/internal.ts",
-    "node_modules/zumokit/src/interfaces/User.ts",
-    "node_modules/zumokit/src/interfaces/Utils.ts",
-    "node_modules/zumokit/src/interfaces/Wallet.ts",
-    "node_modules/zumokit/src/interfaces/ZumoKit.ts",
-    "node_modules/zumokit/src/interfaces/ZumoKitError.ts"
+    "**/private/*"
   ],
+  "excludePrivate": true,
+  "stripInternal": true,
   "readme": "README.md",
   "mode": "file",
   "out": "docs",
