@@ -3,13 +3,11 @@ package com.zumokit.reactnative;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -23,8 +21,6 @@ import money.zumo.zumokit.Exchange;
 import money.zumo.zumokit.ExchangeSetting;
 import money.zumo.zumokit.AccountCryptoProperties;
 import money.zumo.zumokit.AccountFiatProperties;
-import money.zumo.zumokit.TransactionCryptoProperties;
-import money.zumo.zumokit.TransactionFiatProperties;
 import money.zumo.zumokit.HistoricalExchangeRatesCallback;
 import money.zumo.zumokit.SubmitExchangeCallback;
 import money.zumo.zumokit.SuccessCallback;
@@ -433,7 +429,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public void composeEthTransaction(
             String accountId,
             String gasPrice,
-            String gasLimit,
+            int gasLimit,
             String destination,
             String amount,
             String data,
@@ -446,15 +442,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        Long nonceValue = null;
+        Integer nonceValue = null;
         if (nonce != null) {
-            nonceValue = Long.parseLong(nonce);
+            nonceValue = Integer.parseInt(nonce);
         }
 
         this.wallet.composeEthTransaction(
                 accountId,
                 new BigDecimal(gasPrice),
-                new BigDecimal(gasLimit),
+                gasLimit,
                 destination,
                 (amount == null) ? null : new BigDecimal(amount),
                 data,
@@ -855,7 +851,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             if (account.getCryptoProperties().getNonce() == null) {
                 cryptoProperties.putNull("nonce");
             } else {
-                cryptoProperties.putInt("nonce", account.getCryptoProperties().getNonce().intValue());
+                cryptoProperties.putInt("nonce", account.getCryptoProperties().getNonce());
             }
         }
 
@@ -997,16 +993,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         if (transaction.getSubmittedAt() == null) {
             map.putNull("submittedAt");
         } else {
-            map.putInt("submittedAt", transaction.getSubmittedAt().intValue());
+            map.putInt("submittedAt", transaction.getSubmittedAt());
         }
 
         if (transaction.getConfirmedAt() == null) {
             map.putNull("confirmedAt");
         } else {
-            map.putInt("confirmedAt", transaction.getConfirmedAt().intValue());
+            map.putInt("confirmedAt", transaction.getConfirmedAt());
         }
 
-        map.putInt("timestamp", (int) transaction.getTimestamp());
+        map.putInt("timestamp", transaction.getTimestamp());
 
         if (transaction.getCryptoProperties() == null) {
             map.putNull("cryptoProperties");
@@ -1023,7 +1019,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 cryptoProperties.putNull("nonce");
             } else {
                 cryptoProperties.putInt("nonce",
-                        transaction.getCryptoProperties().getNonce().intValue());
+                        transaction.getCryptoProperties().getNonce());
             }
 
             cryptoProperties.putString("fromAddress",
@@ -1053,8 +1049,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             if (transaction.getCryptoProperties().getGasLimit() == null) {
                 cryptoProperties.putNull("gasLimit");
             } else {
-                cryptoProperties.putString("gasLimit",
-                        transaction.getCryptoProperties().getGasLimit().toPlainString());
+                cryptoProperties.putInt("gasLimit",
+                        transaction.getCryptoProperties().getGasLimit());
             }
 
             WritableMap fiatAmounts = Arguments.createMap();
@@ -1208,12 +1204,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             map.putString("nonce", exchange.getNonce());
         }
 
-        map.putInt("submittedAt", exchange.getSubmittedAt().intValue());
+        map.putInt("submittedAt", exchange.getSubmittedAt());
 
         if (exchange.getConfirmedAt() == null) {
             map.putNull("confirmedAt");
         } else {
-            map.putInt("confirmedAt", exchange.getConfirmedAt().intValue());
+            map.putInt("confirmedAt", exchange.getConfirmedAt());
         }
 
         return map;
@@ -1244,7 +1240,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 setting.getOutgoingTransactionFeeRate().toPlainString());
         mappedSettings.putString("returnTransactionFee",
                 setting.getReturnTransactionFee().toPlainString());
-        mappedSettings.putInt("timestamp", (int) setting.getTimestamp());
+        mappedSettings.putInt("timestamp", setting.getTimestamp());
 
         WritableMap exchangeAddress = Arguments.createMap();
         for (HashMap.Entry entry : setting.getExchangeAddress().entrySet()) {
@@ -1286,8 +1282,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         mappedRate.putString("fromCurrency", rate.getFromCurrency());
         mappedRate.putString("toCurrency", rate.getToCurrency());
         mappedRate.putString("value", rate.getValue().toPlainString());
-        mappedRate.putInt("validTo", (int) rate.getValidTo());
-        mappedRate.putInt("timestamp", (int) rate.getTimestamp());
+        mappedRate.putInt("validTo", rate.getValidTo());
+        mappedRate.putInt("timestamp", rate.getTimestamp());
 
         return mappedRate;
     }
@@ -1382,11 +1378,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
             String address = cryptoPropertiesData.getString("address");
             String path = cryptoPropertiesData.getString("path");
-
-            Long nonce = null;
-            if (!cryptoPropertiesData.isNull("nonce")) {
-                nonce = Long.valueOf(cryptoPropertiesData.getInt("nonce"));
-            }
+            Integer nonce = cryptoPropertiesData.getInt("nonce");
 
             cryptoProperties = new AccountCryptoProperties(address, path, nonce);
         }
@@ -1430,8 +1422,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String fromCurrency = map.getString("fromCurrency");
         String toCurrency = map.getString("toCurrency");
         BigDecimal value = new BigDecimal(map.getString("value"));
-        long validTo = map.getInt("validTo");
-        long timestamp = map.getInt("timestamp");
+        int validTo = map.getInt("validTo");
+        int timestamp = map.getInt("timestamp");
 
         return new ExchangeRate(id, fromCurrency, toCurrency, value, validTo, timestamp);
     }
@@ -1445,7 +1437,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         BigDecimal outgoingTransactionFeeRate =
                 new BigDecimal(map.getString("outgoingTransactionFeeRate"));
         BigDecimal returnTransactionFee = new BigDecimal(map.getString("returnTransactionFee"));
-        long timestamp = map.getInt("timestamp");
+        int timestamp = map.getInt("timestamp");
 
         HashMap<String, String> exchangeAddress = new HashMap<>();
 

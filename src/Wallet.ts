@@ -1,4 +1,5 @@
-import { Decimal } from 'decimal.js';
+import { NativeModules } from 'react-native';
+import Decimal from 'decimal.js';
 import {
   Transaction,
   ComposedTransaction,
@@ -6,7 +7,13 @@ import {
   ComposedExchange,
   ExchangeRate,
   ExchangeSetting,
-} from 'zumokit';
+} from 'zumokit/src/models';
+import { tryCatchProxy } from './utility/errorProxy';
+
+const {
+  /** @internal */
+  RNZumoKit,
+} = NativeModules;
 
 /**
  * User wallet interface describes methods for transfer and exchange of fiat and cryptocurrency funds.
@@ -19,7 +26,8 @@ import {
  * <p>
  * See {@link User}.
  */
-export interface Wallet {
+@tryCatchProxy
+export class Wallet {
   /**
    * Compose Ethereum transaction asynchronously.
    * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#ethereum">Send Transactions</a>
@@ -30,20 +38,34 @@ export interface Wallet {
    * @param gasLimit             gas limit
    * @param destinationAddress   destination wallet address
    * @param amount               amount in ETH
-   * @param data                 data in string format or null
-   * @param nonce                next transaction nonce or null
+   * @param data                 data in string format or null (defaults to null)
+   * @param nonce                next transaction nonce or null (defaults to null)
    * @param sendMax              send maximum possible funds to destination (defaults to false)
    */
-  composeEthTransaction(
+  async composeEthTransaction(
     fromAccountId: string,
     gasPrice: Decimal,
     gasLimit: number,
     destinationAddress: string | null,
     amount: Decimal | null,
-    data: string | null,
-    nonce: number | null,
-    sendMax: boolean
-  ): Promise<ComposedTransaction>;
+    data: string | null = null,
+    nonce: number | null = null,
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeEthTransaction(
+      fromAccountId,
+      gasPrice.toString(),
+      gasLimit,
+      destinationAddress,
+      amount ? amount.toString() : null,
+      data,
+      // RN bridge does not support nullable numbers
+      nonce ? nonce.toString() : null,
+      sendMax
+    );
+
+    return new ComposedTransaction(json);
+  }
 
   /**
    * Compose BTC or BSV transaction asynchronously.
@@ -57,14 +79,25 @@ export interface Wallet {
    * @param feeRate             fee rate in satoshis/byte
    * @param sendMax             send maximum possible funds to destination (defaults to false)
    */
-  composeTransaction(
+  async composeTransaction(
     fromAccountId: string,
     changeAccountId: string,
     destinationAddress: string,
     amount: Decimal | null,
     feeRate: Decimal,
-    sendMax: boolean
-  ): Promise<ComposedTransaction>;
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeTransaction(
+      fromAccountId,
+      changeAccountId,
+      destinationAddress,
+      amount ? amount.toString() : null,
+      feeRate.toString(),
+      sendMax
+    );
+
+    return new ComposedTransaction(json);
+  }
 
   /**
    * Compose fiat transaction between users in Zumo ecosystem asynchronously.
@@ -76,12 +109,21 @@ export interface Wallet {
    * @param amount          amount in source account currency
    * @param sendMax        send maximum possible funds to destination (defaults to false)
    */
-  composeInternalFiatTransaction(
+  async composeInternalFiatTransaction(
     fromAccountId: string,
     toAccountId: string,
     amount: Decimal | null,
-    sendMax: boolean
-  ): Promise<ComposedTransaction>;
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeInternalFiatTransaction(
+      fromAccountId,
+      toAccountId,
+      amount ? amount.toString() : null,
+      sendMax
+    );
+
+    return new ComposedTransaction(json);
+  }
 
   /**
    * Compose transaction to nominated account asynchronously.
@@ -92,11 +134,19 @@ export interface Wallet {
    * @param amount          amount in source account currency
    * @param sendMax        send maximum possible funds to destination (defaults to false)
    */
-  composeTransactionToNominatedAccount(
+  async composeTransactionToNominatedAccount(
     fromAccountId: string,
     amount: Decimal | null,
-    sendMax: boolean
-  ): Promise<ComposedTransaction>;
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeTransactionToNominatedAccount(
+      fromAccountId,
+      amount ? amount.toString() : null,
+      sendMax
+    );
+
+    return new ComposedTransaction(json);
+  }
 
   /**
    * Submit a transaction asynchronously.
@@ -106,7 +156,11 @@ export interface Wallet {
    * @param composedTransaction Composed transaction retrieved as a result
    *                             of one of the compose transaction methods
    */
-  submitTransaction(composedTransaction: ComposedTransaction): Promise<Transaction>;
+  async submitTransaction(composedTransaction: ComposedTransaction) {
+    const json = await RNZumoKit.submitTransaction(composedTransaction.json);
+
+    return new Transaction(json);
+  }
 
   /**
    * Compose exchange asynchronously.
@@ -118,16 +172,27 @@ export interface Wallet {
    * @param exchangeRate        Zumo exchange rate obtained from ZumoKit state
    * @param exchangeSetting     Zumo exchange setting obtained from ZumoKit state
    * @param amount              amount in deposit account currency
-   * @param sendMax             exchange maximum possible funds
+   * @param sendMax             exchange maximum possible funds (defaults to false)
    */
-  composeExchange(
+  async composeExchange(
     fromAccountId: string,
     toAccountId: string,
     exchangeRate: ExchangeRate,
     exchangeSetting: ExchangeSetting,
     amount: Decimal | null,
-    sendMax: boolean
-  ): Promise<ComposedExchange>;
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeExchange(
+      fromAccountId,
+      toAccountId,
+      exchangeRate.json,
+      exchangeSetting.json,
+      amount ? amount.toString() : null,
+      sendMax
+    );
+
+    return new ComposedExchange(json);
+  }
 
   /**
    * Submit an exchange asynchronously.
@@ -137,5 +202,8 @@ export interface Wallet {
    * @param composedExchange Composed exchange retrieved as the result
    *                          of {@link composeExchange} method
    */
-  submitExchange(composedExchange: ComposedExchange): Promise<Exchange>;
+  async submitExchange(composedExchange: ComposedExchange) {
+    const json = await RNZumoKit.submitExchange(composedExchange.json);
+    return new Exchange(json);
+  }
 }
