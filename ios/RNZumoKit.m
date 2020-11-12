@@ -14,12 +14,24 @@
 
 @implementation RNZumoKit
 
+RCT_EXPORT_MODULE()
+
+bool hasListeners;
+
+static id _instance;
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [super allocWithZone:zone];
+    });
+    return _instance;
+}
+
 -  (NSDictionary *)decimalLocale
 {
     return [NSDictionary dictionaryWithObject:@"." forKey:NSLocaleDecimalSeparator];
 }
-
-bool hasListeners;
 
 // Let's run the methods in a separate queue!
 - (dispatch_queue_t)methodQueue
@@ -65,9 +77,6 @@ bool hasListeners;
                 errorCode:ZKZumoKitErrorCodeUNKNOWNERROR
                 errorMessage:errorMessage];
 }
-
-
-RCT_EXPORT_MODULE()
 
 # pragma mark - Events
 
