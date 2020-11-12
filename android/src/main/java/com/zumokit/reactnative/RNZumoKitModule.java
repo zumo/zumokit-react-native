@@ -615,34 +615,34 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         String signedTransaction = composedExchangeMap.getString("signedTransaction");
-        Account depositAccount =
-                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("depositAccount"));
-        Account withdrawAccount =
-                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("withdrawAccount"));
+        Account fromAccount =
+                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("fromAccount"));
+        Account toAccount =
+                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("toAccount"));
         ExchangeRate exchangeRate =
                 RNZumoKitModule.unboxExchangeRate(composedExchangeMap.getMap("exchangeRate"));
         ExchangeSetting exchangeSetting =
                 RNZumoKitModule.unboxExchangeSetting(composedExchangeMap.getMap("exchangeSetting"));
         String exchangeAddress = composedExchangeMap.getString("exchangeAddress");
-        BigDecimal value = new BigDecimal(composedExchangeMap.getString("value"));
-        BigDecimal returnValue = new BigDecimal(composedExchangeMap.getString("returnValue"));
-        BigDecimal depositFee = new BigDecimal(composedExchangeMap.getString("depositFee"));
+        BigDecimal amount = new BigDecimal(composedExchangeMap.getString("amount"));
+        BigDecimal returnAmount = new BigDecimal(composedExchangeMap.getString("returnAmount"));
+        BigDecimal outgoingTransactionFee = new BigDecimal(composedExchangeMap.getString("outgoingTransactionFee"));
         BigDecimal exchangeFee = new BigDecimal(composedExchangeMap.getString("exchangeFee"));
-        BigDecimal withdrawFee = new BigDecimal(composedExchangeMap.getString("withdrawFee"));
+        BigDecimal returnTransactionFee = new BigDecimal(composedExchangeMap.getString("returnTransactionFee"));
         String nonce = composedExchangeMap.getString("nonce");
 
         ComposedExchange composedExchange = new ComposedExchange(
                 signedTransaction,
-                depositAccount,
-                withdrawAccount,
+                fromAccount,
+                toAccount,
                 exchangeRate,
                 exchangeSetting,
                 exchangeAddress,
-                value,
+                amount,
                 returnValue,
-                depositFee,
+                outgoingTransactionFee,
                 exchangeFee,
-                withdrawFee,
+                returnTransactionFee,
                 nonce
         );
 
