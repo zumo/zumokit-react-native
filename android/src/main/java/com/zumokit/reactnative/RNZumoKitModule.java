@@ -639,7 +639,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 exchangeSetting,
                 exchangeAddress,
                 amount,
-                returnValue,
+                returnAmount,
                 outgoingTransactionFee,
                 exchangeFee,
                 returnTransactionFee,
