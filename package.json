@@ -1,21 +1,37 @@
 {
   "name": "react-native-zumo-kit",
-  "version": "2.1.0",
-  "description": "",
+  "version": "2.3.0-beta.9",
+  "description": "ZumoKit is a Wallet as a Service SDK",
+  "keywords": [
+    "zumo",
+    "zumokit",
+    "react native",
+    "blockchain",
+    "wallet",
+    "payments",
+    "cryptocurrency",
+    "ethereum",
+    "bitcoin",
+    "bsv",
+    "erc20 tokens"
+  ],
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "typedoc"
   },
-  "keywords": [
-    "react-native"
-  ],
-  "author": "",
-  "license": "",
+  "author": "Zumo (https://www.zumo.money)",
+  "homepage": "https://www.zumo.money/developers",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zumo/zumokit-react-native"
+  },
   "peerDependencies": {
     "react-native": "^0.62.14"
   },
   "dependencies": {
+    "zumokit": "2.3.0-beta.9",
     "decimal.js": "^10.2.0"
   },
   "devDependencies": {
@@ -31,7 +47,7 @@
     "eslint-plugin-react": "^7.20.1",
     "eslint-plugin-react-native": "^3.8.1",
     "prettier": "^2.0.5",
-    "typedoc": "^0.17.8",
+    "typedoc": "^0.19.2",
     "typescript": "^3.9.5"
   }
 }

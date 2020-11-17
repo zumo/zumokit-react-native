@@ -1,8 +1,8 @@
-import ZumoKitError from './ZumoKitError';
+import { ZumoKitError } from '../ZumoKitError';
 
 /** @internal */
 function handler(fun: any) {
-  return function bar() {
+  return function bar(this: any) {
     try {
       // eslint-disable-next-line prefer-rest-params
       const res = fun.apply(this, arguments);
@@ -23,7 +23,7 @@ function handler(fun: any) {
 }
 
 /** @internal */
-export default function tryCatchProxy(constructor: Function) {
+export function tryCatchProxy(constructor: Function) {
   const { prototype } = constructor;
 
   if (Object.getOwnPropertyNames(prototype).length < 2) {

@@ -3,7 +3,7 @@
  * Refer to <a href="https://developers.zumo.money/docs/guides/handling-errors">Handling Errors</a>
  * guide for details on handling errors.
  */
-export default class ZumoKitError extends Error {
+class ZumoKitError extends Error {
   /**
    * Error type, such as api_connection_error, api_error, wallet_error etc.
    */
@@ -23,10 +23,12 @@ export default class ZumoKitError extends Error {
   /** @internal */
   constructor(error: { code: string; message: string; userInfo?: { type: string } }) {
     const { code, message, userInfo } = error;
-    super(message);
 
+    super(message);
     this.type = userInfo && userInfo.type ? userInfo.type : 'zumo_kit_error';
     this.code = code;
     this.message = message;
   }
 }
+
+export { ZumoKitError };

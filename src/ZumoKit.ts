@@ -1,165 +1,194 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
-import User from './models/User';
-import Account from './models/Account';
-import Parser from './util/Parser';
-import tryCatchProxy from './ZKErrorProxy';
-import Transaction from './models/Transaction';
-import Exchange from './models/Exchange';
 import {
-  Dictionary,
+  ExchangeRate,
+  ExchangeRates,
+  ExchangeSetting,
+  ExchangeSettings,
+  TransactionFeeRate,
+  TransactionFeeRates,
+  HistoricalExchangeRates,
+} from 'zumokit/src/models';
+import {
   CurrencyCode,
-  ZumoKitConfig,
   TokenSet,
-  StateJSON,
-  TimeInterval,
   HistoricalExchangeRatesJSON,
-} from './types';
-import FeeRates from './models/FeeRates';
-import ExchangeRate from './models/ExchangeRate';
-import ExchangeSettings from './models/ExchangeSettings';
+  ExchangeRateJSON,
+  ExchangeSettingJSON,
+  TransactionFeeRateJSON,
+  Dictionary,
+} from 'zumokit/src/interfaces';
+import { Utils } from './Utils';
+import { User } from './User';
+import { tryCatchProxy } from './utility/errorProxy';
 
-const { RNZumoKit } = NativeModules;
-
-interface State {
-  authenticatedUser: User | null;
-  accounts: Array<Account>;
-  transactions: Array<Transaction>;
-  exchanges: Array<Exchange>;
-  feeRates: Dictionary<CurrencyCode, FeeRates>;
-  exchangeRates: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRate>>;
-  exchangeSettings: Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeSettings>>;
-}
-
-type HistoricalExchangeRates = Dictionary<
-  TimeInterval,
-  Dictionary<CurrencyCode, Dictionary<CurrencyCode, ExchangeRate>>
->;
+const {
+  /** @internal */
+  RNZumoKit,
+} = NativeModules;
 
 /**
- * Entry point to ZumoKit React Native SDK:
- * ```typescript
- * import ZumoKit from 'react-native-zumo-kit';
- * ```
- * Once ZumoKit is {@link init | initialized}, this class provides access to {@link getUser | user retrieval}, {@link state | ZumoKit state object} and {@link getHistoricalExchangeRates | historical exchange rates}.
- * State change listeners can be  {@link addStateListener added} and {@link removeStateListener removed}.
+ * ZumoKit instance.
  * <p>
  * See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
  * */
 @tryCatchProxy
 class ZumoKit {
-  /**
-   * Current ZumoKit state. Refer to
-   * <a href="https://developers.zumo.money/docs/guides/zumokit-state">ZumoKit State</a>
-   * guide for details.
-   */
-  public state: State;
-
-  // The emitter that bubbles events from the native side.
+  // The emitter that bubbles events from the native side
   private emitter = new NativeEventEmitter(RNZumoKit);
 
-  // Internal JS listeners for state changes.
-  private listeners: Array<(state: State) => void> = [];
+  // Listeners for exchange rates, exchange settings and transaction fee rates changes
+  private changeListeners: Array<() => void> = [];
 
   /** ZumoKit SDK semantic version tag if exists, commit hash otherwise. */
   version: string = RNZumoKit.version;
 
+  /** Currently signed-in user or null. */
+  currentUser: User | null = null;
+
+  /** Crypto utilities. */
+  utils: Utils = new Utils();
+
+  /** Mapping between currency pairs and available exchange rates. */
+  exchangeRates: ExchangeRates = {};
+
+  /** Mapping between currency pairs and available exchange settings. */
+  exchangeSettings: ExchangeSettings = {};
+
+  /** Mapping between cryptocurrencies and available transaction fee rates. */
+  transactionFeeRates: TransactionFeeRates = {};
+
   /**
    * Initializes ZumoKit SDK. Should only be called once.
    *
-   * @param config ZumoKit config
+   * @param apiKey        ZumoKit Api-Key
+   * @param apiUrl        ZumoKit API url
+   * @param txServiceUrl  ZumoKit Transaction Service url
    */
-  init(config: ZumoKitConfig) {
-    this.state = {
-      authenticatedUser: null,
-      accounts: [],
-      transactions: [],
-      exchanges: [],
-      feeRates: null,
-      exchangeRates: null,
-      exchangeSettings: null,
-    };
+  init(apiKey: string, apiUrl: string, txServiceUrl: string) {
+    RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
 
-    const { apiKey, apiRoot, txServiceUrl } = config;
-    RNZumoKit.init(apiKey, apiRoot, txServiceUrl);
-
-    this.emitter.addListener('StateChanged', (state: StateJSON) => {
-      this.state.accounts = Parser.parseAccounts(state.accounts);
-      this.state.transactions = Parser.parseTransactions(state.transactions);
-      this.state.exchanges = Parser.parseExchanges(state.exchanges);
-      this.state.exchangeRates = Parser.parseExchangeRates(state.exchangeRates);
-      this.state.feeRates = Parser.parseFeeRates(state.feeRates);
-      this.state.exchangeSettings = Parser.parseExchangeSettings(state.exchangeSettings);
-
-      this.notifyStateListeners();
+    this.emitter.addListener('AuxDataChanged', async () => {
+      await this.updateAuxData();
+      this.changeListeners.forEach((listener) => listener());
     });
   }
 
   /**
-   * Get user corresponding to user token set.
+   * Signs in user corresponding to user token set. Sets current user to the newly signed in user.
    * Refer to <a href="https://developers.zumo.money/docs/setup/server#get-zumokit-user-token">Server</a> guide for details on how to get user token set.
    *
    * @param tokenSet   user token set
    */
-  async getUser(tokenSet: TokenSet) {
-    const json = await RNZumoKit.getUser(JSON.stringify(tokenSet));
-    const user = new User(json);
+  async signIn(userTokenSet: TokenSet) {
+    const json = await RNZumoKit.signIn(JSON.stringify(userTokenSet));
+    this.currentUser = new User(json);
+    await this.updateAuxData();
+    return this.currentUser;
+  }
 
-    this.state.authenticatedUser = user;
+  /** Signs out current user. */
+  async signOut() {
+    await RNZumoKit.signOut();
+    this.currentUser = null;
+  }
 
-    this.notifyStateListeners();
+  /**
+   * Get exchange rate for selected currency pair.
+   *
+   * @param fromCurrency   currency code
+   * @param toCurrency     currency code
+   *
+   * @return exchange rate or null
+   */
+  getExchangeRate(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeRate | null {
+    return Object.keys(this.exchangeRates).includes(fromCurrency)
+      ? ((this.exchangeRates[fromCurrency] as Dictionary<CurrencyCode, ExchangeRate>)[
+          toCurrency
+        ] as ExchangeRate)
+      : null;
+  }
 
-    return user;
+  /**
+   * Get exchange setting for selected currency pair.
+   *
+   * @param fromCurrency   currency code
+   * @param toCurrency     currency code
+   *
+   * @return exchange setting or null
+   */
+  getExchangeSetting(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeSetting | null {
+    return Object.keys(this.exchangeSettings).includes(fromCurrency)
+      ? ((this.exchangeSettings[fromCurrency] as Dictionary<CurrencyCode, ExchangeSetting>)[
+          toCurrency
+        ] as ExchangeSetting)
+      : null;
+  }
+
+  /**
+   * Get transaction fee rate for selected crypto currency.
+   *
+   * @param currency   currency code
+   *
+   * @return transaction fee rate or null
+   */
+  getTransactionFeeRate(currency: CurrencyCode): TransactionFeeRate | null {
+    return Object.keys(this.transactionFeeRates).includes(currency)
+      ? (this.transactionFeeRates[currency] as TransactionFeeRate)
+      : null;
   }
 
   /**
    * Fetch historical exchange rates for supported time intervals.
-   * On success callback returns historical exchange rates are contained in a mapping between
-   * time interval on a top level, from currency on second level, to currency on third level and
-   * {@link ExchangeRate ExchangeRate} objects.
-   */
-  async getHistoricalExchangeRates(): Promise<HistoricalExchangeRates> {
-    const historicalExchangeRatesJSON = RNZumoKit.getHistoricalExchangeRates() as HistoricalExchangeRatesJSON;
-    const historicalExchangeRates: HistoricalExchangeRates = {};
-    Object.keys(historicalExchangeRatesJSON).forEach((timeInterval) => {
-      historicalExchangeRates[timeInterval as TimeInterval] = Parser.parseExchangeRates(
-        historicalExchangeRatesJSON[timeInterval]
-      );
-    });
-    return historicalExchangeRates;
-  }
-
-  /**
-   * Listen to all state changes. Refer to <a href="https://developers.zumo.money/docs/guides/zumokit-state#listen-to-state-changes">ZumoKit State</a> guide for details.
    *
-   * @param listener interface to listen to state changes
+   * @return historical exchange rates
    */
-  addStateListener(listener: (state: State) => void) {
-    if (this.listeners.includes(listener)) return;
-    this.listeners.push(listener);
-    listener(this.state);
+  async fetchHistoricalExchangeRates(): Promise<HistoricalExchangeRates> {
+    const historicalExchangeRatesJSON = (await RNZumoKit.fetchHistoricalExchangeRates()) as HistoricalExchangeRatesJSON;
+    return HistoricalExchangeRates(historicalExchangeRatesJSON);
   }
 
   /**
-   * Remove listener to state changes. Refer to <a href="https://developers.zumo.money/docs/guides/zumokit-state#remove-state-listener">ZumoKit State</a> guide for details.
+   * Listen to changes in current user’s sign in state, exchange rates, exchange settings or transaction fee rates.
    *
-   * @param listener interface to listen to state changes
+   * @param listener interface to listen to changes
    */
-  removeStateListener(listener: (state: State) => void) {
-    if (!this.listeners.includes(listener)) return;
-    const index = this.listeners.indexOf(listener);
-    this.listeners.splice(index, 1);
-  }
-
-  private notifyStateListeners() {
-    this.listeners.forEach((listener: (state: State) => void) => listener(this.state));
+  addChangeListener(listener: () => void) {
+    this.changeListeners.push(listener);
   }
 
   /**
-   * Clear ZumoKit SDK state. Should be called when user logs out.
+   * Remove change listener.
+   *
+   * @param listener interface to listen to changes
    */
-  public async clear() {
-    await RNZumoKit.clear();
+  removeChangeListener(listener: () => void) {
+    let index = this.changeListeners.indexOf(listener);
+    while (index !== -1) {
+      this.changeListeners.splice(index, 1);
+      index = this.changeListeners.indexOf(listener);
+    }
+  }
+
+  private async updateAuxData(): Promise<void> {
+    const exchangeRatesJSON = (await RNZumoKit.getExchangeRates()) as Record<
+      string,
+      Record<string, ExchangeRateJSON>
+    >;
+    const exchangeSettingsJSON = (await RNZumoKit.getExchangeSettings()) as Record<
+      string,
+      Record<string, ExchangeSettingJSON>
+    >;
+    const tranactionFeeRatesJSON = (await RNZumoKit.getTransactionFeeRates()) as Record<
+      string,
+      TransactionFeeRateJSON
+    >;
+
+    this.exchangeRates = ExchangeRates(exchangeRatesJSON);
+    this.exchangeSettings = ExchangeSettings(exchangeSettingsJSON);
+    this.transactionFeeRates = TransactionFeeRates(tranactionFeeRatesJSON);
   }
 }
+
+export { ZumoKit };
 
 export default new ZumoKit();

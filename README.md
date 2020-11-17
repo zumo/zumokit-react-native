@@ -11,33 +11,32 @@ Refer to ZumoKit SDK developer [documentation](https://developers.zumo.money/doc
 
 Install the package:
 
-```
+```sh
 yarn add zumo/zumokit-react-native
 ```
 
 Link the library (not required for React Native 0.60 and up):
 
-```
+```sh
 react-native link react-native-zumo-kit
 ```
 
-If your project does not yet support typescript, you will have to enable it:
-```
-yarn add --dev typescript @types/jest @types/react @types/react-native @types/react-test-renderer
-```
-
 ZumoKit React Native SDK uses experimental TypeScript decorators, support for which has to be enabled:
-```
+
+```sh
 yarn add @babel/plugin-proposal-decorators -D
 ```
 
-Then, modify `compilerOptions` in _tsconfig.json_:
-```
-"experimentalDecorators": true
-```
-and enable plugin `@babel/plugin-proposal-decorators` in _babel.config.json_:
-```
+Then, enable plugin `@babel/plugin-proposal-decorators` in _babel.config.json_:
+
+```sh
 plugins: [["@babel/plugin-proposal-decorators", { "legacy": true }]]
+```
+
+If your project uses typescript, modify `compilerOptions` in _tsconfig.json_:
+
+```sh
+"experimentalDecorators": true
 ```
 
 ### Extra step for iOS
@@ -66,20 +65,18 @@ Set `minSdkVersion` to 21 in your _android/build.gradle_ settings.
 
 ## Usage
 
-Import `ZumoKit` module from `react-native-zumo-kit` package:
+Entry point to ZumoKit SDK is `loadZumoKit` function. This function returns a Promise that resolves with a newly created ZumoKit object once ZumoKit SDK has loaded.
 
 ```typescript
-import ZumoKit from 'react-native-zumo-kit';
+import zumokit from 'react-native-zumo-kit';
+
+zumokit.init(API_KEY, API_URL, TX_SERVICE_URL);
 ```
 
-ZumoKit module is your entrypoint to ZumoKit SDK. Check your SDK version by calling:
+ Ask your [account manager](mailto:support@zumo.money) to provide you with neccesarry credentials.
+
+ZumoKit module exports TypeScript declarations for ZumoKit types and interfaces via named exports. For example:
 
 ```typescript
-console.log(ZumoKit.version);
-```
-
-Once `ZumoKit` class is initialized via `ZumoKit.init` method, `ZKUtility` class with crypto utility classes can be globally accessed:
-
-```typescript
-import { ZKUtility } from 'react-native-zumo-kit';
+import { Account, Transaction, Exchange } from 'zumokit';
 ```

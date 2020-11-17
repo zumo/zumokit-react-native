@@ -1,17 +1,23 @@
 import { NativeModules } from 'react-native';
 import Decimal from 'decimal.js';
-import Transaction from './Transaction';
-import ComposedTransaction from './ComposedTransaction';
-import Exchange from './Exchange';
-import ComposedExchange from './ComposedExchange';
-import tryCatchProxy from '../ZKErrorProxy';
-import ExchangeRate from './ExchangeRate';
-import ExchangeSettings from './ExchangeSettings';
+import {
+  Transaction,
+  ComposedTransaction,
+  Exchange,
+  ComposedExchange,
+  ExchangeRate,
+  ExchangeSetting,
+} from 'zumokit/src/models';
+import { tryCatchProxy } from './utility/errorProxy';
 
-const { RNZumoKit } = NativeModules;
+const {
+  /** @internal */
+  RNZumoKit,
+} = NativeModules;
 
 /**
- * User wallet provides methods for transfer and exchange of fiat and cryptocurrency funds.
+ * User wallet interface describes methods for transfer and exchange of fiat and cryptocurrency funds.
+ *
  * Sending a transaction or making an exchange is a two step process. First a transaction or
  * exchange has to be composed via one of the compose methods, then {@link  ComposedTransaction ComposedTransaction} or
  * {@link  ComposedExchange ComposedExchange} can be submitted.
@@ -21,36 +27,39 @@ const { RNZumoKit } = NativeModules;
  * See {@link User}.
  */
 @tryCatchProxy
-export default class Wallet {
+export class Wallet {
   /**
-   * Compose Ethereum transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#ethereum">Send Transactions</a> guide for usage details.
+   * Compose Ethereum transaction asynchronously.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#ethereum">Send Transactions</a>
+   * guide for usage details.
    *
    * @param fromAccountId        {@link  Account Account} identifier
    * @param gasPrice             gas price in gwei
    * @param gasLimit             gas limit
    * @param destinationAddress   destination wallet address
    * @param amount               amount in ETH
-   * @param data                 data in string format or null
-   * @param nonce                next transaction nonce or null
-   * @param sendMax              send maximum possible funds to destination
+   * @param data                 data in string format or null (defaults to null)
+   * @param nonce                next transaction nonce or null (defaults to null)
+   * @param sendMax              send maximum possible funds to destination (defaults to false)
    */
   async composeEthTransaction(
     fromAccountId: string,
     gasPrice: Decimal,
     gasLimit: number,
-    destinationAddress: string,
+    destinationAddress: string | null,
     amount: Decimal | null,
-    data: string | null,
-    nonce: number,
+    data: string | null = null,
+    nonce: number | null = null,
     sendMax = false
   ) {
     const json = await RNZumoKit.composeEthTransaction(
       fromAccountId,
       gasPrice.toString(),
-      gasLimit.toString(),
+      gasLimit,
       destinationAddress,
       amount ? amount.toString() : null,
       data,
+      // RN bridge does not support nullable numbers
       nonce ? nonce.toString() : null,
       sendMax
     );
@@ -59,16 +68,18 @@ export default class Wallet {
   }
 
   /**
-   * Compose Bitcoin transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#bitcoin">Send Transactions</a> guide for usage details.
+   * Compose BTC or BSV transaction asynchronously.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#bitcoin">Send Transactions</a>
+   * guide for usage details.
    *
    * @param fromAccountId       {@link  Account Account} identifier
    * @param changeAccountId     change {@link  Account Account} identifier, which can be the same as fromAccountId
    * @param destinationAddress  destination wallet address
-   * @param amount              amount in BTC
+   * @param amount              amount in BTC or BSV
    * @param feeRate             fee rate in satoshis/byte
-   * @param sendMax             send maximum possible funds to destination
+   * @param sendMax             send maximum possible funds to destination (defaults to false)
    */
-  async composeBtcTransaction(
+  async composeTransaction(
     fromAccountId: string,
     changeAccountId: string,
     destinationAddress: string,
@@ -76,7 +87,7 @@ export default class Wallet {
     feeRate: Decimal,
     sendMax = false
   ) {
-    const json = await RNZumoKit.composeBtcTransaction(
+    const json = await RNZumoKit.composeTransaction(
       fromAccountId,
       changeAccountId,
       destinationAddress,
@@ -89,12 +100,14 @@ export default class Wallet {
   }
 
   /**
-   * Compose fiat transaction between users in Zumo ecosystem asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#internal-fiat-transaction">Send Transactions</a> guide for usage details.
+   * Compose fiat transaction between users in Zumo ecosystem asynchronously.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#internal-fiat-transaction">Send Transactions</a>
+   * guide for usage details.
    *
    * @param fromAccountId {@link  Account Account} identifier
    * @param toAccountId   {@link  Account Account} identifier
    * @param amount          amount in source account currency
-   * @param sendMax        send maximum possible funds to destination
+   * @param sendMax        send maximum possible funds to destination (defaults to false)
    */
   async composeInternalFiatTransaction(
     fromAccountId: string,
@@ -113,11 +126,13 @@ export default class Wallet {
   }
 
   /**
-   * Compose transaction to nominated account asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#external-fiat-transaction">Send Transactions</a> guide for usage details.
+   * Compose transaction to nominated account asynchronously.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#external-fiat-transaction">Send Transactions</a>
+   * guide for usage details.
    *
    * @param fromAccountId {@link  Account Account} identifier
    * @param amount          amount in source account currency
-   * @param sendMax        send maximum possible funds to destination
+   * @param sendMax        send maximum possible funds to destination (defaults to false)
    */
   async composeTransactionToNominatedAccount(
     fromAccountId: string,
@@ -134,7 +149,9 @@ export default class Wallet {
   }
 
   /**
-   * Submit a transaction asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#submit-transaction">Send Transactions</a> guide for usage details.
+   * Submit a transaction asynchronously.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#submit-transaction">Send Transactions</a>
+   * guide for usage details.
    *
    * @param composedTransaction Composed transaction retrieved as a result
    *                             of one of the compose transaction methods
@@ -146,20 +163,22 @@ export default class Wallet {
   }
 
   /**
-   * Compose exchange asynchronously. Refer to <a href="https://developers.zumo.money/docs/guides/make-exchanges#compose-exchange">Make Exchanges</a> guide for usage details.
+   * Compose exchange asynchronously.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/make-exchanges#compose-exchange">Make Exchanges</a>
+   * guide for usage details.
    *
    * @param fromAccountId       {@link  Account Account} identifier
    * @param toAccountId         {@link  Account Account} identifier
    * @param exchangeRate        Zumo exchange rate obtained from ZumoKit state
-   * @param exchangeSettings    Zumo exchange settings obtained from ZumoKit state
+   * @param exchangeSetting     Zumo exchange setting obtained from ZumoKit state
    * @param amount              amount in deposit account currency
-   * @param sendMax             exchange maximum possible funds
+   * @param sendMax             exchange maximum possible funds (defaults to false)
    */
   async composeExchange(
     fromAccountId: string,
     toAccountId: string,
     exchangeRate: ExchangeRate,
-    exchangeSettings: ExchangeSettings,
+    exchangeSetting: ExchangeSetting,
     amount: Decimal | null,
     sendMax = false
   ) {
@@ -167,7 +186,7 @@ export default class Wallet {
       fromAccountId,
       toAccountId,
       exchangeRate.json,
-      exchangeSettings.json,
+      exchangeSetting.json,
       amount ? amount.toString() : null,
       sendMax
     );
@@ -176,7 +195,9 @@ export default class Wallet {
   }
 
   /**
-   * Submit an exchange asynchronously. <a href="https://developers.zumo.money/docs/guides/make-exchanges#submit-exchange">Make Exchanges</a> guide for usage details.
+   * Submit an exchange asynchronously.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/make-exchanges#submit-exchange">Make Exchanges</a>
+   * guide for usage details.
    *
    * @param composedExchange Composed exchange retrieved as the result
    *                          of {@link composeExchange} method

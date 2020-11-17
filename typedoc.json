@@ -1,12 +1,13 @@
 {
   "name": "ZumoKit",
   "includeVersion": true,
-  "inputFiles": [
-    "./src"
+  "exclude": [
+    "**/private/*"
   ],
+  "excludePrivate": true,
+  "stripInternal": true,
+  "readme": "README.md",
   "mode": "file",
   "out": "docs",
-  "theme": "minimal",
-  "excludeExternals": false,
-  "stripInternal": true
+  "theme": "minimal"
 }

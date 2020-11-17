@@ -7,14 +7,13 @@
       "es2017",
       "es6"
     ],
-    "outDir": "./built",
+    "outDir": "lib",
     "allowJs": false,
     "target": "es5",
+    "strict": true,
+    "strictPropertyInitialization": true,
     "noEmitOnError": true,
     "noImplicitAny": true,
-  },
-  "include": [
-    "./index.ts",
-    "./src/**/*"
-  ]
+    "declaration": true
+  }
 }
