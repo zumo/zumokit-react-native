@@ -944,6 +944,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("id", transaction.getId());
         map.putString("type", transaction.getType());
         map.putString("currencyCode", transaction.getCurrencyCode());
+        map.putString("direction", transaction.getDirection());
 
         if (transaction.getFromUserId() == null) {
             map.putNull("fromUserId");
