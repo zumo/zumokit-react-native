@@ -716,6 +716,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"id": [transaction id],
         @"type": [transaction type],
         @"currencyCode": [transaction currencyCode],
+        @"direction": [transaction direction],
         @"fromUserId": [transaction fromUserId] ? [transaction fromUserId] : [NSNull null],
         @"toUserId": [transaction toUserId] ? [transaction toUserId] : [NSNull null],
         @"fromAccountId": [transaction fromAccountId] ? [transaction fromAccountId] : [NSNull null],
