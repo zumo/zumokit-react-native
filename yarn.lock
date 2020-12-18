@@ -816,9 +816,9 @@ has@^1.0.3:
     function-bind "^1.1.1"
 
 highlight.js@^10.2.0:
-  version "10.3.2"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.3.2.tgz#135fd3619a00c3cbb8b4cd6dbc78d56bfcbc46f1"
-  integrity sha512-3jRT7OUYsVsKvukNKZCtnvRcFyCJqSEIuIMsEybAXRiFSwpt65qjPd/Pr+UOdYt7WJlt+lj3+ypUsHiySBp/Jw==
+  version "10.4.1"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.4.1.tgz#d48fbcf4a9971c4361b3f95f302747afe19dbad0"
+  integrity sha512-yR5lWvNz7c85OhVAEAeFhVCc/GV4C30Fjzc/rCP0aCWzc1UUOPUk55dK/qdwTZHBvMZo+eZ2jpk62ndX/xMFlg==
 
 hosted-git-info@^2.1.4:
   version "2.8.8"
@@ -1638,7 +1638,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-zumokit@2.3.0-beta.7:
-  version "2.3.0-beta.7"
-  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-2.3.0-beta.7.tgz#4881f0fcb5d7c9955ebe87703eed2217006a9700"
-  integrity sha512-vflX/HazwdOrvP9rG8RhyOfRdbI9gwCvPgpPujbpMyHkEvGFOsF6g3Z1IhRccFQyfkqx4nCPrENwrLb7OeKI4A==
+zumokit@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-2.2.0.tgz#cf7991d500420b366f8ace2d0e78ea751ffce536"
+  integrity sha512-xYEElUtM0a13zr+IydOgexJeH6qe1mOmT/ZktPmLOSV78CgeqqV6prt9v9+PqHCMDSa3tpauUkjCyGDmlcKL9Q==
