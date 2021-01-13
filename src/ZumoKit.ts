@@ -65,12 +65,12 @@ class ZumoKit {
    * @param txServiceUrl  ZumoKit Transaction Service url
    */
   init(apiKey: string, apiUrl: string, txServiceUrl: string) {
-    RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
-
     this.emitter.addListener('AuxDataChanged', async () => {
       await this.updateAuxData();
       this.changeListeners.forEach((listener) => listener());
     });
+
+    RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
   }
 
   /**
@@ -178,14 +178,14 @@ class ZumoKit {
       string,
       Record<string, ExchangeSettingJSON>
     >;
-    const tranactionFeeRatesJSON = (await RNZumoKit.getTransactionFeeRates()) as Record<
+    const transactionFeeRatesJSON = (await RNZumoKit.getTransactionFeeRates()) as Record<
       string,
       TransactionFeeRateJSON
     >;
 
     this.exchangeRates = ExchangeRates(exchangeRatesJSON);
     this.exchangeSettings = ExchangeSettings(exchangeSettingsJSON);
-    this.transactionFeeRates = TransactionFeeRates(tranactionFeeRatesJSON);
+    this.transactionFeeRates = TransactionFeeRates(transactionFeeRatesJSON);
   }
 }
 
