@@ -279,7 +279,7 @@ RCT_EXPORT_METHOD(createFiatAccount:(NSString *)network currencyCode:(NSString *
 }
 
 
-RCT_EXPORT_METHOD(getNominatedAccountFiatPoperties:(NSString *)accountId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(getNominatedAccountFiatProperties:(NSString *)accountId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
         [_user getNominatedAccountFiatProperties:accountId completion:^(ZKAccountFiatProperties * _Nullable accountFiatProperties, NSError * _Nullable error) {

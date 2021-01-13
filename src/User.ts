@@ -35,19 +35,19 @@ interface UserJSON {
  */
 @tryCatchProxy
 export class User {
-  // Listening to account data changes
-  private listeningToChanges = false;
-
   // The emitter that bubbles events from the native side
   private emitter = new NativeEventEmitter(RNZumoKit);
 
-  // Current user account data snanpshots
+  // Current user account data snapshots are initialised when first AccountDataChanged event is received
+  private accountDataSnapshotsInitialised = false;
+
+  // Current user account data snapshots
   private accountDataSnapshots: Array<AccountDataSnapshot> = [];
 
   // Listeners for account data changes
   private accountDataListeners: Array<(snapshots: Array<AccountDataSnapshot>) => void> = [];
 
-  /** User dentifier. */
+  /** User identifier. */
   id: string;
 
   /** Indicator if user has wallet. */
@@ -63,13 +63,14 @@ export class User {
     this.accounts = json.accounts.map((accountJson: AccountJSON) => new Account(accountJson));
 
     this.emitter.addListener('AccountDataChanged', (snapshots: Array<AccountDataSnapshotJSON>) => {
-      this.listeningToChanges = true;
       this.accountDataSnapshots = snapshots.map(
         (snapshot: AccountDataSnapshotJSON) => new AccountDataSnapshot(snapshot)
       );
       this.accounts = this.accountDataSnapshots.map((snapshot) => snapshot.account);
       this.accountDataListeners.forEach((listener) => listener(this.accountDataSnapshots));
+      this.accountDataSnapshotsInitialised = true;
     });
+    RNZumoKit.addAccountDataListener();
   }
 
   /**
@@ -173,7 +174,7 @@ export class User {
    */
   async getNominatedAccountFiatProperties(accountId: string) {
     try {
-      const json = await RNZumoKit.getNominatedAccountFiatPoperties(accountId);
+      const json = await RNZumoKit.getNominatedAccountFiatProperties(accountId);
       return new AccountFiatProperties(json);
     } catch (error) {
       return null;
@@ -187,10 +188,8 @@ export class User {
    */
   addAccountDataListener(listener: (snapshots: Array<AccountDataSnapshot>) => void) {
     this.accountDataListeners.push(listener);
-    if (this.listeningToChanges) {
+    if (this.accountDataSnapshotsInitialised) {
       listener(this.accountDataSnapshots);
-    } else {
-      RNZumoKit.addAccountDataListener();
     }
   }
 
