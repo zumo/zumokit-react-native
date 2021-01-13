@@ -8,7 +8,7 @@ const {
 } = NativeModules;
 
 /**
- * Crypto utility inteface decribes methods for mnemonic phrase generation and
+ * Crypto utility interface describes methods for mnemonic phrase generation and
  * Bitcoin/Ethereum address validation.
  */
 @tryCatchProxy

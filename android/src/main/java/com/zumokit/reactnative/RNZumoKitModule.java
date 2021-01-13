@@ -99,6 +99,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void init(String apiKey, String apiUrl, String txServiceUrl) {
         this.zumokit = new ZumoKit(apiKey, apiUrl, txServiceUrl);
+
+        RNZumoKitModule module = this;
+        this.zumokit.addChangeListener(new ChangeListener() {
+            @Override
+            public void onChange() {
+                module.reactContext
+                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("AuxDataChanged", null);
+            }
+        });
     }
 
     // - Authentication
@@ -147,24 +157,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     // - Listeners
     @ReactMethod
-    public void addChangeListener(Promise promise) {
-        if (this.zumokit == null) {
-            rejectPromise(promise, "ZumoKit not initialized.");
-            return;
-        }
-
-        RNZumoKitModule module = this;
-        zumokit.addChangeListener(new ChangeListener() {
-            @Override
-            public void onChange() {
-                module.reactContext
-                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                        .emit("AuxDataChanged", null);
-            }
-        });
-    }
-
-    @ReactMethod
     public void addAccountDataListener(Promise promise) {
         if (this.user == null) {
             rejectPromise(promise, "User not found.");
@@ -172,7 +164,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         RNZumoKitModule module = this;
-        user.addAccountDataListener(new AccountDataListener() {
+        this.user.addAccountDataListener(new AccountDataListener() {
             @Override
             public void onDataChange(ArrayList<AccountDataSnapshot> snapshots) {
                 WritableArray array = RNZumoKitModule.mapAccountData(snapshots);
@@ -306,7 +298,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getNominatedAccountFiatPoperties(String accountId, Promise promise) {
+    public void getNominatedAccountFiatProperties(String accountId, Promise promise) {
         if (this.user == null) {
             rejectPromise(promise, "User not found.");
             return;
