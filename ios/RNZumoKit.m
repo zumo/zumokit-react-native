@@ -33,7 +33,7 @@ static id _instance;
     return [NSDictionary dictionaryWithObject:@"." forKey:NSLocaleDecimalSeparator];
 }
 
-// ZumoKit iOS SDK runs its WebSockets on the main queue. Runining other methods 
+// ZumoKit iOS SDK runs its WebSockets on the main queue. Running other methods 
 // in a separate queue introduces mememory access race conditions and crashes.
 - (dispatch_queue_t)methodQueue
 {
