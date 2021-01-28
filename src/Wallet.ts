@@ -17,14 +17,12 @@ const {
 
 /**
  * User wallet interface describes methods for transfer and exchange of fiat and cryptocurrency funds.
- *
- * Sending a transaction or making an exchange is a two step process. First a transaction or
- * exchange has to be composed via one of the compose methods, then {@link  ComposedTransaction ComposedTransaction} or
- * {@link  ComposedExchange ComposedExchange} can be submitted.
  * <p>
  * User wallet instance can be obtained by {@link User.createWallet creating}, {@link User.unlockWallet unlocking} or {@link User.recoverWallet recovering} user wallet.
  * <p>
- * See {@link User}.
+ * Sending a transaction or making an exchange is a two step process. First a transaction or
+ * exchange has to be composed via one of the compose methods, then {@link  ComposedTransaction ComposedTransaction} or
+ * {@link  ComposedExchange ComposedExchange} can be submitted.
  */
 @tryCatchProxy
 export class Wallet {

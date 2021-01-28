@@ -1,12 +1,15 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
-import { Account, AccountFiatProperties, AccountDataSnapshot } from 'zumokit/src/models';
+import { Account, AccountFiatProperties, AccountDataSnapshot, Card } from 'zumokit/src/models';
 import {
   AccountJSON,
   CurrencyCode,
   Network,
   AccountType,
   AccountDataSnapshotJSON,
-  FiatCustomerData,
+  Address,
+  CardType,
+  CardStatus,
+  CardDetails,
 } from 'zumokit/src/interfaces';
 import { Wallet } from './Wallet';
 import { tryCatchProxy } from './utility/errorProxy';
@@ -24,13 +27,13 @@ interface UserJSON {
 }
 
 /**
- * User instance provides methods for managing user wallet and accounts.
+ * User instance, obtained via {@link ZumoKit.signIn} method, provides methods for managing user wallet and accounts.
  * <p>
- * User instance can be obtained via {@link ZumoKit.signIn} method.
- * <p>
- * See <a href="https://developers.zumo.money/docs/guides/manage-user-wallet">Manage User Wallet</a>,
- * <a href="https://developers.zumo.money/docs/guides/create-fiat-account">Create Fiat Account</a> and
- * <a href="https://developers.zumo.money/docs/guides/view-user-data">View User Data</a>
+ * Refer to
+ * <a href="https://developers.zumo.money/docs/guides/manage-user-wallet">Manage User Wallet</a>,
+ * <a href="https://developers.zumo.money/docs/guides/create-fiat-account">Create Fiat Account</a>,
+ * <a href="https://developers.zumo.money/docs/guides/view-user-accounts">View User Accounts</a> and
+ * <a href="https://developers.zumo.money/docs/guides/get-account-data">Get Account Data</a>
  * guides for usage details.
  */
 @tryCatchProxy
@@ -149,10 +152,34 @@ export class User {
   /**
    * Make user fiat customer on specified network by providing user's personal details.
    * @param  network        'MAINNET' or 'TESTNET'
-   * @param  customerData    user's personal details.
+   * @param  firstName       first name
+   * @param  middleName      middle name or null
+   * @param  lastName        last name
+   * @param  dateOfBirth     date of birth in ISO 8601 format, e.g '2020-08-12'
+   * @param  email           email
+   * @param  phone           phone number
+   * @param  address         home address
    */
-  async makeFiatCustomer(network: Network, customerData: FiatCustomerData): Promise<void> {
-    return RNZumoKit.makeFiatCustomer(network, customerData);
+  async makeFiatCustomer(
+    network: Network,
+    firstName: string,
+    middleName: string | null,
+    lastName: string,
+    dateOfBirth: string,
+    email: string,
+    phone: string,
+    address: Address
+  ): Promise<void> {
+    return RNZumoKit.makeFiatCustomer(
+      network,
+      firstName,
+      middleName,
+      lastName,
+      dateOfBirth,
+      email,
+      phone,
+      address
+    );
   }
 
   /**
@@ -179,6 +206,85 @@ export class User {
     } catch (error) {
       return null;
     }
+  }
+
+  /**
+   * Create card for a fiat account.
+   * @param  fiatAccountId  fiat {@link Account account} identifier
+   * @param  cardType       'VIRTUAL' or 'PHYSICAL'
+   * @param  firstName      card holder first name
+   * @param  lastName       card holder last name
+   * @param  title          card holder title or null
+   * @param  dateOfBirth    card holder date of birth in ISO 8601 format, e.g '2020-08-12', or null
+   * @param  mobileNumber   card holder mobile number, starting with a '+', followed by the country code and then the mobile number, or null
+   * @param  address        card holder address
+   */
+  async createCard(
+    fiatAccountId: string,
+    cardType: CardType,
+    firstName: string,
+    lastName: string,
+    title: string | null,
+    dateOfBirth: string,
+    mobileNumber: string,
+    address: Address
+  ) {
+    const json = await RNZumoKit.createCard(
+      fiatAccountId,
+      cardType,
+      firstName,
+      lastName,
+      title,
+      dateOfBirth,
+      mobileNumber,
+      address
+    );
+    return new Card(json);
+  }
+
+  /**
+   * Set card status to 'ACTIVE', 'BLOCKED' or 'CANCELLED'.
+   * - To block card, set card status to 'BLOCKED'.
+   * - To activate a physical card, set card status to 'ACTIVE' and provide PAN and CVC2 fields.
+   * - To cancel a card, set card status to 'CANCELLED'.
+   * - To unblock a card, set card status to 'ACTIVE.'.
+   * @param  cardId        {@link Card card} identifier
+   * @param  cardStatus    new card status
+   * @param  pan           PAN when activating a physical card, null otherwise (defaults to null)
+   * @param  cvv2          CVV2 when activating a physical card, null otherwise (defaults to null)
+   */
+  async setCardStatus(
+    cardId: string,
+    cardStatus: CardStatus,
+    pan: string | null = null,
+    cvv2: string | null = null
+  ): Promise<void> {
+    return RNZumoKit.setCardStatus(cardId, cardStatus, pan, cvv2);
+  }
+
+  /**
+   * Reveals sensitive card details.
+   * @param  cardId  {@link Card card} identifier
+   */
+  async revealCardDetails(cardId: string) {
+    const json = await RNZumoKit.revealCardDetails(cardId);
+    return json as CardDetails;
+  }
+
+  /**
+   * Reveal card PIN.
+   * @param  cardId  {@link Card card} identifier
+   */
+  async revealPin(cardId: string): Promise<number> {
+    return RNZumoKit.revealPin(cardId);
+  }
+
+  /**
+   * Unblock card PIN.
+   * @param  cardId  {@link Card card} identifier
+   */
+  async unblockPin(cardId: string): Promise<void> {
+    return RNZumoKit.unblockPin(cardId);
   }
 
   /**

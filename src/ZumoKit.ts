@@ -27,9 +27,7 @@ const {
 } = NativeModules;
 
 /**
- * ZumoKit instance.
- * <p>
- * See <a href="https://developers.zumo.money/docs/guides/getting-started">Getting Started</a> guide for usage details.
+ * ZumoKit entry point. Refer to <a href="https://developers.zumo.money/docs/guides/initialize-zumokit">documentation</a> for usage details.
  * */
 @tryCatchProxy
 class ZumoKit {
@@ -60,17 +58,18 @@ class ZumoKit {
   /**
    * Initializes ZumoKit SDK. Should only be called once.
    *
-   * @param apiKey        ZumoKit Api-Key
-   * @param apiUrl        ZumoKit API url
-   * @param txServiceUrl  ZumoKit Transaction Service url
+   * @param apiKey          ZumoKit API key
+   * @param apiUrl          ZumoKit API URL
+   * @param txServiceUrl    ZumoKit Transaction Service URL
+   * @param cardServiceUrl  ZumoKit Card Service URL
    */
-  init(apiKey: string, apiUrl: string, txServiceUrl: string) {
+  init(apiKey: string, apiUrl: string, txServiceUrl: string, cardServiceUrl: string) {
     this.emitter.addListener('AuxDataChanged', async () => {
       await this.updateAuxData();
       this.changeListeners.forEach((listener) => listener());
     });
 
-    RNZumoKit.init(apiKey, apiUrl, txServiceUrl);
+    RNZumoKit.init(apiKey, apiUrl, txServiceUrl, cardServiceUrl);
   }
 
   /**
