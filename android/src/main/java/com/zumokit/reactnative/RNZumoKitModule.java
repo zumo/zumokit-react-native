@@ -5,6 +5,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -14,6 +15,11 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import money.zumo.zumokit.AccountDataSnapshot;
 import money.zumo.zumokit.AccountFiatPropertiesCallback;
+import money.zumo.zumokit.Address;
+import money.zumo.zumokit.Card;
+import money.zumo.zumokit.CardCallback;
+import money.zumo.zumokit.CardDetails;
+import money.zumo.zumokit.CardDetailsCallback;
 import money.zumo.zumokit.ChangeListener;
 import money.zumo.zumokit.ComposeExchangeCallback;
 import money.zumo.zumokit.ComposedExchange;
@@ -22,6 +28,7 @@ import money.zumo.zumokit.ExchangeSetting;
 import money.zumo.zumokit.AccountCryptoProperties;
 import money.zumo.zumokit.AccountFiatProperties;
 import money.zumo.zumokit.HistoricalExchangeRatesCallback;
+import money.zumo.zumokit.PinCallback;
 import money.zumo.zumokit.SubmitExchangeCallback;
 import money.zumo.zumokit.SuccessCallback;
 import money.zumo.zumokit.ZumoKit;
@@ -97,8 +104,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String apiKey, String apiUrl, String txServiceUrl) {
-        this.zumokit = new ZumoKit(apiKey, apiUrl, txServiceUrl);
+    public void init(String apiKey, String apiUrl, String transactionServiceUrl, String cardServiceUrl) {
+        this.zumokit = new ZumoKit(apiKey, apiUrl, transactionServiceUrl, cardServiceUrl);
 
         RNZumoKitModule module = this;
         this.zumokit.addChangeListener(new ChangeListener() {
@@ -233,23 +240,21 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void makeFiatCustomer(String network, ReadableMap map, Promise promise) {
+    public void makeFiatCustomer(
+            String network,
+            String firstName,
+            String middleName,
+            String lastName,
+            String dateOfBirth,
+            String email,
+            String phone,
+            ReadableMap addressData,
+            Promise promise
+    ) {
         if (this.user == null) {
             rejectPromise(promise, "User not found.");
             return;
         }
-
-        String firstName = map.getString("firstName");
-        String middleName = map.getString("middleName");
-        String lastName = map.getString("lastName");
-        String dateOfBirth = map.getString("dateOfBirth");
-        String email = map.getString("email");
-        String phone = map.getString("phone");
-        String addressLine1 = map.getString("addressLine1");
-        String addressLine2 = map.getString("addressLine2");
-        String country = map.getString("country");
-        String postCode = map.getString("postCode");
-        String postTown = map.getString("postTown");
 
         this.user.makeFiatCustomer(
                 network,
@@ -259,11 +264,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 dateOfBirth,
                 email,
                 phone,
-                addressLine1,
-                addressLine2,
-                country,
-                postCode,
-                postTown,
+                RNZumoKitModule.unboxAddress(addressData),
                 new SuccessCallback() {
                     @Override
                     public void onError(Exception e) {
@@ -315,6 +316,123 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 promise.resolve(accountFiatProperties == null ?
                         null : mapAccountFiatProperties(accountFiatProperties));
             }
+        });
+    }
+
+    @ReactMethod
+    public void createCard(
+            String fiatAccountId,
+            String cardType,
+            String firstName,
+            String lastName,
+            String title,
+            String dateOfBirth,
+            String mobileNumber,
+            ReadableMap addressData,
+            Promise promise
+    ) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.createCard(
+                fiatAccountId,
+                cardType,
+                firstName,
+                lastName,
+                title,
+                dateOfBirth,
+                mobileNumber,
+                RNZumoKitModule.unboxAddress(addressData),
+                new CardCallback() {
+                    @Override
+                    public void onError(Exception e) {
+                        rejectPromise(promise, e);
+                    }
+
+                    @Override
+                    public void onSuccess(Card card) {
+                        promise.resolve(RNZumoKitModule.mapCard(card));
+                    }
+                });
+    }
+
+    @ReactMethod
+    public void setCardStatus(
+            String cardId,
+            String cardStatus,
+            String pan,
+            String cvv2,
+            Promise promise
+    ) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.setCardStatus(cardId, cardStatus, pan, cvv2, new SuccessCallback() {
+                    @Override
+                    public void onError(Exception e) { rejectPromise(promise, e); }
+
+                    @Override
+                    public void onSuccess() { promise.resolve(true); }
+                });
+    }
+
+    @ReactMethod
+    public void revealCardDetails(String cardId, Promise promise) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.revealCardDetails(cardId, new CardDetailsCallback() {
+            @Override
+            public void onError(Exception e) { rejectPromise(promise, e); }
+
+            @Override
+            public void onSuccess(CardDetails cardDetails) {
+                WritableMap map = Arguments.createMap();
+
+                map.putString("id", cardDetails.getPan());
+                map.putString("cvv2", cardDetails.getCvv2());
+                map.putString("expiry", cardDetails.getExpiry());
+
+                promise.resolve(map);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void revealPin(String cardId, Promise promise) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.revealPin(cardId, new PinCallback() {
+            @Override
+            public void onError(Exception e) { rejectPromise(promise, e); }
+
+            @Override
+            public void onSuccess(int pin) { promise.resolve(pin); }
+        });
+    }
+
+    @ReactMethod
+    public void unblockPin(String cardId, Promise promise) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.unblockPin(cardId, new SuccessCallback() {
+            @Override
+            public void onError(Exception e) { rejectPromise(promise, e); }
+
+            @Override
+            public void onSuccess() { promise.resolve(true); }
         });
     }
 
@@ -834,6 +952,23 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         return fiatProperties;
     }
 
+    public static WritableMap mapCard(Card card) {
+        WritableMap map = Arguments.createMap();
+
+        map.putString("id", card.getId());
+        map.putString("accountId", card.getAccountId());
+        map.putString("cardType", card.getCardType());
+        map.putString("cardStatus", card.getCardStatus());
+        map.putInt("limit", card.getLimit());
+        if (card.getMaskedPan() == null) {
+            map.putNull("maskedPan");
+        } else {
+            map.putString("maskedPan", card.getMaskedPan());
+        }
+
+        return map;
+    }
+
     public static WritableMap mapAccount(Account account) {
         WritableMap cryptoProperties = Arguments.createMap();
         if (account.getCryptoProperties() != null) {
@@ -868,6 +1003,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         } else {
             map.putMap("fiatProperties", mapAccountFiatProperties(account.getFiatProperties()));
         }
+
+        WritableArray cards = Arguments.createArray();
+        for (Card card : account.getCards()) {
+            cards.pushMap(RNZumoKitModule.mapCard(card));
+        }
+        map.putArray("cards", cards);
 
         return map;
     }
@@ -1401,6 +1542,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         BigDecimal balance = new BigDecimal(map.getString("balance"));
         Boolean hasNominatedAccount = map.getBoolean("hasNominatedAccount");
 
+        ReadableArray cardsArray =  map.getArray("cards");
+        ArrayList<Card> cards = new ArrayList<Card>();
+        for (int i = 0; i < cards.size(); i++) {
+            cards.add(RNZumoKitModule.unboxCard(cardsArray.getMap(i)));
+        }
+
         return new Account(
                 accountId,
                 currencyType,
@@ -1410,7 +1557,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 balance,
                 hasNominatedAccount,
                 cryptoProperties,
-                fiatProperties
+                fiatProperties,
+                cards
         );
     }
 
@@ -1457,6 +1605,40 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 outgoingTransactionFeeRate,
                 returnTransactionFee,
                 timestamp
+        );
+    }
+
+    public static Address unboxAddress(ReadableMap map) {
+        String addressLine1 = map.getString("addressLine1");
+        String addressLine2 = map.getString("addressLine2");
+        String country = map.getString("country");
+        String postCode = map.getString("postCode");
+        String postTown = map.getString("postTown");
+
+        return new Address(
+                addressLine1,
+                addressLine2,
+                country,
+                postCode,
+                postTown
+        );
+    }
+
+    public static Card unboxCard(ReadableMap map) {
+        String cardId = map.getString("cardId");
+        String accountId = map.getString("accountId");
+        String cardType = map.getString("cardType");
+        String cardStatus = map.getString("cardStatus");
+        int limit = map.getInt("limit");
+        String maskedPan = map.getString("maskedPan");
+
+        return new Card(
+                cardId,
+                accountId,
+                cardType,
+                cardStatus,
+                limit,
+                maskedPan
         );
     }
 
