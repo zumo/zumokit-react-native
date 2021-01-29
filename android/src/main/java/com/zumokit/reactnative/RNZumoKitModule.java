@@ -1230,6 +1230,31 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             map.putMap("fiatProperties", fiatProperties);
         }
 
+        if (transaction.getCardProperties() == null) {
+            map.putNull("cardProperties");
+        } else {
+            WritableMap cardProperties = Arguments.createMap();
+
+            cardProperties.putString("cardId", transaction.getCardProperties().getCardId());
+            cardProperties.putString("transactionAmount",
+                    transaction.getCardProperties().getTransactionAmount().toPlainString());
+            cardProperties.putString("transactionCurrency",
+                    transaction.getCardProperties().getTransactionCurrency());
+            cardProperties.putString("billingAmount",
+                    transaction.getCardProperties().getBillingAmount().toPlainString());
+            cardProperties.putString("billingCurrency",
+                    transaction.getCardProperties().getBillingCurrency());
+            cardProperties.putString("exchangeRateValue",
+                    transaction.getCardProperties().getExchangeRateValue().toPlainString());
+            cardProperties.putString("mcc", transaction.getCardProperties().getMcc());
+            cardProperties.putString("merchantName",
+                    transaction.getCardProperties().getMerchantName());
+            cardProperties.putString("merchantCountry",
+                    transaction.getCardProperties().getMerchantCountry());
+
+            map.putMap("cardProperties", cardProperties);
+        }
+
         if (transaction.getExchange() == null) {
             map.putNull("exchange");
         } else {

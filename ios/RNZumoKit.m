@@ -325,7 +325,11 @@ RCT_EXPORT_METHOD(revealCardDetails:(NSString *)cardId resolver:(RCTPromiseResol
                 return;
             }
 
-            resolve([self mapCardDetails:cardDetails]);
+            resolve(@{
+                @"pan": [cardDetails pan],
+                @"cvv2": [cardDetails cvv2],
+                @"expiry": [cardDetails expiry]
+            });
         }];
     } @catch (NSException *exception) {
         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
@@ -734,15 +738,6 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     };
 }
 
-- (NSDictionary *)mapCardDetails:(ZKCardDetails *)cardDetails
-{
-    return @{
-        @"pan": [cardDetails pan],
-        @"cvv2": [cardDetails cvv2],
-        @"expiry": [cardDetails expiry]
-    };
-}
-
 - (NSDictionary *)mapComposedTransaction:(ZKComposedTransaction *)composedTransaction
 {
     NSMutableDictionary *dict = [@{
@@ -809,6 +804,19 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         fiatProperties[@"fromFiatAccount"] = transaction.fiatProperties.fromFiatAccount ? [self mapAccountFiatProperties:transaction.fiatProperties.fromFiatAccount] : [NSNull null];
         fiatProperties[@"toFiatAccount"] = transaction.fiatProperties.toFiatAccount ? [self mapAccountFiatProperties:transaction.fiatProperties.toFiatAccount] : [NSNull null];
     }
+    
+    NSMutableDictionary *cardProperties = [[NSMutableDictionary alloc] init];
+    if ([transaction cardProperties]) {
+        cryptoProperties[@"cardId"] = transaction.cardProperties.cardId;
+        cryptoProperties[@"transactionAmount"] = [transaction.cardProperties.transactionAmount descriptionWithLocale:[self decimalLocale]];
+        cryptoProperties[@"transactionCurrency"] = transaction.cardProperties.transactionCurrency;
+        cryptoProperties[@"billingAmount"] = [transaction.cardProperties.billingAmount descriptionWithLocale:[self decimalLocale]];
+        cryptoProperties[@"billingCurrency"] = transaction.cardProperties.billingCurrency;
+        cryptoProperties[@"exchangeRateValue"] = [transaction.cardProperties.exchangeRateValue descriptionWithLocale:[self decimalLocale]];
+        cryptoProperties[@"mcc"] = transaction.cardProperties.mcc;
+        cryptoProperties[@"merchantName"] = transaction.cardProperties.merchantName;
+        cryptoProperties[@"merchantCountry"] = transaction.cardProperties.merchantCountry;
+    }
 
     NSMutableDictionary *dict = [@{
         @"id": [transaction id],
@@ -826,6 +834,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"nonce": [transaction nonce] ? [transaction nonce] : [NSNull null],
         @"cryptoProperties": [transaction cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
+        @"cardProperties": [transaction cardProperties] ? cardProperties : [NSNull null],
         @"exchange": [transaction exchange] ? [self mapExchange:[transaction exchange]] : [NSNull null],
         @"submittedAt": [transaction submittedAt] ? [transaction submittedAt] : [NSNull null],
         @"confirmedAt": [transaction confirmedAt] ? [transaction confirmedAt] : [NSNull null],
