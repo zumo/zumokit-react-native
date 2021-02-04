@@ -112,9 +112,9 @@ static id _instance;
 
 # pragma mark - Initialization + Authentication
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl txServiceUrl:(NSString *)txServiceUrl)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl transactionServiceUrl:(NSString *)transactionServiceUrl cardServiceUrl:(NSString *)cardServiceUrl)
 {
-    _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl txServiceUrl:txServiceUrl];
+    _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl transactionServiceUrl:transactionServiceUrl cardServiceUrl:cardServiceUrl];
     [_zumoKit addChangeListener:self];
 }
 
@@ -231,22 +231,10 @@ RCT_EXPORT_METHOD(isFiatCustomer:(NSString *)network resolver:(RCTPromiseResolve
     }
 }
 
-RCT_EXPORT_METHOD(makeFiatCustomer:(NSString *)network data:(NSDictionary *)data resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(makeFiatCustomer:(NSString *)network firstName:(NSString *)firstName middleName:(NSString *)middleName lastName:(NSString *)lastName dateOfBirth:(NSString *)dateOfBirth email:(NSString *)email phone:(NSString *)phone addressData:(NSDictionary *)addressData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        NSString *firstName = data[@"firstName"];
-        NSString *middleName = (data[@"middleName"] == [NSNull null]) ? NULL : data[@"middleName"];
-        NSString *lastName = data[@"lastName"];
-        NSString *dateOfBirth = data[@"dateOfBirth"];
-        NSString *email = data[@"email"];
-        NSString *phone = data[@"phone"];
-        NSString *addressLine1 = data[@"addressLine1"];
-        NSString *addressLine2 = (data[@"addressLine2"] == [NSNull null]) ? NULL : data[@"addressLine2"];
-        NSString *country = data[@"country"];
-        NSString *postCode = data[@"postCode"];
-        NSString *postTown = data[@"postTown"];
-
-        [_user makeFiatCustomer:network firstName:firstName middleName:middleName lastName:lastName dateOfBirth:dateOfBirth email:email phone:phone addressLine1:addressLine1 addressLine2:addressLine2 country:country postCode:postCode postTown:postTown completion:^(NSError * _Nullable error) {
+        [_user makeFiatCustomer:network firstName:firstName middleName:middleName lastName:lastName dateOfBirth:dateOfBirth email:email phone:phone address:[self unboxAddress:addressData] completion:^(NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -289,6 +277,91 @@ RCT_EXPORT_METHOD(getNominatedAccountFiatProperties:(NSString *)accountId resolv
             }
 
             resolve(accountFiatProperties ? [self mapAccountFiatProperties:accountFiatProperties] : nil);
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(createCard:(NSString *)fiatAccountId cardType:(NSString *)cardType firstName:(NSString *)firstName lastName:(NSString *)lastName title:(NSString *)title dateOfBirth:(NSString *)dateOfBirth mobileNumber:(NSString *)mobileNumber addressData:(NSDictionary *)addressData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user createCard:fiatAccountId cardType:cardType firstName:firstName lastName:lastName title:title dateOfBirth:dateOfBirth mobileNumber:mobileNumber address:[self unboxAddress:addressData] completion:^(ZKCard * _Nullable card, NSError * _Nullable error) {
+            
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapCard:card]);
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(setCardStatus:(NSString *)cardId cardStatus:(NSString *)cardStatus pan:(NSString *)pan cvv2:(NSString *)cvv2 resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user setCardStatus:cardId cardStatus:cardStatus pan:pan cvv2:cvv2 completion:^(NSError * _Nullable error) {
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve(@(YES));
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(revealCardDetails:(NSString *)cardId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user revealCardDetails:cardId completion:^(ZKCardDetails * _Nullable cardDetails, NSError * _Nullable error) {
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve(@{
+                @"pan": [cardDetails pan],
+                @"cvv2": [cardDetails cvv2],
+                @"expiry": [cardDetails expiry]
+            });
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(revealPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user revealPin:cardId completion:^(int32_t pin, NSError * _Nullable error) {
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve(@(pin));
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(unblockPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user unblockPin:cardId completion:^(NSError * _Nullable error) {
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve(@(YES));
         }];
     } @catch (NSException *exception) {
         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
@@ -397,7 +470,7 @@ RCT_EXPORT_METHOD(composeExchange:(NSString *)fromAccountId toAccountId:(NSStrin
 {
     @try {
         ZKExchangeRate *rate = [self unboxExchangeRate:exchangeRate];
-        ZKExchangeSetting *fees = [self unboxexchangeSetting:exchangeSetting];
+        ZKExchangeSetting *fees = [self unboxExchangeSetting:exchangeSetting];
 
         [_wallet composeExchange:fromAccountId toAccountId:toAccountId exchangeRate:rate exchangeSetting:fees amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
 
@@ -421,7 +494,7 @@ RCT_EXPORT_METHOD(submitExchange:(NSDictionary *)composedExchangeData resolver:(
         ZKAccount *fromAccount = [self unboxAccount:composedExchangeData[@"fromAccount"]];
         ZKAccount *toAccount = [self unboxAccount:composedExchangeData[@"toAccount"]];
         ZKExchangeRate *exchangeRate = [self unboxExchangeRate:composedExchangeData[@"exchangeRate"]];
-        ZKExchangeSetting *exchangeSetting = [self unboxexchangeSetting:composedExchangeData[@"exchangeSetting"]];
+        ZKExchangeSetting *exchangeSetting = [self unboxExchangeSetting:composedExchangeData[@"exchangeSetting"]];
         NSString * exchangeAddress = (composedExchangeData[@"exchangeAddress"] == [NSNull null]) ? NULL : composedExchangeData[@"exchangeAddress"];
         NSDecimalNumber * amount = [NSDecimalNumber decimalNumberWithString:composedExchangeData[@"amount"] locale:[self decimalLocale]];
         NSDecimalNumber * returnAmount = [NSDecimalNumber decimalNumberWithString:composedExchangeData[@"returnAmount"] locale:[self decimalLocale]];
@@ -614,6 +687,15 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         cryptoProperties[@"address"] = account.cryptoProperties.address;
         cryptoProperties[@"nonce"] = account.cryptoProperties.nonce ? account.cryptoProperties.nonce : [NSNull null];
     }
+    
+    NSMutableArray<NSDictionary *> *cards = [[NSMutableArray alloc] init];
+    [account.cards enumerateObjectsUsingBlock:^(
+            ZKCard * _Nonnull card,
+            NSUInteger idx,
+            BOOL * _Nonnull stop) {
+
+        [cards addObject:[self mapCard:card]];
+    }];
 
     NSDictionary *dict = @{
         @"id": [account id],
@@ -624,7 +706,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"balance": [[account balance] descriptionWithLocale:[self decimalLocale]],
         @"hasNominatedAccount": @([account hasNominatedAccount]),
         @"cryptoProperties": [account cryptoProperties] ? cryptoProperties : [NSNull null],
-        @"fiatProperties": [account fiatProperties] ? [self mapAccountFiatProperties:account.fiatProperties] : [NSNull null]
+        @"fiatProperties": [account fiatProperties] ? [self mapAccountFiatProperties:account.fiatProperties] : [NSNull null],
+        @"cards": cards
     };
 
     return dict;
@@ -643,6 +726,17 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     return mapped;
 }
 
+- (NSDictionary *)mapCard:(ZKCard *)card
+{
+    return @{
+        @"id": [card id],
+        @"accountId": [card accountId],
+        @"cardType": [card cardType],
+        @"cardStatus": [card cardStatus],
+        @"limit": @([card limit]),
+        @"maskedPan": [card maskedPan] ? [card maskedPan] : [NSNull null]
+    };
+}
 
 - (NSDictionary *)mapComposedTransaction:(ZKComposedTransaction *)composedTransaction
 {
@@ -710,6 +804,19 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         fiatProperties[@"fromFiatAccount"] = transaction.fiatProperties.fromFiatAccount ? [self mapAccountFiatProperties:transaction.fiatProperties.fromFiatAccount] : [NSNull null];
         fiatProperties[@"toFiatAccount"] = transaction.fiatProperties.toFiatAccount ? [self mapAccountFiatProperties:transaction.fiatProperties.toFiatAccount] : [NSNull null];
     }
+    
+    NSMutableDictionary *cardProperties = [[NSMutableDictionary alloc] init];
+    if ([transaction cardProperties]) {
+        cryptoProperties[@"cardId"] = transaction.cardProperties.cardId;
+        cryptoProperties[@"transactionAmount"] = [transaction.cardProperties.transactionAmount descriptionWithLocale:[self decimalLocale]];
+        cryptoProperties[@"transactionCurrency"] = transaction.cardProperties.transactionCurrency;
+        cryptoProperties[@"billingAmount"] = [transaction.cardProperties.billingAmount descriptionWithLocale:[self decimalLocale]];
+        cryptoProperties[@"billingCurrency"] = transaction.cardProperties.billingCurrency;
+        cryptoProperties[@"exchangeRateValue"] = [transaction.cardProperties.exchangeRateValue descriptionWithLocale:[self decimalLocale]];
+        cryptoProperties[@"mcc"] = transaction.cardProperties.mcc;
+        cryptoProperties[@"merchantName"] = transaction.cardProperties.merchantName;
+        cryptoProperties[@"merchantCountry"] = transaction.cardProperties.merchantCountry;
+    }
 
     NSMutableDictionary *dict = [@{
         @"id": [transaction id],
@@ -727,6 +834,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"nonce": [transaction nonce] ? [transaction nonce] : [NSNull null],
         @"cryptoProperties": [transaction cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
+        @"cardProperties": [transaction cardProperties] ? cardProperties : [NSNull null],
         @"exchange": [transaction exchange] ? [self mapExchange:[transaction exchange]] : [NSNull null],
         @"submittedAt": [transaction submittedAt] ? [transaction submittedAt] : [NSNull null],
         @"confirmedAt": [transaction confirmedAt] ? [transaction confirmedAt] : [NSNull null],
@@ -944,6 +1052,15 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
 
         fiatProperties = [[ZKAccountFiatProperties alloc] initWithAccountNumber:accountNumber sortCode:sortCode bic:bic iban:iban customerName:customerName];
     }
+    
+    NSMutableArray<ZKCard *> *cards = [[NSMutableArray alloc] init];
+    [accountData[@"cards"] enumerateObjectsUsingBlock:^(
+            NSDictionary * _Nonnull cardData,
+            NSUInteger idx,
+            BOOL * _Nonnull stop) {
+
+        [cards addObject:[self unboxCard:cardData]];
+    }];
 
     NSString *accountId = accountData[@"id"];
     NSString *accountCurrencyType = accountData[@"currencyType"];
@@ -953,7 +1070,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSString *accountBalance = accountData[@"balance"];
     BOOL accountHasNominatedAccount = accountData[@"hasNominatedAccount"];
 
-    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:[NSDecimalNumber decimalNumberWithString:accountBalance locale:[self decimalLocale]] hasNominatedAccount:accountHasNominatedAccount cryptoProperties:cryptoProperties fiatProperties:fiatProperties];
+    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:[NSDecimalNumber decimalNumberWithString:accountBalance locale:[self decimalLocale]] hasNominatedAccount:accountHasNominatedAccount cryptoProperties:cryptoProperties fiatProperties:fiatProperties cards:cards];
 }
 
 - (ZKExchangeRate *)unboxExchangeRate:(NSDictionary *)exchangeRate
@@ -968,7 +1085,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     return [[ZKExchangeRate alloc] initWithId:exchangeRateId fromCurrency:fromCurrency toCurrency:toCurrency value:[NSDecimalNumber decimalNumberWithString:value locale:[self decimalLocale]]  validTo:validTo.intValue timestamp:timestamp.intValue];
 }
 
-- (ZKExchangeSetting *)unboxexchangeSetting:(NSDictionary *)exchangeSetting
+- (ZKExchangeSetting *)unboxExchangeSetting:(NSDictionary *)exchangeSetting
 {
     NSString *exchangeSettingId = exchangeSetting[@"id"];
     NSString *fromCurrency = exchangeSetting[@"fromCurrency"];
@@ -987,6 +1104,29 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     }];
 
     return [[ZKExchangeSetting alloc] initWithId:exchangeSettingId exchangeAddress:exchangeAddress fromCurrency:fromCurrency toCurrency:toCurrency minExchangeAmount:[NSDecimalNumber decimalNumberWithString:minExchangeAmount locale:[self decimalLocale]] exchangeFeeRate:[NSDecimalNumber decimalNumberWithString:exchangeFeeRate locale:[self decimalLocale]] outgoingTransactionFeeRate:[NSDecimalNumber decimalNumberWithString:outgoingTransactionFeeRate locale:[self decimalLocale]] returnTransactionFee:[NSDecimalNumber decimalNumberWithString:returnTransactionFee locale:[self decimalLocale]] timestamp:timestamp.intValue];
+}
+
+- (ZKAddress *)unboxAddress:(NSDictionary *)data
+{
+    NSString *addressLine1 = data[@"addressLine1"];
+    NSString *addressLine2 = (data[@"addressLine2"] == [NSNull null]) ? NULL : data[@"addressLine2"];
+    NSString *country = data[@"country"];
+    NSString *postCode = data[@"postCode"];
+    NSString *postTown = data[@"postTown"];
+
+    return [[ZKAddress alloc] initWithAddressLine1:addressLine1 addressLine2:addressLine2 country:country postCode:postCode postTown:postTown];
+}
+
+- (ZKCard *)unboxCard:(NSDictionary *)data
+{
+    NSString *cardId = data[@"id"];
+    NSString *accountId = data[@"accountId"];
+    NSString *cardType = data[@"cardType"];
+    NSString *cardStatus = data[@"cardStatus"];
+    NSNumber *limit = data[@"limit"];
+    NSString *maskedPan = (data[@"maskedPan"] == [NSNull null]) ? NULL : data[@"maskedPan"];
+
+    return [[ZKCard alloc] initWithId:cardId accountId:accountId cardType:cardType cardStatus:cardStatus limit:limit.intValue maskedPan:maskedPan];
 }
 
 @end
