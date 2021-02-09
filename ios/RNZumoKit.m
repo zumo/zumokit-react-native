@@ -327,8 +327,7 @@ RCT_EXPORT_METHOD(revealCardDetails:(NSString *)cardId resolver:(RCTPromiseResol
 
             resolve(@{
                 @"pan": [cardDetails pan],
-                @"cvv2": [cardDetails cvv2],
-                @"expiry": [cardDetails expiry]
+                @"cvv2": [cardDetails cvv2]
             });
         }];
     } @catch (NSException *exception) {
@@ -734,7 +733,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"cardType": [card cardType],
         @"cardStatus": [card cardStatus],
         @"limit": @([card limit]),
-        @"maskedPan": [card maskedPan] ? [card maskedPan] : [NSNull null]
+        @"maskedPan": [card maskedPan] ? [card maskedPan] : [NSNull null],
+        @"expiry": [card expiry]
     };
 }
 
@@ -813,9 +813,9 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         cryptoProperties[@"billingAmount"] = [transaction.cardProperties.billingAmount descriptionWithLocale:[self decimalLocale]];
         cryptoProperties[@"billingCurrency"] = transaction.cardProperties.billingCurrency;
         cryptoProperties[@"exchangeRateValue"] = [transaction.cardProperties.exchangeRateValue descriptionWithLocale:[self decimalLocale]];
-        cryptoProperties[@"mcc"] = transaction.cardProperties.mcc;
-        cryptoProperties[@"merchantName"] = transaction.cardProperties.merchantName;
-        cryptoProperties[@"merchantCountry"] = transaction.cardProperties.merchantCountry;
+        cryptoProperties[@"mcc"] = transaction.cardProperties.mcc ? transaction.cardProperties.mcc : [NSNull null];
+        cryptoProperties[@"merchantName"] = transaction.cardProperties.merchantName ? transaction.cardProperties.merchantName : [NSNull null];
+        cryptoProperties[@"merchantCountry"] = transaction.cardProperties.merchantCountry ? transaction.cardProperties.merchantCountry : [NSNull null];
     }
 
     NSMutableDictionary *dict = [@{
@@ -1125,8 +1125,9 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSString *cardStatus = data[@"cardStatus"];
     NSNumber *limit = data[@"limit"];
     NSString *maskedPan = (data[@"maskedPan"] == [NSNull null]) ? NULL : data[@"maskedPan"];
+    NSString *expiry = data[@"expiry"];
 
-    return [[ZKCard alloc] initWithId:cardId accountId:accountId cardType:cardType cardStatus:cardStatus limit:limit.intValue maskedPan:maskedPan];
+    return [[ZKCard alloc] initWithId:cardId accountId:accountId cardType:cardType cardStatus:cardStatus limit:limit.intValue maskedPan:maskedPan expiry:expiry];
 }
 
 @end
