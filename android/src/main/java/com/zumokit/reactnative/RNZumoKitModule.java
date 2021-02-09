@@ -395,9 +395,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             public void onSuccess(CardDetails cardDetails) {
                 WritableMap map = Arguments.createMap();
 
-                map.putString("id", cardDetails.getPan());
+                map.putString("pan", cardDetails.getPan());
                 map.putString("cvv2", cardDetails.getCvv2());
-                map.putString("expiry", cardDetails.getExpiry());
 
                 promise.resolve(map);
             }
@@ -965,6 +964,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         } else {
             map.putString("maskedPan", card.getMaskedPan());
         }
+        map.putString("expiry", card.getExpiry());
 
         return map;
     }
@@ -1246,11 +1246,32 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                     transaction.getCardProperties().getBillingCurrency());
             cardProperties.putString("exchangeRateValue",
                     transaction.getCardProperties().getExchangeRateValue().toPlainString());
-            cardProperties.putString("mcc", transaction.getCardProperties().getMcc());
-            cardProperties.putString("merchantName",
-                    transaction.getCardProperties().getMerchantName());
-            cardProperties.putString("merchantCountry",
-                    transaction.getCardProperties().getMerchantCountry());
+
+            if (transaction.getCardProperties().getMcc() == null) {
+                cardProperties.putNull("mcc");
+            } else {
+                cardProperties.putString("mcc", transaction.getCardProperties().getMcc());
+            }
+
+            if (transaction.getCardProperties().getMcc() == null) {
+                cardProperties.putNull("mcc");
+            } else {
+                cardProperties.putString("mcc", transaction.getCardProperties().getMcc());
+            }
+
+            if (transaction.getCardProperties().getMerchantName() == null) {
+                cardProperties.putNull("merchantName");
+            } else {
+                cardProperties.putString("merchantName",
+                        transaction.getCardProperties().getMerchantName());
+            }
+
+            if (transaction.getCardProperties().getMerchantCountry() == null) {
+                cardProperties.putNull("merchantCountry");
+            } else {
+                cardProperties.putString("merchantCountry",
+                        transaction.getCardProperties().getMerchantCountry());
+            }
 
             map.putMap("cardProperties", cardProperties);
         }
@@ -1656,6 +1677,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String cardStatus = map.getString("cardStatus");
         int limit = map.getInt("limit");
         String maskedPan = map.getString("maskedPan");
+        String expiry = map.getString("expiry");
 
         return new Card(
                 cardId,
@@ -1663,7 +1685,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 cardType,
                 cardStatus,
                 limit,
-                maskedPan
+                maskedPan,
+                expiry
         );
     }
 
