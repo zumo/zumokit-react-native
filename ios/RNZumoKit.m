@@ -807,15 +807,15 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     
     NSMutableDictionary *cardProperties = [[NSMutableDictionary alloc] init];
     if ([transaction cardProperties]) {
-        cryptoProperties[@"cardId"] = transaction.cardProperties.cardId;
-        cryptoProperties[@"transactionAmount"] = [transaction.cardProperties.transactionAmount descriptionWithLocale:[self decimalLocale]];
-        cryptoProperties[@"transactionCurrency"] = transaction.cardProperties.transactionCurrency;
-        cryptoProperties[@"billingAmount"] = [transaction.cardProperties.billingAmount descriptionWithLocale:[self decimalLocale]];
-        cryptoProperties[@"billingCurrency"] = transaction.cardProperties.billingCurrency;
-        cryptoProperties[@"exchangeRateValue"] = [transaction.cardProperties.exchangeRateValue descriptionWithLocale:[self decimalLocale]];
-        cryptoProperties[@"mcc"] = transaction.cardProperties.mcc ? transaction.cardProperties.mcc : [NSNull null];
-        cryptoProperties[@"merchantName"] = transaction.cardProperties.merchantName ? transaction.cardProperties.merchantName : [NSNull null];
-        cryptoProperties[@"merchantCountry"] = transaction.cardProperties.merchantCountry ? transaction.cardProperties.merchantCountry : [NSNull null];
+        cardProperties[@"cardId"] = transaction.cardProperties.cardId;
+        cardProperties[@"transactionAmount"] = [transaction.cardProperties.transactionAmount descriptionWithLocale:[self decimalLocale]];
+        cardProperties[@"transactionCurrency"] = transaction.cardProperties.transactionCurrency;
+        cardProperties[@"billingAmount"] = [transaction.cardProperties.billingAmount descriptionWithLocale:[self decimalLocale]];
+        cardProperties[@"billingCurrency"] = transaction.cardProperties.billingCurrency;
+        cardProperties[@"exchangeRateValue"] = [transaction.cardProperties.exchangeRateValue descriptionWithLocale:[self decimalLocale]];
+        cardProperties[@"mcc"] = transaction.cardProperties.mcc ? transaction.cardProperties.mcc : [NSNull null];
+        cardProperties[@"merchantName"] = transaction.cardProperties.merchantName ? transaction.cardProperties.merchantName : [NSNull null];
+        cardProperties[@"merchantCountry"] = transaction.cardProperties.merchantCountry ? transaction.cardProperties.merchantCountry : [NSNull null];
     }
 
     NSMutableDictionary *dict = [@{
