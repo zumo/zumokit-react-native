@@ -9,6 +9,7 @@ import {
   HistoricalExchangeRates,
 } from 'zumokit/src/models';
 import {
+  LogLevel,
   CurrencyCode,
   TokenSet,
   HistoricalExchangeRatesJSON,
@@ -54,6 +55,29 @@ class ZumoKit {
 
   /** Mapping between cryptocurrencies and available transaction fee rates. */
   transactionFeeRates: TransactionFeeRates = {};
+
+  /**
+   * Sets log level for current logger.
+   *
+   * @param logLevel log level, e.g. 'debug' or 'info'
+   */
+  setLogLevel(logLevel: LogLevel) {
+    RNZumoKit.setLogLevel(logLevel);
+  }
+
+  /**
+   * Sets log handler for all ZumoKit related logs.
+   *
+   * @param listener interface to listen to changes
+   * @param logLevel log level, e.g. 'debug' or 'info'
+   */
+  onLog(listener: (message: string) => void, logLevel: LogLevel) {
+    this.emitter.addListener('OnLog', (message: string) => {
+      listener(message);
+    });
+
+    RNZumoKit.addLogListener(logLevel);
+  }
 
   /**
    * Initializes ZumoKit SDK. Should only be called once.

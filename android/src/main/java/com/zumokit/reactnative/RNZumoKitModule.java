@@ -13,6 +13,7 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import money.zumo.zumokit.LogListener;
 import money.zumo.zumokit.AccountDataSnapshot;
 import money.zumo.zumokit.AccountFiatPropertiesCallback;
 import money.zumo.zumokit.Address;
@@ -100,6 +101,27 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 ZumoKitErrorType.INVALID_REQUEST_ERROR,
                 ZumoKitErrorCode.UNKNOWN_ERROR,
                 errorMessage
+        );
+    }
+
+    @ReactMethod
+    public void setLogLevel(String logLevel) {
+        ZumoKit.setLogLevel(logLevel);
+    }
+
+    @ReactMethod
+    public void addLogListener(String logLevel) {
+        RNZumoKitModule module = this;
+        ZumoKit.onLog(
+                new LogListener() {
+                    @Override
+                    public void onLog(String message) {
+                        module.reactContext
+                                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                                .emit("OnLog", message);
+                    }
+                },
+                logLevel
         );
     }
 
