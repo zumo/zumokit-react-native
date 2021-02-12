@@ -81,7 +81,7 @@ static id _instance;
 
 - (NSArray<NSString *> *)supportedEvents
 {
-    return @[@"AuxDataChanged", @"AccountDataChanged"];
+    return @[@"OnLog", @"AuxDataChanged", @"AccountDataChanged"];
 }
 
 - (void)startObserving
@@ -92,6 +92,11 @@ static id _instance;
 - (void)stopObserving
 {
     hasListeners = NO;
+}
+
+- (void)onLog:(nonnull NSString *)message
+{
+    [self sendEventWithName:@"OnLog" body:message];
 }
 
 
@@ -109,6 +114,18 @@ static id _instance;
     [self sendEventWithName:@"AccountDataChanged" body:[self mapAccountData:snapshots]];
 }
 
+# pragma mark - Logging
+
+RCT_EXPORT_METHOD(setLogLevel:(NSString *)logLevel)
+{
+    
+    [ZumoKit setLogLevel:logLevel];
+}
+
+RCT_EXPORT_METHOD(addLogListener:(NSString *)logLevel)
+{
+    [ZumoKit onLog:self logLevel:logLevel];
+}
 
 # pragma mark - Initialization + Authentication
 
