@@ -71,9 +71,19 @@ class ZumoKit {
    * @param listener interface to listen to changes
    * @param logLevel log level, e.g. 'debug' or 'info'
    */
-  onLog(listener: (message: string) => void, logLevel: LogLevel) {
+  onLog(
+    listener: (logEntry: {
+      timestamp: number;
+      level: LogLevel;
+      process: number;
+      thread: number;
+      message: string;
+      data: any;
+    }) => void,
+    logLevel: LogLevel
+  ) {
     this.emitter.addListener('OnLog', (message: string) => {
-      listener(message);
+      listener(JSON.parse(message));
     });
 
     RNZumoKit.addLogListener(logLevel);
