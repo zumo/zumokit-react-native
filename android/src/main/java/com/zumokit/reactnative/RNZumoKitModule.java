@@ -345,12 +345,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public void createCard(
             String fiatAccountId,
             String cardType,
-            String firstName,
-            String lastName,
-            String title,
-            String dateOfBirth,
             String mobileNumber,
-            ReadableMap addressData,
             Promise promise
     ) {
         if (this.user == null) {
@@ -361,12 +356,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         this.user.createCard(
                 fiatAccountId,
                 cardType,
-                firstName,
-                lastName,
-                title,
-                dateOfBirth,
                 mobileNumber,
-                RNZumoKitModule.unboxAddress(addressData),
                 new CardCallback() {
                     @Override
                     public void onError(Exception e) {

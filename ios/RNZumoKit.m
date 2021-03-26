@@ -300,10 +300,10 @@ RCT_EXPORT_METHOD(getNominatedAccountFiatProperties:(NSString *)accountId resolv
     }
 }
 
-RCT_EXPORT_METHOD(createCard:(NSString *)fiatAccountId cardType:(NSString *)cardType firstName:(NSString *)firstName lastName:(NSString *)lastName title:(NSString *)title dateOfBirth:(NSString *)dateOfBirth mobileNumber:(NSString *)mobileNumber addressData:(NSDictionary *)addressData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(createCard:(NSString *)fiatAccountId cardType:(NSString *)cardType mobileNumber:(NSString *)mobileNumber resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_user createCard:fiatAccountId cardType:cardType firstName:firstName lastName:lastName title:title dateOfBirth:dateOfBirth mobileNumber:mobileNumber address:[self unboxAddress:addressData] completion:^(ZKCard * _Nullable card, NSError * _Nullable error) {
+        [_user createCard:fiatAccountId cardType:cardType mobileNumber:mobileNumber completion:^(ZKCard * _Nullable card, NSError * _Nullable error) {
             
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
