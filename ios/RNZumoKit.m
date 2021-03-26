@@ -384,7 +384,7 @@ RCT_EXPORT_METHOD(unblockPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock
     }
 }
 
-RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData metadata:(NSString *)metadata resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
         NSString * type = composedTransactionData[@"type"];
@@ -398,7 +398,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
 
         ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type signedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee nonce:nonce];
 
-        [_wallet submitTransaction:composedTransaction completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet submitTransaction:composedTransaction metadata:metadata completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];

@@ -504,7 +504,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // - Transactions
 
     @ReactMethod
-    public void submitTransaction(ReadableMap composedTransactionMap, Promise promise) {
+    public void submitTransaction(ReadableMap composedTransactionMap, String metadata, Promise promise) {
         if (this.wallet == null) {
             rejectPromise(promise, "Wallet not found.");
             return;
@@ -531,7 +531,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                         nonce
                 );
 
-        this.wallet.submitTransaction(composedTransaction, new SubmitTransactionCallback() {
+        this.wallet.submitTransaction(composedTransaction, metadata, new SubmitTransactionCallback() {
 
             @Override
             public void onError(Exception error) {
