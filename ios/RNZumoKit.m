@@ -300,10 +300,10 @@ RCT_EXPORT_METHOD(getNominatedAccountFiatProperties:(NSString *)accountId resolv
     }
 }
 
-RCT_EXPORT_METHOD(createCard:(NSString *)fiatAccountId cardType:(NSString *)cardType firstName:(NSString *)firstName lastName:(NSString *)lastName title:(NSString *)title dateOfBirth:(NSString *)dateOfBirth mobileNumber:(NSString *)mobileNumber addressData:(NSDictionary *)addressData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(createCard:(NSString *)fiatAccountId cardType:(NSString *)cardType mobileNumber:(NSString *)mobileNumber resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_user createCard:fiatAccountId cardType:cardType firstName:firstName lastName:lastName title:title dateOfBirth:dateOfBirth mobileNumber:mobileNumber address:[self unboxAddress:addressData] completion:^(ZKCard * _Nullable card, NSError * _Nullable error) {
+        [_user createCard:fiatAccountId cardType:cardType mobileNumber:mobileNumber completion:^(ZKCard * _Nullable card, NSError * _Nullable error) {
             
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -384,7 +384,7 @@ RCT_EXPORT_METHOD(unblockPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock
     }
 }
 
-RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData metadata:(NSString *)metadata resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
         NSString * type = composedTransactionData[@"type"];
@@ -398,7 +398,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData reso
 
         ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type signedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee nonce:nonce];
 
-        [_wallet submitTransaction:composedTransaction completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_wallet submitTransaction:composedTransaction metadata:metadata completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -853,6 +853,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
         @"cardProperties": [transaction cardProperties] ? cardProperties : [NSNull null],
         @"exchange": [transaction exchange] ? [self mapExchange:[transaction exchange]] : [NSNull null],
+        @"metadata": [transaction metadata] ? [transaction metadata] : [NSNull null],
         @"submittedAt": [transaction submittedAt] ? [transaction submittedAt] : [NSNull null],
         @"confirmedAt": [transaction confirmedAt] ? [transaction confirmedAt] : [NSNull null],
         @"timestamp": @([transaction timestamp])

@@ -345,12 +345,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public void createCard(
             String fiatAccountId,
             String cardType,
-            String firstName,
-            String lastName,
-            String title,
-            String dateOfBirth,
             String mobileNumber,
-            ReadableMap addressData,
             Promise promise
     ) {
         if (this.user == null) {
@@ -361,12 +356,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         this.user.createCard(
                 fiatAccountId,
                 cardType,
-                firstName,
-                lastName,
-                title,
-                dateOfBirth,
                 mobileNumber,
-                RNZumoKitModule.unboxAddress(addressData),
                 new CardCallback() {
                     @Override
                     public void onError(Exception e) {
@@ -514,7 +504,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // - Transactions
 
     @ReactMethod
-    public void submitTransaction(ReadableMap composedTransactionMap, Promise promise) {
+    public void submitTransaction(ReadableMap composedTransactionMap, String metadata, Promise promise) {
         if (this.wallet == null) {
             rejectPromise(promise, "Wallet not found.");
             return;
@@ -541,7 +531,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                         nonce
                 );
 
-        this.wallet.submitTransaction(composedTransaction, new SubmitTransactionCallback() {
+        this.wallet.submitTransaction(composedTransaction, metadata, new SubmitTransactionCallback() {
 
             @Override
             public void onError(Exception error) {
@@ -1144,6 +1134,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             map.putNull("nonce");
         } else {
             map.putString("nonce", transaction.getNonce());
+        }
+
+        if (transaction.getMetadata() == null) {
+            map.putNull("metadata");
+        } else {
+            map.putString("metadata", transaction.getMetadata());
         }
 
         if (transaction.getSubmittedAt() == null) {

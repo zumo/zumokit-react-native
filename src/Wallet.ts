@@ -152,10 +152,14 @@ export class Wallet {
    * guide for usage details.
    *
    * @param composedTransaction Composed transaction retrieved as a result
-   *                             of one of the compose transaction methods
+   *                            of one of the compose transaction methods
+   * @param metadata            Optional metadata that will be attached to transaction
    */
-  async submitTransaction(composedTransaction: ComposedTransaction) {
-    const json = await RNZumoKit.submitTransaction(composedTransaction.json);
+  async submitTransaction(composedTransaction: ComposedTransaction, metadata: any = null) {
+    const json = await RNZumoKit.submitTransaction(
+      composedTransaction.json,
+      JSON.stringify(metadata)
+    );
 
     return new Transaction(json);
   }
