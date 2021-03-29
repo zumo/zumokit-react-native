@@ -1136,6 +1136,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             map.putString("nonce", transaction.getNonce());
         }
 
+        if (transaction.getMetadata() == null) {
+            map.putNull("metadata");
+        } else {
+            map.putString("metadata", transaction.getMetadata());
+        }
+
         if (transaction.getSubmittedAt() == null) {
             map.putNull("submittedAt");
         } else {

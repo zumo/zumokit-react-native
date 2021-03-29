@@ -853,6 +853,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
         @"cardProperties": [transaction cardProperties] ? cardProperties : [NSNull null],
         @"exchange": [transaction exchange] ? [self mapExchange:[transaction exchange]] : [NSNull null],
+        @"metadata": [transaction metadata] ? [transaction metadata] : [NSNull null],
         @"submittedAt": [transaction submittedAt] ? [transaction submittedAt] : [NSNull null],
         @"confirmedAt": [transaction confirmedAt] ? [transaction confirmedAt] : [NSNull null],
         @"timestamp": @([transaction timestamp])
