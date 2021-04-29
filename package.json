@@ -1,6 +1,6 @@
 {
   "name": "react-native-zumo-kit",
-  "version": "2.3.0-beta.22",
+  "version": "2.3.0",
   "description": "ZumoKit is a Wallet as a Service SDK",
   "keywords": [
     "zumo",
@@ -31,7 +31,7 @@
     "react-native": "^0.62.14"
   },
   "dependencies": {
-    "zumokit": "2.3.0-beta.22",
+    "zumokit": "2.3.0",
     "decimal.js": "^10.2.0"
   },
   "devDependencies": {
