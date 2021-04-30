@@ -1673,6 +1673,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     public static Address unboxAddress(ReadableMap map) {
+        String houseNumber = map.getString("houseNumber");
         String addressLine1 = map.getString("addressLine1");
         String addressLine2 = map.getString("addressLine2");
         String country = map.getString("country");
@@ -1680,6 +1681,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String postTown = map.getString("postTown");
 
         return new Address(
+                houseNumber,
                 addressLine1,
                 addressLine2,
                 country,

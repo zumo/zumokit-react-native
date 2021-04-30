@@ -1126,13 +1126,14 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
 
 - (ZKAddress *)unboxAddress:(NSDictionary *)data
 {
+    NSString *houseNumber = data[@"houseNumber"];
     NSString *addressLine1 = data[@"addressLine1"];
     NSString *addressLine2 = (data[@"addressLine2"] == [NSNull null]) ? NULL : data[@"addressLine2"];
     NSString *country = data[@"country"];
     NSString *postCode = data[@"postCode"];
     NSString *postTown = data[@"postTown"];
 
-    return [[ZKAddress alloc] initWithAddressLine1:addressLine1 addressLine2:addressLine2 country:country postCode:postCode postTown:postTown];
+    return [[ZKAddress alloc] initWithHouseNumber:houseNumber addressLine1:addressLine1 addressLine2:addressLine2 country:country postCode:postCode postTown:postTown];
 }
 
 - (ZKCard *)unboxCard:(NSDictionary *)data
