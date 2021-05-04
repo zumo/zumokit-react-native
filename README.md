@@ -39,7 +39,9 @@ If your project uses typescript, modify `compilerOptions` in _tsconfig.json_:
 "experimentalDecorators": true
 ```
 
-### Extra step for iOS
+### Extra steps for iOS
+
+ZumoKit CocoaPod relies on Git LFS to store native libraries, there you will need to install [git-lfs client](https://git-lfs.github.com/) to be able to use it.
 
 As ZumoKit is not yet distributed via CocoaPods Trunk, you'll need to include the [ZumoKit Spec](https://github.com/zumo/zumokit-specs) repo in your app's _Podfile_ (usually located in the _ios_ directory). You'll also need to ensure that the minimum iOS target is 10.0 or higher.
 
