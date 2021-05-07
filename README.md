@@ -72,7 +72,13 @@ Entry point to ZumoKit SDK is `loadZumoKit` function. This function returns a Pr
 ```typescript
 import zumokit from 'react-native-zumo-kit';
 
-zumokit.init(API_KEY, API_URL, TRANSACTION_SERVICE_URL, CARD_SERVICE_URL);
+zumokit.init(
+  API_KEY, 
+  API_URL, 
+  TRANSACTION_SERVICE_URL, 
+  CARD_SERVICE_URL,
+  NOTIFICATION_SERVICE_URL
+);
 ```
 
 Ask your [account manager](mailto:support@zumo.money) to provide you with necessary credentials.

@@ -16,7 +16,6 @@ import {
   ExchangeRateJSON,
   ExchangeSettingJSON,
   TransactionFeeRateJSON,
-  Dictionary,
 } from 'zumokit/src/interfaces';
 import { Utils } from './Utils';
 import { User } from './User';
@@ -92,18 +91,25 @@ class ZumoKit {
   /**
    * Initializes ZumoKit SDK. Should only be called once.
    *
-   * @param apiKey          ZumoKit API key
-   * @param apiUrl          ZumoKit API URL
-   * @param txServiceUrl    ZumoKit Transaction Service URL
-   * @param cardServiceUrl  ZumoKit Card Service URL
+   * @param apiKey                 ZumoKit API key
+   * @param apiUrl                 ZumoKit API URL
+   * @param transactionServiceUrl  ZumoKit Transaction Service URL
+   * @param cardServiceUrl         ZumoKit Card Service URL
+   * @param notificationServiceUrl ZumoKit Notification Service URL
    */
-  init(apiKey: string, apiUrl: string, txServiceUrl: string, cardServiceUrl: string) {
+  init(
+    apiKey: string,
+    apiUrl: string,
+    txServiceUrl: string,
+    cardServiceUrl: string,
+    notificationServiceUrl: string
+  ) {
     this.emitter.addListener('AuxDataChanged', async () => {
       await this.updateAuxData();
       this.changeListeners.forEach((listener) => listener());
     });
 
-    RNZumoKit.init(apiKey, apiUrl, txServiceUrl, cardServiceUrl);
+    RNZumoKit.init(apiKey, apiUrl, txServiceUrl, cardServiceUrl, notificationServiceUrl);
   }
 
   /**
@@ -135,9 +141,7 @@ class ZumoKit {
    */
   getExchangeRate(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeRate | null {
     return Object.keys(this.exchangeRates).includes(fromCurrency)
-      ? ((this.exchangeRates[fromCurrency] as Dictionary<CurrencyCode, ExchangeRate>)[
-          toCurrency
-        ] as ExchangeRate)
+      ? this.exchangeRates[fromCurrency]![toCurrency]!
       : null;
   }
 
@@ -151,9 +155,7 @@ class ZumoKit {
    */
   getExchangeSetting(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeSetting | null {
     return Object.keys(this.exchangeSettings).includes(fromCurrency)
-      ? ((this.exchangeSettings[fromCurrency] as Dictionary<CurrencyCode, ExchangeSetting>)[
-          toCurrency
-        ] as ExchangeSetting)
+      ? this.exchangeSettings[fromCurrency]![toCurrency]!
       : null;
   }
 
@@ -166,7 +168,7 @@ class ZumoKit {
    */
   getTransactionFeeRate(currency: CurrencyCode): TransactionFeeRate | null {
     return Object.keys(this.transactionFeeRates).includes(currency)
-      ? (this.transactionFeeRates[currency] as TransactionFeeRate)
+      ? this.transactionFeeRates[currency]!
       : null;
   }
 
