@@ -782,9 +782,9 @@ graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
 
 handlebars@^4.7.6:
-  version "4.7.6"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.7.6.tgz#d4c05c1baf90e9945f77aa68a7a219aa4a7df74e"
-  integrity sha512-1f2BACcBfiwAfStCKZNrUCgqNZkGsAT7UM3kkYtXuLo0KnaVfjKOyf7PRzB6++aK9STyT1Pd2ZCPe3EGOXleXA==
+  version "4.7.7"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.7.7.tgz#9ce33416aad02dbd6c8fafa8240d5d98004945a1"
+  integrity sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==
   dependencies:
     minimist "^1.2.5"
     neo-async "^2.6.0"
@@ -1575,9 +1575,9 @@ typescript@^3.9.5:
   integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
 
 uglify-js@^3.1.4:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.10.1.tgz#dd14767eb7150de97f2573a5ff210db14fffe4ad"
-  integrity sha512-RjxApKkrPJB6kjJxQS3iZlf///REXWYxYJxO/MpmlQzVkDWVI3PSnCBWezMecmTU/TRkNxrl8bmsfFQCp+LO+Q==
+  version "3.13.5"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.13.5.tgz#5d71d6dbba64cf441f32929b1efce7365bb4f113"
+  integrity sha512-xtB8yEqIkn7zmOyS2zUNBsYCBRhDkvlNxMMY2smuJ/qA8NCHeQvKCF3i9Z4k8FJH4+PJvZRtMrPynfZ75+CSZw==
 
 universalify@^1.0.0:
   version "1.0.0"
@@ -1638,7 +1638,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-zumokit@2.3.0-beta.10:
-  version "2.3.0-beta.10"
-  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-2.3.0-beta.10.tgz#e3f0361517760db470893e0133da71df8c74c587"
-  integrity sha512-XjMbdcV5a0p4ObYRU7miW3cCt1DJMvIohI6CQ+RMIjgBq9GN/0DHCYLOfqBiOf7Au8RwvAnp+r2WKR9qNolRRg==
+zumokit@2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-2.4.1.tgz#f66f2561565d4d36437bbd70d906a7976b941c62"
+  integrity sha512-BFE6hyC+isFFSs1qeNhg0tQ84ARtXQH2EmcuXZ5cyB9iiS+tQSXx8gOMhNx9TuYykhnCToQuYDJvFITp6lzSww==
