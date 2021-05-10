@@ -1638,7 +1638,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-zumokit@2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-2.4.1.tgz#f66f2561565d4d36437bbd70d906a7976b941c62"
-  integrity sha512-BFE6hyC+isFFSs1qeNhg0tQ84ARtXQH2EmcuXZ5cyB9iiS+tQSXx8gOMhNx9TuYykhnCToQuYDJvFITp6lzSww==
+zumokit@3.0.0-beta.2:
+  version "3.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-3.0.0-beta.2.tgz#18472faa4e8089e36bb4391ac2111b02094d2bb5"
+  integrity sha512-pBX/qIFpXRg84bywY22sDM8TWVpVfqzbHwmvKtgqGFw7IO71EZjdk3JBVO+FThlnLyYUovdmiw+GwBx7XxV8mw==

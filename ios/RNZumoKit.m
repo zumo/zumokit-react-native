@@ -129,9 +129,9 @@ RCT_EXPORT_METHOD(addLogListener:(NSString *)logLevel)
 
 # pragma mark - Initialization + Authentication
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl transactionServiceUrl:(NSString *)transactionServiceUrl cardServiceUrl:(NSString *)cardServiceUrl)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl transactionServiceUrl:(NSString *)transactionServiceUrl cardServiceUrl:(NSString *)cardServiceUrl notificationServiceUrl:(NSString *)notificationServiceUrl)
 {
-    _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl transactionServiceUrl:transactionServiceUrl cardServiceUrl:cardServiceUrl];
+    _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl transactionServiceUrl:transactionServiceUrl cardServiceUrl:cardServiceUrl notificationServiceUrl:notificationServiceUrl];
     [_zumoKit addChangeListener:self];
 }
 

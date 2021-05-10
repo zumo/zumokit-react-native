@@ -126,8 +126,18 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String apiKey, String apiUrl, String transactionServiceUrl, String cardServiceUrl) {
-        this.zumokit = new ZumoKit(apiKey, apiUrl, transactionServiceUrl, cardServiceUrl);
+    public void init(
+        String apiKey, 
+        String apiUrl, 
+        String transactionServiceUrl, 
+        String cardServiceUrl,
+        String notificationServiceUrl) {
+        this.zumokit = new ZumoKit(
+            apiKey, 
+            apiUrl, 
+            transactionServiceUrl, 
+            cardServiceUrl,
+            notificationServiceUrl);
 
         RNZumoKitModule module = this;
         this.zumokit.addChangeListener(new ChangeListener() {
