@@ -645,15 +645,9 @@ RCT_EXPORT_METHOD(getTransactionFeeRates:(RCTPromiseResolveBlock)resolve rejecto
     }
 }
 
-RCT_EXPORT_METHOD(isValidEthAddress:(NSString *)address resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(isValidAddress:(NSString *)currencyCode address:(NSString *)address network:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
-    BOOL isValid = [[_zumoKit getUtils] isValidEthAddress:address];
-    resolve(@(isValid));
-}
-
-RCT_EXPORT_METHOD(isValidBtcAddress:(NSString *)address network:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    BOOL isValid = [[_zumoKit getUtils] isValidBtcAddress:address network:network];
+    BOOL isValid = [[_zumoKit getUtils] isValidAddress:currencyCode address:address network:network];
     resolve(@(isValid));
 }
 

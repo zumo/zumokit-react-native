@@ -1633,7 +1633,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-zumokit@3.0.0-beta.2:
-  version "3.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-3.0.0-beta.2.tgz#18472faa4e8089e36bb4391ac2111b02094d2bb5"
-  integrity sha512-pBX/qIFpXRg84bywY22sDM8TWVpVfqzbHwmvKtgqGFw7IO71EZjdk3JBVO+FThlnLyYUovdmiw+GwBx7XxV8mw==
+zumokit@3.0.0-beta.3:
+  version "3.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-3.0.0-beta.3.tgz#af4c4de6f55dbe712ffaa9a56d15c3c6abc1b205"
+  integrity sha512-1BC4/HA6xZElGqNoj4bw/89CDEFLil02HIUKXST+/3JrudmZIPomwA6pQlNff6ycQjJhOSZkF7cFD0okOOSOhA==

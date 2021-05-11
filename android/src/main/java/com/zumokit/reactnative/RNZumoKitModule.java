@@ -896,19 +896,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void isValidEthAddress(String address, Promise promise) {
+    public void isValidAddress(String currencyCode, String address, String network, Promise promise) {
         try {
-            Boolean valid = this.zumokit.getUtils().isValidEthAddress(address);
-            promise.resolve(valid);
-        } catch (Exception e) {
-            rejectPromise(promise, e);
-        }
-    }
-
-    @ReactMethod
-    public void isValidBtcAddress(String address, String network, Promise promise) {
-        try {
-            Boolean valid = this.zumokit.getUtils().isValidBtcAddress(address, network);
+            Boolean valid = this.zumokit.getUtils().isValidAddress(currencyCode, address, network);
             promise.resolve(valid);
         } catch (Exception e) {
             rejectPromise(promise, e);
