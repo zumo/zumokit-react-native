@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
-import { Network } from 'zumokit/src/interfaces';
+import { CurrencyCode, Network } from 'zumokit/src/interfaces';
 import { tryCatchProxy } from './utility/errorProxy';
 
 const {
@@ -30,11 +30,12 @@ export class Utils {
   }
 
   /**
-   * Validates Bitcoin address on a given network.
-   * @param address Bitcoin address
-   * @param network network type, either 'MAINNET' or 'TESTNET'
+   * Validates Ethereum, Bitcoin or Bitcoin SV address.
+   * @param currencyCode 'ETH', 'BTC or 'BSV'
+   * @param address      blockchain address
+   * @param network      network type
    */
-  async isValidBtcAddress(address: string, network: Network): Promise<boolean> {
-    return RNZumoKit.isValidBtcAddress(address, network);
+  isValidAddress(currencyCode: CurrencyCode, address: string, network: Network): boolean {
+    return RNZumoKit.isValidAddress(currencyCode, address, network);
   }
 }
