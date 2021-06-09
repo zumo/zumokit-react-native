@@ -132,6 +132,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String transactionServiceUrl, 
         String cardServiceUrl,
         String notificationServiceUrl) {
+        this.user = null;
+        this.wallet = null;
         this.zumokit = new ZumoKit(
             apiKey, 
             apiUrl, 

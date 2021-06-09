@@ -16,8 +16,6 @@
 
 RCT_EXPORT_MODULE()
 
-bool hasListeners;
-
 static id _instance;
 
 + (instancetype)allocWithZone:(struct _NSZone *)zone {
@@ -84,16 +82,6 @@ static id _instance;
     return @[@"OnLog", @"AuxDataChanged", @"AccountDataChanged"];
 }
 
-- (void)startObserving
-{
-    hasListeners = YES;
-}
-
-- (void)stopObserving
-{
-    hasListeners = NO;
-}
-
 - (void)onLog:(nonnull NSString *)message
 {
     [self sendEventWithName:@"OnLog" body:message];
@@ -102,15 +90,11 @@ static id _instance;
 
 - (void)onChange
 {
-    if(!hasListeners) return;
-
     [self sendEventWithName:@"AuxDataChanged" body:[NSNull null]];
 }
 
 - (void)onDataChange:(nonnull NSArray<ZKAccountDataSnapshot *> *)snapshots
 {
-    if(!hasListeners) return;
-
     [self sendEventWithName:@"AccountDataChanged" body:[self mapAccountData:snapshots]];
 }
 
@@ -131,6 +115,8 @@ RCT_EXPORT_METHOD(addLogListener:(NSString *)logLevel)
 
 RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl transactionServiceUrl:(NSString *)transactionServiceUrl cardServiceUrl:(NSString *)cardServiceUrl notificationServiceUrl:(NSString *)notificationServiceUrl)
 {
+    _user = nil;
+    _wallet = nil;
     _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl transactionServiceUrl:transactionServiceUrl cardServiceUrl:cardServiceUrl notificationServiceUrl:notificationServiceUrl];
     [_zumoKit addChangeListener:self];
 }
