@@ -131,6 +131,9 @@ RCT_EXPORT_METHOD(addLogListener:(NSString *)logLevel)
 
 RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl transactionServiceUrl:(NSString *)transactionServiceUrl cardServiceUrl:(NSString *)cardServiceUrl notificationServiceUrl:(NSString *)notificationServiceUrl)
 {
+    hasListeners = NO;
+    _user = nil;
+    _wallet = nil;
     _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl transactionServiceUrl:transactionServiceUrl cardServiceUrl:cardServiceUrl notificationServiceUrl:notificationServiceUrl];
     [_zumoKit addChangeListener:self];
 }
