@@ -751,9 +751,9 @@ get-stdin@^6.0.0:
   integrity sha512-jp4tHawyV7+fkkSKyvjuLZswblUtz+SQKzSWnBbii16BuZksJlU1wuBYXY75r+duh/llF1ur6oNwi+2ZzjKZ7g==
 
 glob-parent@^5.0.0:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.1.tgz#b6c1ef417c4e5663ea498f1c45afac6916bbc229"
-  integrity sha512-FnI+VGOpnlGHWZxthPGR+QhR78fuiK0sNLkHQv+bL9fQi57lNNdquIbna/WrfROrolq8GK5Ek6BiMwqL/voRYQ==
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz#869832c58034fe68a4093c17dc15e8340d8401c4"
+  integrity sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==
   dependencies:
     is-glob "^4.0.1"
 
@@ -1633,7 +1633,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-zumokit@3.0.0-beta.3:
-  version "3.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-3.0.0-beta.3.tgz#af4c4de6f55dbe712ffaa9a56d15c3c6abc1b205"
-  integrity sha512-1BC4/HA6xZElGqNoj4bw/89CDEFLil02HIUKXST+/3JrudmZIPomwA6pQlNff6ycQjJhOSZkF7cFD0okOOSOhA==
+zumokit@3.0.0-beta.5:
+  version "3.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-3.0.0-beta.5.tgz#295d523f98412c2240b3719d55a7f1e1cf52758f"
+  integrity sha512-9bvR3bPZUsDp3OuQy6Ss1O0LjYohs/LhntSF2O452OWrxHZXiiA8f/6ahXeq2cYmwl/sscnzG2dxUTx9oZmCCA==
