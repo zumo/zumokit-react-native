@@ -1050,7 +1050,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         NSString *iban = (fiatPropertiesData[@"iban"] == [NSNull null]) ? NULL : fiatPropertiesData[@"iban"];
         NSString *customerName = (fiatPropertiesData[@"customerName"] == [NSNull null]) ? NULL : fiatPropertiesData[@"customerName"];
 
-        fiatProperties = [[ZKAccountFiatProperties alloc] initWithAccountNumber:accountNumber sortCode:sortCode bic:bic iban:iban customerName:customerName];
+        fiatProperties = [[ZKAccountFiatProperties alloc] initWithProviderId:providerId accountNumber:accountNumber sortCode:sortCode bic:bic iban:iban customerName:customerName];
     }
     
     NSMutableArray<ZKCard *> *cards = [[NSMutableArray alloc] init];
