@@ -932,6 +932,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     public static WritableMap mapAccountFiatProperties(AccountFiatProperties accountFiatProperties) {
         WritableMap fiatProperties = Arguments.createMap();
+        if (accountFiatProperties.getProviderId() == null) {
+            fiatProperties.putNull("providerId");
+        } else {
+            fiatProperties.putString("providerId", accountFiatProperties.getProviderId());
+        }
+
         if (accountFiatProperties.getAccountNumber() == null) {
             fiatProperties.putNull("accountNumber");
         } else {
@@ -1591,13 +1597,14 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         if (!map.isNull("fiatProperties")) {
             ReadableMap fiatPropertiesData = map.getMap("fiatProperties");
 
+            String providerId = fiatPropertiesData.getString("providerId");
             String accountNumber = fiatPropertiesData.getString("accountNumber");
             String sortCode = fiatPropertiesData.getString("sortCode");
             String bic = fiatPropertiesData.getString("bic");
             String iban = fiatPropertiesData.getString("iban");
             String customerName = fiatPropertiesData.getString("customerName");
 
-            fiatProperties = new AccountFiatProperties(accountNumber, sortCode, bic, iban, customerName);
+            fiatProperties = new AccountFiatProperties(providerId, accountNumber, sortCode, bic, iban, customerName);
         }
 
         String accountId = map.getString("id");

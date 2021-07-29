@@ -667,6 +667,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
 - (NSDictionary *)mapAccountFiatProperties:(ZKAccountFiatProperties *)accountFiatProperties
 {
     return @{
+        @"providerId": accountFiatProperties.providerId ? accountFiatProperties.providerId : [NSNull null],
         @"accountNumber": accountFiatProperties.accountNumber ? accountFiatProperties.accountNumber : [NSNull null],
         @"sortCode": accountFiatProperties.sortCode ? accountFiatProperties.sortCode : [NSNull null],
         @"bic": accountFiatProperties.bic ? accountFiatProperties.bic : [NSNull null],
@@ -1042,13 +1043,14 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     if (accountData[@"fiatProperties"] != [NSNull null]){
         NSDictionary *fiatPropertiesData = accountData[@"fiatProperties"];
 
+        NSString *providerId = (fiatPropertiesData[@"providerId"] == [NSNull null]) ? NULL : fiatPropertiesData[@"providerId"];
         NSString *accountNumber = (fiatPropertiesData[@"accountNumber"] == [NSNull null]) ? NULL : fiatPropertiesData[@"accountNumber"];
         NSString *sortCode = (fiatPropertiesData[@"sortCode"] == [NSNull null]) ? NULL : fiatPropertiesData[@"sortCode"];
         NSString *bic = (fiatPropertiesData[@"bic"] == [NSNull null]) ? NULL : fiatPropertiesData[@"bic"];
         NSString *iban = (fiatPropertiesData[@"iban"] == [NSNull null]) ? NULL : fiatPropertiesData[@"iban"];
         NSString *customerName = (fiatPropertiesData[@"customerName"] == [NSNull null]) ? NULL : fiatPropertiesData[@"customerName"];
 
-        fiatProperties = [[ZKAccountFiatProperties alloc] initWithAccountNumber:accountNumber sortCode:sortCode bic:bic iban:iban customerName:customerName];
+        fiatProperties = [[ZKAccountFiatProperties alloc] initWithProviderId:providerId accountNumber:accountNumber sortCode:sortCode bic:bic iban:iban customerName:customerName];
     }
     
     NSMutableArray<ZKCard *> *cards = [[NSMutableArray alloc] init];
