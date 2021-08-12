@@ -370,6 +370,22 @@ RCT_EXPORT_METHOD(unblockPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock
     }
 }
 
+RCT_EXPORT_METHOD(getQuote:(NSString *)fromCurrency toCurrency:(NSString *)toCurrency (NSString *)depositAmount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user getQuote:fromCurrency toCurrency:toCurrency depositAmount:[NSDecimalNumber decimalNumberWithString:depositAmount locale:[self decimalLocale]] completion:^(ZKQuote * _Nullable quote, NSError * _Nullable error) {
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapQuote:quote]);
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
 RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData metadata:(NSString *)metadata resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
@@ -892,15 +908,26 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     return res;
 }
 
-- (NSDictionary *)mapExchangeRate:(ZKExchangeRate *)exchangeRates
+- (NSDictionary *)mapExchangeRate:(ZKExchangeRate *)exchangeRate
 {
     return @{
-        @"id": [exchangeRates id],
-        @"fromCurrency": [exchangeRates fromCurrency],
-        @"toCurrency": [exchangeRates toCurrency],
-        @"value": [[exchangeRates value] descriptionWithLocale:[self decimalLocale]],
-        @"validTo": [NSNumber numberWithInt:[exchangeRates validTo]],
-        @"timestamp": [NSNumber numberWithInt:[exchangeRates timestamp]]
+        @"id": [exchangeRate id],
+        @"fromCurrency": [exchangeRate fromCurrency],
+        @"toCurrency": [exchangeRate toCurrency],
+        @"value": [[exchangeRate value] descriptionWithLocale:[self decimalLocale]],
+        @"timestamp": [NSNumber numberWithInt:[exchangeRate timestamp]]
+    };
+}
+
+- (NSDictionary *)mapQuote:(ZKQuote *)quote
+{
+    return @{
+        @"id": [quote id],
+        @"expireTime": [NSNumber numberWithInt:[quote expireTime]],
+        @"fromCurrency": [quote fromCurrency],
+        @"toCurrency": [quote toCurrency],
+        @"depositAmount": [[quote depositAmount] descriptionWithLocale:[self decimalLocale]],
+        @"value": [[quote value] descriptionWithLocale:[self decimalLocale]]
     };
 }
 
@@ -1079,10 +1106,9 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSString *fromCurrency = exchangeRate[@"fromCurrency"];
     NSString *toCurrency = exchangeRate[@"toCurrency"];
     NSString *value = exchangeRate[@"value"];
-    NSNumber *validTo = exchangeRate[@"validTo"];
     NSNumber *timestamp = exchangeRate[@"timestamp"];
 
-    return [[ZKExchangeRate alloc] initWithId:exchangeRateId fromCurrency:fromCurrency toCurrency:toCurrency value:[NSDecimalNumber decimalNumberWithString:value locale:[self decimalLocale]]  validTo:validTo.intValue timestamp:timestamp.intValue];
+    return [[ZKExchangeRate alloc] initWithId:exchangeRateId fromCurrency:fromCurrency toCurrency:toCurrency value:[NSDecimalNumber decimalNumberWithString:value locale:[self decimalLocale]] timestamp:timestamp.intValue];
 }
 
 - (ZKExchangeSetting *)unboxExchangeSetting:(NSDictionary *)exchangeSetting
