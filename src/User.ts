@@ -1,5 +1,6 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
-import { Account, AccountFiatProperties, AccountDataSnapshot, Card } from 'zumokit/src/models';
+import Decimal from 'decimal.js';
+import { Account, AccountFiatProperties, AccountDataSnapshot, Card, Quote } from 'zumokit/src/models';
 import {
   AccountJSON,
   CurrencyCode,
@@ -262,6 +263,21 @@ export class User {
    */
   async unblockPin(cardId: string): Promise<void> {
     return RNZumoKit.unblockPin(cardId);
+  }
+
+  /**
+   * Get exchange rate quote.
+   * @param fromCurrency  deposit currency code
+   * @param toCurrency    target currency code
+   * @param depositAmount deposit amount to be exchanged to target currency
+   */
+  async getQuote(
+    fromCurrency: CurrencyCode,
+    toCurrency: CurrencyCode,
+    depositAmount: Decimal
+  ) {
+    const json = await RNZumoKit.getQuote(fromCurrency, toCurrency, depositAmount.toString());
+    return new Quote(json);
   }
 
   /**

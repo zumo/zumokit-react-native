@@ -49,6 +49,8 @@ import money.zumo.zumokit.AccountDataListener;
 import money.zumo.zumokit.AccountCallback;
 import money.zumo.zumokit.TransactionFeeRate;
 import money.zumo.zumokit.ExchangeRate;
+import money.zumo.zumokit.Quote;
+import money.zumo.zumokit.QuoteCallback;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
 import java.math.BigDecimal;
@@ -475,6 +477,24 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             @Override
             public void onSuccess(String mnemonic) {
                 promise.resolve(mnemonic);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void getQuote(String fromCurrency, String toCurrency, String depositAmount, Promise promise) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.getQuote(fromCurrency, toCurrency, new BigDecimal(depositAmount), new QuoteCallback() {
+            @Override
+            public void onError(Exception e) { rejectPromise(promise, e); }
+
+            @Override
+            public void onSuccess(Quote quote) {
+                promise.resolve(RNZumoKitModule.mapQuote(quote));
             }
         });
     }
@@ -1488,10 +1508,22 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         mappedRate.putString("fromCurrency", rate.getFromCurrency());
         mappedRate.putString("toCurrency", rate.getToCurrency());
         mappedRate.putString("value", rate.getValue().toPlainString());
-        mappedRate.putInt("validTo", rate.getValidTo());
         mappedRate.putInt("timestamp", rate.getTimestamp());
 
         return mappedRate;
+    }
+
+    public static WritableMap mapQuote(Quote quote) {
+        WritableMap mappedQuote = Arguments.createMap();
+
+        mappedQuote.putString("id", quote.getId());
+        mappedQuote.putInt("expireTime", quote.getExpireTime());
+        mappedQuote.putString("fromCurrency", quote.getFromCurrency());
+        mappedQuote.putString("toCurrency", quote.getToCurrency());
+        mappedQuote.putString("depositAmount", quote.getDepositAmount().toPlainString());
+        mappedQuote.putString("value", quote.getValue().toPlainString());
+
+        return mappedQuote;
     }
 
     public static WritableMap mapExchangeRates(
@@ -1640,10 +1672,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String fromCurrency = map.getString("fromCurrency");
         String toCurrency = map.getString("toCurrency");
         BigDecimal value = new BigDecimal(map.getString("value"));
-        int validTo = map.getInt("validTo");
         int timestamp = map.getInt("timestamp");
 
-        return new ExchangeRate(id, fromCurrency, toCurrency, value, validTo, timestamp);
+        return new ExchangeRate(id, fromCurrency, toCurrency, value, timestamp);
     }
 
     public static ExchangeSetting unboxExchangeSetting(ReadableMap map) {
