@@ -1,6 +1,6 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 import Decimal from 'decimal.js';
-import { Account, AccountFiatProperties, AccountDataSnapshot, Card } from 'zumokit/src/models';
+import { Account, AccountFiatProperties, AccountDataSnapshot, Card, Quote } from 'zumokit/src/models';
 import {
   AccountJSON,
   CurrencyCode,
@@ -276,7 +276,8 @@ export class User {
     toCurrency: CurrencyCode,
     depositAmount: Decimal
   ) {
-    return RNZumoKit.getQuote(fromCurrency, toCurrency, depositAmount.toString());
+    const json = await RNZumoKit.getQuote(fromCurrency, toCurrency, depositAmount.toString());
+    return new Quote(json);
   }
 
   /**

@@ -50,6 +50,7 @@ import money.zumo.zumokit.AccountCallback;
 import money.zumo.zumokit.TransactionFeeRate;
 import money.zumo.zumokit.ExchangeRate;
 import money.zumo.zumokit.Quote;
+import money.zumo.zumokit.QuoteCallback;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
 import java.math.BigDecimal;
@@ -1515,12 +1516,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public static WritableMap mapQuote(Quote quote) {
         WritableMap mappedQuote = Arguments.createMap();
 
-        mappedQuote.putString("id", rate.getId());
-        mappedQuote.putInt("expireTime", rate.getExpireTime());
-        mappedQuote.putString("fromCurrency", rate.getFromCurrency());
-        mappedQuote.putString("toCurrency", rate.getToCurrency());
-        mappedQuote.putString("depositAmount", rate.getDepositAmount().toPlainString());
-        mappedQuote.putString("value", rate.getValue().toPlainString());
+        mappedQuote.putString("id", quote.getId());
+        mappedQuote.putInt("expireTime", quote.getExpireTime());
+        mappedQuote.putString("fromCurrency", quote.getFromCurrency());
+        mappedQuote.putString("toCurrency", quote.getToCurrency());
+        mappedQuote.putString("depositAmount", quote.getDepositAmount().toPlainString());
+        mappedQuote.putString("value", quote.getValue().toPlainString());
 
         return mappedQuote;
     }

@@ -370,7 +370,7 @@ RCT_EXPORT_METHOD(unblockPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock
     }
 }
 
-RCT_EXPORT_METHOD(getQuote:(NSString *)fromCurrency toCurrency:(NSString *)toCurrency (NSString *)depositAmount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(getQuote:(NSString *)fromCurrency toCurrency:(NSString *)toCurrency depositAmount:(NSString *)depositAmount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
         [_user getQuote:fromCurrency toCurrency:toCurrency depositAmount:[NSDecimalNumber decimalNumberWithString:depositAmount locale:[self decimalLocale]] completion:^(ZKQuote * _Nullable quote, NSError * _Nullable error) {
