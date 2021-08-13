@@ -1106,7 +1106,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSString *depositAmount = quote[@"depositAmount"];
     NSString *value = quote[@"value"];
 
-    return [[ZKQuote alloc] initWithId:quoteId expireTime:expireTime.intValue fromCurrency:fromCurrency toCurrency:toCurrency depositAmount:[NSDecimalNumber decimalNumberWithString:depositAmount value:[NSDecimalNumber decimalNumberWithString:value locale:[self decimalLocale]]];
+    return [[ZKQuote alloc] initWithId:quoteId expireTime:expireTime.intValue fromCurrency:fromCurrency toCurrency:toCurrency depositAmount:[NSDecimalNumber decimalNumberWithString:depositAmount locale:[self decimalLocale]] value:[NSDecimalNumber decimalNumberWithString:value locale:[self decimalLocale]]];
 }
 
 - (ZKExchangeSetting *)unboxExchangeSetting:(NSDictionary *)exchangeSetting
