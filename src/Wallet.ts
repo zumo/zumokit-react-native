@@ -171,24 +171,18 @@ export class Wallet {
    *
    * @param fromAccountId       {@link  Account Account} identifier
    * @param toAccountId         {@link  Account Account} identifier
-   * @param exchangeRate        Zumo exchange rate obtained from ZumoKit state
-   * @param exchangeSetting     Zumo exchange setting obtained from ZumoKit state
    * @param amount              amount in deposit account currency
    * @param sendMax             exchange maximum possible funds (defaults to false)
    */
   async composeExchange(
     fromAccountId: string,
     toAccountId: string,
-    exchangeRate: ExchangeRate,
-    exchangeSetting: ExchangeSetting,
     amount: Decimal | null,
     sendMax = false
   ) {
     const json = await RNZumoKit.composeExchange(
       fromAccountId,
       toAccountId,
-      exchangeRate.json,
-      exchangeSetting.json,
       amount ? amount.toString() : null,
       sendMax
     );
