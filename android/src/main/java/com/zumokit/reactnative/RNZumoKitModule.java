@@ -725,8 +725,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public void composeExchange(
             String fromAccountId,
             String toAccountId,
-            ReadableMap exchangeRate,
-            ReadableMap exchangeSetting,
             String amount,
             Boolean sendMax,
             Promise promise
@@ -736,14 +734,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        ExchangeRate rate = RNZumoKitModule.unboxExchangeRate(exchangeRate);
-        ExchangeSetting settings = RNZumoKitModule.unboxExchangeSetting(exchangeSetting);
-
         this.wallet.composeExchange(
                 fromAccountId,
                 toAccountId,
-                rate,
-                settings,
                 (amount == null) ? null : new BigDecimal(amount),
                 sendMax,
                 new ComposeExchangeCallback() {
@@ -772,8 +765,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("fromAccount"));
         Account toAccount =
                 RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("toAccount"));
-        ExchangeRate exchangeRate =
-                RNZumoKitModule.unboxExchangeRate(composedExchangeMap.getMap("exchangeRate"));
+        Quote quote =
+                RNZumoKitModule.unboxQuote(composedExchangeMap.getMap("quote"));
         ExchangeSetting exchangeSetting =
                 RNZumoKitModule.unboxExchangeSetting(composedExchangeMap.getMap("exchangeSetting"));
         String exchangeAddress = composedExchangeMap.getString("exchangeAddress");
@@ -788,7 +781,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 signedTransaction,
                 fromAccount,
                 toAccount,
-                exchangeRate,
+                quote,
                 exchangeSetting,
                 exchangeAddress,
                 amount,
@@ -1364,7 +1357,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("signedTransaction", exchange.getSignedTransaction());
         map.putMap("fromAccount", RNZumoKitModule.mapAccount(exchange.getFromAccount()));
         map.putMap("toAccount", RNZumoKitModule.mapAccount(exchange.getToAccount()));
-        map.putMap("exchangeRate", RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
+        map.putMap("quote", RNZumoKitModule.mapQuote(exchange.getQuote()));
         map.putMap("exchangeSetting", RNZumoKitModule.mapExchangeSetting(
                 exchange.getExchangeSetting()));
 
@@ -1419,7 +1412,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("returnAmount", exchange.getReturnAmount().toPlainString());
         map.putString("exchangeFee", exchange.getExchangeFee().toPlainString());
         map.putString("returnTransactionFee", exchange.getReturnTransactionFee().toPlainString());
-        map.putMap("exchangeRate", RNZumoKitModule.mapExchangeRate(exchange.getExchangeRate()));
+        map.putMap("quote", RNZumoKitModule.mapQuote(exchange.getQuote()));
         map.putMap("exchangeRates", RNZumoKitModule.mapExchangeRates(exchange.getExchangeRates()));
         map.putMap("exchangeSetting",
                 RNZumoKitModule.mapExchangeSetting(exchange.getExchangeSetting()));
@@ -1667,14 +1660,15 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         );
     }
 
-    public static ExchangeRate unboxExchangeRate(ReadableMap map) {
+    public static Quote unboxQuote(ReadableMap map) {
         String id = map.getString("id");
+        int expireTime = map.getInt("expireTime");
         String fromCurrency = map.getString("fromCurrency");
         String toCurrency = map.getString("toCurrency");
+        BigDecimal depositAmount = new BigDecimal(map.getString("depositAmount"));
         BigDecimal value = new BigDecimal(map.getString("value"));
-        int timestamp = map.getInt("timestamp");
 
-        return new ExchangeRate(id, fromCurrency, toCurrency, value, timestamp);
+        return new Quote(id, expireTime, fromCurrency, toCurrency, depositAmount, value);
     }
 
     public static ExchangeSetting unboxExchangeSetting(ReadableMap map) {
