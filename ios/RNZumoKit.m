@@ -988,7 +988,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"minExchangeAmount": [[exchangeSetting minExchangeAmount] descriptionWithLocale:[self decimalLocale]],
         @"exchangeFeeRate": [[exchangeSetting exchangeFeeRate] descriptionWithLocale:[self decimalLocale]],
         @"outgoingTransactionFeeRate": [[exchangeSetting outgoingTransactionFeeRate] descriptionWithLocale:[self decimalLocale]],
-        @"returnTransactionFee": [[exchangeSetting returnTransactionFee] descriptionWithLocale:[self decimalLocale]]]
+        @"returnTransactionFee": [[exchangeSetting returnTransactionFee] descriptionWithLocale:[self decimalLocale]]
     };
 }
 
