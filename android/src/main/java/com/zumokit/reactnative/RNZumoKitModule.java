@@ -1404,7 +1404,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             map.putString("nonce", exchange.getNonce());
         }
 
-        map.putInt("submittedAt", exchange.getSubmittedAt());
+        map.putInt("submittedAt", 0);
 
         if (exchange.getConfirmedAt() == null) {
             map.putNull("confirmedAt");

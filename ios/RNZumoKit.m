@@ -860,7 +860,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
          @"exchangeRates": [self mapExchangeRates:[exchange exchangeRates]],
          @"exchangeSetting": [self mapExchangeSetting:[exchange exchangeSetting]],
          @"nonce": [exchange nonce] ? [exchange nonce] : [NSNull null],
-         @"submittedAt": [exchange submittedAt],
+         @"submittedAt": @0,
          @"confirmedAt": [exchange confirmedAt] ? [exchange confirmedAt] : [NSNull null],
     };
 }
