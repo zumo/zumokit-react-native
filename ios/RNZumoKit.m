@@ -905,7 +905,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     return @{
         @"id": [quote id],
         @"expireTime": [NSNumber numberWithInt:[quote expireTime]],
-        @"expiresIn": [quote expiresIn] ? [NSNumber numberWithInt:[quote expiresIn]]: [NSNull null],
+        @"expiresIn": [quote expiresIn] ? [quote expiresIn] : [NSNull null],
         @"fromCurrency": [quote fromCurrency],
         @"toCurrency": [quote toCurrency],
         @"depositAmount": [[quote depositAmount] descriptionWithLocale:[self decimalLocale]],
