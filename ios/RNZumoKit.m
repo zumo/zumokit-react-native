@@ -370,22 +370,6 @@ RCT_EXPORT_METHOD(unblockPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock
     }
 }
 
-RCT_EXPORT_METHOD(getQuote:(NSString *)fromCurrency toCurrency:(NSString *)toCurrency depositAmount:(NSString *)depositAmount resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    @try {
-        [_user getQuote:fromCurrency toCurrency:toCurrency depositAmount:[NSDecimalNumber decimalNumberWithString:depositAmount locale:[self decimalLocale]] completion:^(ZKQuote * _Nullable quote, NSError * _Nullable error) {
-            if(error != nil) {
-                [self rejectPromiseWithNSError:reject error:error];
-                return;
-            }
-
-            resolve([self mapQuote:quote]);
-        }];
-    } @catch (NSException *exception) {
-        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
-    }
-}
-
 RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData metadata:(NSString *)metadata resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
@@ -921,6 +905,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     return @{
         @"id": [quote id],
         @"expireTime": [NSNumber numberWithInt:[quote expireTime]],
+        @"expiresIn": [quote expiresIn] ? [quote expiresIn] : [NSNull null],
         @"fromCurrency": [quote fromCurrency],
         @"toCurrency": [quote toCurrency],
         @"depositAmount": [[quote depositAmount] descriptionWithLocale:[self decimalLocale]],
@@ -1003,8 +988,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"minExchangeAmount": [[exchangeSetting minExchangeAmount] descriptionWithLocale:[self decimalLocale]],
         @"exchangeFeeRate": [[exchangeSetting exchangeFeeRate] descriptionWithLocale:[self decimalLocale]],
         @"outgoingTransactionFeeRate": [[exchangeSetting outgoingTransactionFeeRate] descriptionWithLocale:[self decimalLocale]],
-        @"returnTransactionFee": [[exchangeSetting returnTransactionFee] descriptionWithLocale:[self decimalLocale]],
-        @"timestamp": [NSNumber numberWithInt:[exchangeSetting timestamp]]
+        @"returnTransactionFee": [[exchangeSetting returnTransactionFee] descriptionWithLocale:[self decimalLocale]]
     };
 }
 
@@ -1101,12 +1085,13 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
 {
     NSString *quoteId = quote[@"id"];
     NSNumber *expireTime = quote[@"expireTime"];
+    NSNumber *expiresIn = (quote[@"expiresIn"] == [NSNull null]) ? NULL : quote[@"expiresIn"];
     NSString *fromCurrency = quote[@"fromCurrency"];
     NSString *toCurrency = quote[@"toCurrency"];
     NSString *depositAmount = quote[@"depositAmount"];
     NSString *value = quote[@"value"];
 
-    return [[ZKQuote alloc] initWithId:quoteId expireTime:expireTime.intValue fromCurrency:fromCurrency toCurrency:toCurrency depositAmount:[NSDecimalNumber decimalNumberWithString:depositAmount locale:[self decimalLocale]] value:[NSDecimalNumber decimalNumberWithString:value locale:[self decimalLocale]]];
+    return [[ZKQuote alloc] initWithId:quoteId expireTime:expireTime.intValue expiresIn:expiresIn fromCurrency:fromCurrency toCurrency:toCurrency depositAmount:[NSDecimalNumber decimalNumberWithString:depositAmount locale:[self decimalLocale]] value:[NSDecimalNumber decimalNumberWithString:value locale:[self decimalLocale]]];
 }
 
 - (ZKExchangeSetting *)unboxExchangeSetting:(NSDictionary *)exchangeSetting
@@ -1118,7 +1103,6 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSString *exchangeFeeRate = exchangeSetting[@"exchangeFeeRate"];
     NSString *outgoingTransactionFeeRate = exchangeSetting[@"outgoingTransactionFeeRate"];
     NSString *returnTransactionFee = exchangeSetting[@"returnTransactionFee"];
-    NSNumber *timestamp = exchangeSetting[@"timestamp"];
 
     NSMutableDictionary *exchangeAddress = [[NSMutableDictionary alloc] init];
 
@@ -1127,7 +1111,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         exchangeAddress[network] = address;
     }];
 
-    return [[ZKExchangeSetting alloc] initWithId:exchangeSettingId exchangeAddress:exchangeAddress fromCurrency:fromCurrency toCurrency:toCurrency minExchangeAmount:[NSDecimalNumber decimalNumberWithString:minExchangeAmount locale:[self decimalLocale]] exchangeFeeRate:[NSDecimalNumber decimalNumberWithString:exchangeFeeRate locale:[self decimalLocale]] outgoingTransactionFeeRate:[NSDecimalNumber decimalNumberWithString:outgoingTransactionFeeRate locale:[self decimalLocale]] returnTransactionFee:[NSDecimalNumber decimalNumberWithString:returnTransactionFee locale:[self decimalLocale]] timestamp:timestamp.intValue];
+    return [[ZKExchangeSetting alloc] initWithId:exchangeSettingId exchangeAddress:exchangeAddress fromCurrency:fromCurrency toCurrency:toCurrency minExchangeAmount:[NSDecimalNumber decimalNumberWithString:minExchangeAmount locale:[self decimalLocale]] exchangeFeeRate:[NSDecimalNumber decimalNumberWithString:exchangeFeeRate locale:[self decimalLocale]] outgoingTransactionFeeRate:[NSDecimalNumber decimalNumberWithString:outgoingTransactionFeeRate locale:[self decimalLocale]] returnTransactionFee:[NSDecimalNumber decimalNumberWithString:returnTransactionFee locale:[self decimalLocale]]];
 }
 
 - (ZKAddress *)unboxAddress:(NSDictionary *)data
