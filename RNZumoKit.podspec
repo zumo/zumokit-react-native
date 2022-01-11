@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "RNZumoKit"
-  s.version      = "3.2.0-beta.9"
+  s.version      = "3.2.0-beta.22"
   s.summary      = "RNZumoKit"
   s.description  = <<-DESC
                   RNZumoKit

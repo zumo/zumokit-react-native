@@ -6,16 +6,14 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:7.0.4'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "28.0.3"
-
+    compileSdkVersion 31
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
@@ -24,10 +22,6 @@ android {
     }
     lintOptions {
         abortOnError false
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -42,5 +36,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.java-websocket:Java-WebSocket:1.4.0'
-    implementation 'com.github.zumo:zumokit-android:3.2.0-beta.9'
+    implementation 'com.github.zumo:zumokit-android:3.2.0-beta.22'
 }
