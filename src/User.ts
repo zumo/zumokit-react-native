@@ -1,6 +1,11 @@
-import { NativeModules, NativeEventEmitter } from 'react-native';
-import Decimal from 'decimal.js';
-import { Account, AccountFiatProperties, AccountDataSnapshot, Card } from 'zumokit/src/models';
+import { NativeModules, NativeEventEmitter } from "react-native";
+import Decimal from "decimal.js";
+import {
+  Account,
+  AccountFiatProperties,
+  AccountDataSnapshot,
+  Card,
+} from "zumokit/src/models";
 import {
   AccountJSON,
   CurrencyCode,
@@ -11,9 +16,11 @@ import {
   CardType,
   CardStatus,
   CardDetails,
-} from 'zumokit/src/interfaces';
-import { Wallet } from './Wallet';
-import { tryCatchProxy } from './utility/errorProxy';
+  KbaAnswer,
+  AuthenticationConfig,
+} from "zumokit/src/interfaces";
+import { Wallet } from "./Wallet";
+import { tryCatchProxy } from "./utility/errorProxy";
 
 const {
   /** @internal */
@@ -49,7 +56,9 @@ export class User {
   private accountDataSnapshots: Array<AccountDataSnapshot> = [];
 
   // Listeners for account data changes
-  private accountDataListeners: Array<(snapshots: Array<AccountDataSnapshot>) => void> = [];
+  private accountDataListeners: Array<
+    (snapshots: Array<AccountDataSnapshot>) => void
+  > = [];
 
   /** User identifier. */
   id: string;
@@ -64,16 +73,26 @@ export class User {
   constructor(json: UserJSON) {
     this.id = json.id;
     this.hasWallet = json.hasWallet;
-    this.accounts = json.accounts.map((accountJson: AccountJSON) => new Account(accountJson));
+    this.accounts = json.accounts.map(
+      (accountJson: AccountJSON) => new Account(accountJson)
+    );
 
-    this.emitter.addListener('AccountDataChanged', (snapshots: Array<AccountDataSnapshotJSON>) => {
-      this.accountDataSnapshots = snapshots.map(
-        (snapshot: AccountDataSnapshotJSON) => new AccountDataSnapshot(snapshot)
-      );
-      this.accounts = this.accountDataSnapshots.map((snapshot) => snapshot.account);
-      this.accountDataListeners.forEach((listener) => listener(this.accountDataSnapshots));
-      this.accountDataSnapshotsInitialised = true;
-    });
+    this.emitter.addListener(
+      "AccountDataChanged",
+      (snapshots: Array<AccountDataSnapshotJSON>) => {
+        this.accountDataSnapshots = snapshots.map(
+          (snapshot: AccountDataSnapshotJSON) =>
+            new AccountDataSnapshot(snapshot)
+        );
+        this.accounts = this.accountDataSnapshots.map(
+          (snapshot) => snapshot.account
+        );
+        this.accountDataListeners.forEach((listener) =>
+          listener(this.accountDataSnapshots)
+        );
+        this.accountDataSnapshotsInitialised = true;
+      }
+    );
     RNZumoKit.addAccountDataListener();
   }
 
@@ -210,13 +229,35 @@ export class User {
   }
 
   /**
+   * Fetch Strong Customer Authentication (SCA) config.
+   */
+  async fetchAuthenticationConfig(): Promise<AuthenticationConfig> {
+    return RNZumoKit.fetchAuthenticationConfig();
+  }
+
+  /**
    * Create card for a fiat account.
+   * <p>
+   * At least one Knowledge-Based Authentication (KBA) answers should be defined,
+   * answers are limited to 256 characters and cannot be null or empty and only
+   * one answer per question type should be provided.
    * @param  fiatAccountId  fiat {@link Account account} identifier
    * @param  cardType       'VIRTUAL' or 'PHYSICAL'
    * @param  mobileNumber   card holder mobile number, starting with a '+', followed by the country code and then the mobile number, or null
+   * @param  knowledgeBase  list of KBA answers
    */
-  async createCard(fiatAccountId: string, cardType: CardType, mobileNumber: string) {
-    const json = await RNZumoKit.createCard(fiatAccountId, cardType, mobileNumber);
+  async createCard(
+    fiatAccountId: string,
+    cardType: CardType,
+    mobileNumber: string,
+    knowledgeBase: Array<KbaAnswer>
+  ) {
+    const json = await RNZumoKit.createCard(
+      fiatAccountId,
+      cardType,
+      mobileNumber,
+      knowledgeBase
+    );
     return new Card(json);
   }
 
@@ -266,11 +307,33 @@ export class User {
   }
 
   /**
+   * Add KBA answers to a card without SCA.
+   * <p>
+   * This endpoint is used to set Knowledge-Based Authentication (KBA) answers to
+   * a card without Strong Customer Authentication (SCA). Once it is set SCA flag
+   * on corresponding card is set to true.
+   * <p>
+   * At least one answer should be defined, answers are limited to 256 characters and
+   * cannot be null or empty and only one answer per question type should be provided.
+   *
+   * @param  cardId         card id
+   * @param  knowledgeBase  list of KBA answers
+   */
+  async setAuthentication(
+    cardId: string,
+    knowledgeBase: Array<KbaAnswer>
+  ): Promise<void> {
+    return RNZumoKit.setAuthentication(cardId, knowledgeBase);
+  }
+
+  /**
    * Listen to all account data changes.
    *
    * @param listener interface to listen to user changes
    */
-  addAccountDataListener(listener: (snapshots: Array<AccountDataSnapshot>) => void) {
+  addAccountDataListener(
+    listener: (snapshots: Array<AccountDataSnapshot>) => void
+  ) {
     this.accountDataListeners.push(listener);
     if (this.accountDataSnapshotsInitialised) {
       listener(this.accountDataSnapshots);
@@ -282,7 +345,9 @@ export class User {
    *
    * @param listener interface to listen to state changes
    */
-  removeAccountDataListener(listener: (snapshot: Array<AccountDataSnapshot>) => void) {
+  removeAccountDataListener(
+    listener: (snapshot: Array<AccountDataSnapshot>) => void
+  ) {
     let index = this.accountDataListeners.indexOf(listener);
     while (index !== -1) {
       this.accountDataListeners.splice(index, 1);
