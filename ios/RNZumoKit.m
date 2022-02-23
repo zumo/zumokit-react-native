@@ -286,10 +286,27 @@ RCT_EXPORT_METHOD(getNominatedAccountFiatProperties:(NSString *)accountId resolv
     }
 }
 
-RCT_EXPORT_METHOD(createCard:(NSString *)fiatAccountId cardType:(NSString *)cardType mobileNumber:(NSString *)mobileNumber resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(fetchAuthenticationConfig:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_user createCard:fiatAccountId cardType:cardType mobileNumber:mobileNumber completion:^(ZKCard * _Nullable card, NSError * _Nullable error) {
+        [_user fetchAuthenticationConfigWithCompletion:^(ZKAuthenticationConfig * _Nullable config, NSError * _Nullable error) {
+            
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapAuthenticationConfig:config]);
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(createCard:(NSString *)fiatAccountId cardType:(NSString *)cardType mobileNumber:(NSString *)mobileNumber knowledgeBase:(NSArray<NSDictionary *> *)knowledgeBase resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user createCard:fiatAccountId cardType:cardType mobileNumber:mobileNumber knowledgeBase:[self unboxKnowledgeBase:knowledgeBase] completion:^(ZKCard * _Nullable card, NSError * _Nullable error) {
             
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -358,6 +375,23 @@ RCT_EXPORT_METHOD(unblockPin:(NSString *)cardId resolver:(RCTPromiseResolveBlock
 {
     @try {
         [_user unblockPin:cardId completion:^(NSError * _Nullable error) {
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve(@(YES));
+        }];
+    } @catch (NSException *exception) {
+        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+    }
+}
+
+RCT_EXPORT_METHOD(setAuthentication:(NSString *)cardId knowledgeBase:(NSArray<NSDictionary *> *)knowledgeBase resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user setAuthentication:cardId knowledgeBase:[self unboxKnowledgeBase:knowledgeBase] completion:^(NSError * _Nullable error) {
+            
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
                 return;
@@ -1032,6 +1066,27 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     return mapped;
 }
 
+- (NSDictionary *)mapKbaQuestion:(ZKKbaQuestion *)question
+{
+    return @{
+        @"type": [question type],
+        @"question": [question question]
+    };
+}
+
+- (NSDictionary *)mapAuthenticationConfig:(ZKAuthenticationConfig *)config
+{
+    NSMutableArray<NSDictionary *> *knowledgeBase = [[NSMutableArray alloc] init];
+
+    [[config knowledgeBase] enumerateObjectsUsingBlock:^(ZKKbaQuestion * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [knowledgeBase addObject:[self mapKbaQuestion:obj]];
+    }];
+    
+    return @{
+        @"knowledgeBase": knowledgeBase,
+    };
+}
+
 #pragma mark - Unboxing
 
 - (ZKAccount *)unboxAccount:(NSDictionary *)accountData
@@ -1135,8 +1190,31 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSNumber *limit = data[@"limit"];
     NSString *maskedPan = (data[@"maskedPan"] == [NSNull null]) ? NULL : data[@"maskedPan"];
     NSString *expiry = data[@"expiry"];
+    bool sca = data[@"sca"];
 
-    return [[ZKCard alloc] initWithId:cardId accountId:accountId cardType:cardType cardStatus:cardStatus limit:limit.intValue maskedPan:maskedPan expiry:expiry];
+    return [[ZKCard alloc] initWithId:cardId accountId:accountId cardType:cardType cardStatus:cardStatus limit:limit.intValue maskedPan:maskedPan expiry:expiry sca:sca];
+}
+
+- (ZKKbaAnswer *)unboxKbaAnswer:(NSDictionary *)data
+{
+    NSString *type = data[@"type"];
+    NSString *answer = data[@"answer"];
+
+    return [[ZKKbaAnswer alloc] initWithType:type answer:answer];
+}
+
+- (NSArray<ZKKbaAnswer *> *)unboxKnowledgeBase:(NSArray<NSDictionary *>*)data
+{
+    NSMutableArray<ZKKbaAnswer *> * knowledgeBase = [[NSMutableArray alloc] init];
+    [data enumerateObjectsUsingBlock:^(
+            NSDictionary * _Nonnull kbaData,
+            NSUInteger idx,
+            BOOL * _Nonnull stop) {
+
+        [knowledgeBase addObject:[self unboxKbaAnswer:kbaData]];
+    }];
+
+    return knowledgeBase;
 }
 
 @end
