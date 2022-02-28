@@ -13,6 +13,10 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import money.zumo.zumokit.AuthenticationConfig;
+import money.zumo.zumokit.AuthenticationConfigCallback;
+import money.zumo.zumokit.KbaAnswer;
+import money.zumo.zumokit.KbaQuestion;
 import money.zumo.zumokit.LogListener;
 import money.zumo.zumokit.AccountDataSnapshot;
 import money.zumo.zumokit.AccountFiatPropertiesCallback;
@@ -52,6 +56,7 @@ import money.zumo.zumokit.ExchangeRate;
 import money.zumo.zumokit.Quote;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.ArrayList;
@@ -355,10 +360,34 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void fetchAuthenticationConfig(
+            Promise promise
+    ) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.fetchAuthenticationConfig(
+                new AuthenticationConfigCallback() {
+                    @Override
+                    public void onError(Exception e) {
+                        rejectPromise(promise, e);
+                    }
+
+                    @Override
+                    public void onSuccess(AuthenticationConfig config) {
+                        promise.resolve(RNZumoKitModule.mapAuthenticationConfig(config));
+                    }
+                });
+    }
+
+    @ReactMethod
     public void createCard(
             String fiatAccountId,
             String cardType,
             String mobileNumber,
+            ReadableArray knowledgeBase,
             Promise promise
     ) {
         if (this.user == null) {
@@ -370,6 +399,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 fiatAccountId,
                 cardType,
                 mobileNumber,
+                RNZumoKitModule.unboxKnowledgeBase(knowledgeBase),
                 new CardCallback() {
                     @Override
                     public void onError(Exception e) {
@@ -452,6 +482,22 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         this.user.unblockPin(cardId, new SuccessCallback() {
+            @Override
+            public void onError(Exception e) { rejectPromise(promise, e); }
+
+            @Override
+            public void onSuccess() { promise.resolve(true); }
+        });
+    }
+
+    @ReactMethod
+    public void setAuthentication(String cardId, ReadableArray knowledgeBase, Promise promise) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.setAuthentication(cardId, unboxKnowledgeBase(knowledgeBase), new SuccessCallback() {
             @Override
             public void onError(Exception e) { rejectPromise(promise, e); }
 
@@ -1588,6 +1634,29 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
       return res;
     }
 
+    public static WritableMap mapKbaQuestion(KbaQuestion question) {
+        WritableMap mappedQuestion = Arguments.createMap();
+
+        mappedQuestion.putString("type", question.getType());
+        mappedQuestion.putString("question", question.getQuestion());
+
+        return mappedQuestion;
+    }
+
+    public static WritableMap mapAuthenticationConfig(AuthenticationConfig config) {
+        WritableArray knowledgeBase = Arguments.createArray();
+
+        for (KbaQuestion question : config.getKnowledgeBase()) {
+            knowledgeBase.pushMap(mapKbaQuestion(question));
+        }
+
+        WritableMap mappedConfig = Arguments.createMap();
+
+        mappedConfig.putArray("knowledgeBase", knowledgeBase);
+
+        return mappedConfig;
+    }
+
     public static Account unboxAccount(ReadableMap map) {
         AccountCryptoProperties cryptoProperties = null;
         if (!map.isNull("cryptoProperties")) {
@@ -1721,6 +1790,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         int limit = map.getInt("limit");
         String maskedPan = map.getString("maskedPan");
         String expiry = map.getString("expiry");
+        Boolean sca = map.getBoolean("sca");
 
         return new Card(
                 cardId,
@@ -1729,8 +1799,25 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 cardStatus,
                 limit,
                 maskedPan,
-                expiry
+                expiry,
+                sca
         );
+    }
+
+    public static KbaAnswer unboxKbaAnswer(ReadableMap map) {
+        String type = map.getString("type");
+        String answer = map.getString("answer");
+
+        return new KbaAnswer(type, answer);
+    }
+
+    public static ArrayList<KbaAnswer> unboxKnowledgeBase(ReadableArray knowledgeBase) {
+        ArrayList<KbaAnswer> res = new ArrayList<KbaAnswer>();
+        for (int i = 0; i < knowledgeBase.size(); i++) {
+            res.add(RNZumoKitModule.unboxKbaAnswer(knowledgeBase.getMap(i)));
+        }
+
+        return res;
     }
 
     @Override
