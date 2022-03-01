@@ -763,7 +763,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"cardStatus": [card cardStatus],
         @"limit": @([card limit]),
         @"maskedPan": [card maskedPan] ? [card maskedPan] : [NSNull null],
-        @"expiry": [card expiry]
+        @"expiry": [card expiry],
+        @"sca": @([card sca])
     };
 }
 
