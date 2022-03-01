@@ -87,7 +87,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         WritableMap userInfo = Arguments.createMap();
         userInfo.putString("type", errorType);
 
-        promise.reject(errorCode, errorMessage, userInfo);
+        promise.reject(errorCode, errorMessage, (Throwable) userInfo);
     }
 
     private void rejectPromise(Promise promise, Exception e) {
@@ -1025,6 +1025,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             map.putString("maskedPan", card.getMaskedPan());
         }
         map.putString("expiry", card.getExpiry());
+        map.putBoolean("sca", card.getSca());
 
         return map;
     }
