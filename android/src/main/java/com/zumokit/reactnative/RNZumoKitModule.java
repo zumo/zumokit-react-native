@@ -56,7 +56,6 @@ import money.zumo.zumokit.ExchangeRate;
 import money.zumo.zumokit.Quote;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.ArrayList;
