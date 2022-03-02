@@ -87,7 +87,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         WritableMap userInfo = Arguments.createMap();
         userInfo.putString("type", errorType);
 
-        promise.reject(errorCode, errorMessage, (Throwable) userInfo);
+        promise.reject(errorCode, errorMessage, userInfo);
     }
 
     private void rejectPromise(Promise promise, Exception e) {
