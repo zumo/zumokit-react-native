@@ -38,8 +38,7 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.java-websocket:Java-WebSocket:1.4.0'
-    implementation 'com.github.zumo:zumokit-android:3.2.0-beta.9'
+    implementation 'money.zumo.zumokit:zumokit:3.3.0-beta.5'
 }
