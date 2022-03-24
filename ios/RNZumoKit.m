@@ -763,7 +763,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"cardStatus": [card cardStatus],
         @"limit": @([card limit]),
         @"maskedPan": [card maskedPan] ? [card maskedPan] : [NSNull null],
-        @"expiry": [card expiry]
+        @"expiry": [card expiry],
+        @"sca": @([card sca])
     };
 }
 
@@ -1190,7 +1191,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSNumber *limit = data[@"limit"];
     NSString *maskedPan = (data[@"maskedPan"] == [NSNull null]) ? NULL : data[@"maskedPan"];
     NSString *expiry = data[@"expiry"];
-    bool sca = data[@"sca"];
+    BOOL sca = data[@"sca"];
 
     return [[ZKCard alloc] initWithId:cardId accountId:accountId cardType:cardType cardStatus:cardStatus limit:limit.intValue maskedPan:maskedPan expiry:expiry sca:sca];
 }
