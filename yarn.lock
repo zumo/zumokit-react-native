@@ -1594,7 +1594,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-zumokit@3.3.0-beta.3:
-  version "3.3.0-beta.3"
-  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-3.3.0-beta.3.tgz#736f713dd282c2db944c5c758fa7d8493121a86b"
-  integrity sha512-UNAx9dbe0tTwDr5vplyQBS+V7pG0qdAsOZremG5PifjfRZy5YdlRkZDfAKqPNIqAm6qdJVV1Au/sBXoiBUyoHA==
+zumokit@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-3.3.0.tgz#8b25f8f90a05244296d342476a0e2b0d28f68f41"
+  integrity sha512-qS0Bi7rKxupgpeBxdQ4Oj+6OO3A07s2220IhY8sFDQHOkF84HkYtOMzd/sIrNQk5lgUKTSOTa6rpnsh0Pb2lIQ==
