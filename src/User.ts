@@ -30,6 +30,7 @@ const {
 /** @internal */
 interface UserJSON {
   id: string;
+  integratorId: string;
   hasWallet: boolean;
   accounts: Array<AccountJSON>;
 }
@@ -63,6 +64,9 @@ export class User {
   /** User identifier. */
   id: string;
 
+  /** User integrator identifier. */
+  integratorId: string;
+
   /** Indicator if user has wallet. */
   hasWallet: boolean;
 
@@ -72,6 +76,7 @@ export class User {
   /** @internal */
   constructor(json: UserJSON) {
     this.id = json.id;
+    this.integratorId = json.integratorId;
     this.hasWallet = json.hasWallet;
     this.accounts = json.accounts.map(
       (accountJson: AccountJSON) => new Account(accountJson)
