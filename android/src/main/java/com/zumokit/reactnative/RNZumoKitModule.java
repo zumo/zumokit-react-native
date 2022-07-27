@@ -1412,8 +1412,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 WritableMap fiatAmounts = Arguments.createMap();
                 for (HashMap.Entry entry :
                         transaction.getCryptoProperties().getFiatAmount().entrySet()) {
-                    fiatAmounts.putString((String) entry.getKey(),
-                            ((BigDecimal) entry.getValue()).toPlainString());
+                    fiatAmounts.putDouble((String) entry.getKey(), ((Double) entry.getValue()));
                 }
                 cryptoProperties.putMap("fiatAmount", fiatAmounts);
             }
@@ -1424,8 +1423,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 WritableMap fiatFee = Arguments.createMap();
                 for (HashMap.Entry entry :
                         transaction.getCryptoProperties().getFiatFee().entrySet()) {
-                    fiatFee.putString((String) entry.getKey(),
-                            ((BigDecimal) entry.getValue()).toPlainString());
+                    fiatFee.putDouble((String) entry.getKey(), ((Double) entry.getValue()));
                 }
                 cryptoProperties.putMap("fiatFee", fiatFee);
             }
