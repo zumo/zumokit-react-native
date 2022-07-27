@@ -1162,7 +1162,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("direction", transactionAmount.getDirection());
 
         if (transactionAmount.getUserId() == null) {
-            map.putNull("fromUserId");
+            map.putNull("userId");
         } else {
             map.putString("fromUserId", transactionAmount.getUserId());
         }
