@@ -844,7 +844,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"toUserIntegratorId": [internalTransaction toUserIntegratorId] ? [internalTransaction toUserIntegratorId] : [NSNull null],
         @"toAccountId": [internalTransaction toAccountId] ? [internalTransaction toAccountId] : [NSNull null],
         @"toAddress": [internalTransaction toAddress] ? [internalTransaction toAddress] : [NSNull null],
-        @"amount": [[internalTransaction amount] descriptionWithLocale:[self decimalLocale]]
+        @"amount": [[internalTransaction amount] descriptionWithLocale:[self decimalLocale]],
+        @"fiatAmount": [internalTransaction fiatAmount] ? [self mapFiatMap:[internalTransaction fiatAmount]] : [NSNull null]
     };
 }
 
