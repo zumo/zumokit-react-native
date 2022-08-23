@@ -134,6 +134,7 @@ RCT_EXPORT_METHOD(signIn:(NSString *)userTokenSet resolver:(RCTPromiseResolveBlo
 
             resolve(@{
                 @"id": [user getId],
+                @"integratorId": [user getIntegratorId],
                 @"hasWallet": @([user hasWallet]),
                 @"accounts": [self mapAccounts:[user getAccounts]]
             });
@@ -803,15 +804,49 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     };
 }
 
-- (NSDictionary *)mapFiatMap:(NSDictionary<NSString *, NSDecimalNumber *>*)fiatAmountsMap
+- (NSDictionary *)mapFiatMap:(NSDictionary<NSString *, NSNumber *>*)fiatAmountsMap
 {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
-    [fiatAmountsMap enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSDecimalNumber * _Nonnull obj, BOOL * _Nonnull stop) {
+    [fiatAmountsMap enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
         dict[key] = [obj descriptionWithLocale:[self decimalLocale]];
     }];
 
     return dict;
+}
+
+- (NSDictionary *)mapTransactionAmount:(ZKTransactionAmount *)transactionAmount
+{
+    return @{
+        @"direction": [transactionAmount direction],
+        @"userId": [transactionAmount userId] ? [transactionAmount userId] : [NSNull null],
+        @"userIntegratorId": [transactionAmount userIntegratorId] ? [transactionAmount userIntegratorId] : [NSNull null],
+        @"accountId": [transactionAmount accountId] ? [transactionAmount accountId] : [NSNull null],
+        @"amount": [transactionAmount amount] ? [[transactionAmount amount] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
+        @"fiatAmount": [transactionAmount fiatAmount] ? [self mapFiatMap:[transactionAmount fiatAmount]] : [NSNull null],
+        @"address": [transactionAmount address] ? [transactionAmount address] : [NSNull null],
+        @"isChange": @([transactionAmount isChange]),
+        @"accountNumber": [transactionAmount accountNumber] ? [transactionAmount accountNumber] : [NSNull null],
+        @"sortCode": [transactionAmount sortCode] ? [transactionAmount sortCode] : [NSNull null],
+        @"bic": [transactionAmount bic] ? [transactionAmount bic] : [NSNull null],
+        @"iban": [transactionAmount iban] ? [transactionAmount iban] : [NSNull null]
+    };
+}
+
+- (NSDictionary *)mapInternalTransaction:(ZKInternalTransaction *)internalTransaction
+{
+    return @{
+        @"fromUserId": [internalTransaction fromUserId] ? [internalTransaction fromUserId] : [NSNull null],
+        @"fromUserIntegratorId": [internalTransaction fromUserIntegratorId] ? [internalTransaction fromUserIntegratorId] : [NSNull null],
+        @"fromAccountId": [internalTransaction fromAccountId] ? [internalTransaction fromAccountId] : [NSNull null],
+        @"fromAddress": [internalTransaction fromAddress] ? [internalTransaction fromAddress] : [NSNull null],
+        @"toUserId": [internalTransaction toUserId] ? [internalTransaction toUserId] : [NSNull null],
+        @"toUserIntegratorId": [internalTransaction toUserIntegratorId] ? [internalTransaction toUserIntegratorId] : [NSNull null],
+        @"toAccountId": [internalTransaction toAccountId] ? [internalTransaction toAccountId] : [NSNull null],
+        @"toAddress": [internalTransaction toAddress] ? [internalTransaction toAddress] : [NSNull null],
+        @"amount": [[internalTransaction amount] descriptionWithLocale:[self decimalLocale]],
+        @"fiatAmount": [internalTransaction fiatAmount] ? [self mapFiatMap:[internalTransaction fiatAmount]] : [NSNull null]
+    };
 }
 
 - (NSDictionary *)mapTransaction:(ZKTransaction *)transaction
@@ -853,15 +888,14 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"type": [transaction type],
         @"currencyCode": [transaction currencyCode],
         @"direction": [transaction direction],
-        @"fromUserId": [transaction fromUserId] ? [transaction fromUserId] : [NSNull null],
-        @"toUserId": [transaction toUserId] ? [transaction toUserId] : [NSNull null],
-        @"fromAccountId": [transaction fromAccountId] ? [transaction fromAccountId] : [NSNull null],
-        @"toAccountId": [transaction toAccountId] ? [transaction toAccountId] : [NSNull null],
         @"network": [transaction network],
         @"status": [transaction status],
         @"amount": [transaction amount] ? [[transaction amount] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
         @"fee": [transaction fee] ? [[transaction fee] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
         @"nonce": [transaction nonce] ? [transaction nonce] : [NSNull null],
+        @"senders": [self mapTransactionAmounts:[transaction senders]],
+        @"recipients": [self mapTransactionAmounts:[transaction recipients]],
+        @"internalTransactions": [self mapInternalTransactions:[transaction internalTransactions]],
         @"cryptoProperties": [transaction cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
         @"cardProperties": [transaction cardProperties] ? cardProperties : [NSNull null],
@@ -1043,6 +1077,28 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     }];
 
     return outerDict;
+}
+
+- (NSArray<NSDictionary *> *)mapTransactionAmounts:(NSArray<ZKTransactionAmount *>*)transactionAmounts
+{
+    NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+
+    [transactionAmounts enumerateObjectsUsingBlock:^(ZKTransactionAmount * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [mapped addObject:[self mapTransactionAmount:obj]];
+    }];
+
+    return mapped;
+}
+
+- (NSArray<NSDictionary *> *)mapInternalTransactions:(NSArray<ZKInternalTransaction *>*)internalTransactions
+{
+    NSMutableArray<NSDictionary *> *mapped = [[NSMutableArray alloc] init];
+
+    [internalTransactions enumerateObjectsUsingBlock:^(ZKInternalTransaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [mapped addObject:[self mapInternalTransaction:obj]];
+    }];
+
+    return mapped;
 }
 
 - (NSArray<NSDictionary *> *)mapTransactions:(NSArray<ZKTransaction *>*)transactions

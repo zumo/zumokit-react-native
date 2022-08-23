@@ -46,6 +46,8 @@ import money.zumo.zumokit.MnemonicCallback;
 import money.zumo.zumokit.UserCallback;
 import money.zumo.zumokit.Account;
 import money.zumo.zumokit.Transaction;
+import money.zumo.zumokit.TransactionAmount;
+import money.zumo.zumokit.InternalTransaction;
 import money.zumo.zumokit.ComposedTransaction;
 import money.zumo.zumokit.ComposeTransactionCallback;
 import money.zumo.zumokit.SubmitTransactionCallback;
@@ -180,6 +182,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 WritableMap map = Arguments.createMap();
 
                 map.putString("id", user.getId());
+                map.putString("integratorId", user.getIntegratorId());
                 map.putBoolean("hasWallet", user.hasWallet());
                 map.putArray("accounts", RNZumoKitModule.mapAccounts(user.getAccounts()));
 
@@ -1120,6 +1123,28 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         return map;
     }
 
+    public static WritableArray mapTransactionAmounts(ArrayList<TransactionAmount> transactionAmounts) {
+        WritableArray response = Arguments.createArray();
+
+        for (TransactionAmount transactionAmount : transactionAmounts) {
+            WritableMap map = RNZumoKitModule.mapTransactionAmount(transactionAmount);
+            response.pushMap(map);
+        }
+
+        return response;
+    }
+
+    public static WritableArray mapInternalTransactions(ArrayList<InternalTransaction> internalTransactions) {
+        WritableArray response = Arguments.createArray();
+
+        for (InternalTransaction internalTransaction : internalTransactions) {
+            WritableMap map = RNZumoKitModule.mapInternalTransaction(internalTransaction);
+            response.pushMap(map);
+        }
+
+        return response;
+    }
+
     public static WritableArray mapTransactions(ArrayList<Transaction> transactions) {
         WritableArray response = Arguments.createArray();
 
@@ -1131,6 +1156,150 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         return response;
     }
 
+    public static WritableMap mapTransactionAmount(TransactionAmount transactionAmount) {
+        WritableMap map = Arguments.createMap();
+
+        map.putString("direction", transactionAmount.getDirection());
+
+        if (transactionAmount.getUserId() == null) {
+            map.putNull("userId");
+        } else {
+            map.putString("userId", transactionAmount.getUserId());
+        }
+
+        if (transactionAmount.getUserIntegratorId() == null) {
+            map.putNull("userIntegratorId");
+        } else {
+            map.putString("userIntegratorId", transactionAmount.getUserIntegratorId());
+        }
+
+        if (transactionAmount.getAccountId() == null) {
+            map.putNull("accountId");
+        } else {
+            map.putString("accountId", transactionAmount.getAccountId());
+        }
+
+        if (transactionAmount.getAmount() == null) {
+            map.putNull("amount");
+        } else {
+            map.putString("amount", transactionAmount.getAmount().toPlainString());
+        }
+
+        if (transactionAmount.getFiatAmount() == null) {
+            map.putNull("fiatAmount");
+        } else {
+            WritableMap fiatAmounts = Arguments.createMap();
+            for (HashMap.Entry entry : transactionAmount.getFiatAmount().entrySet()) {
+                fiatAmounts.putDouble((String) entry.getKey(), ((Double) entry.getValue()));
+            }
+            map.putMap("fiatAmount", fiatAmounts);
+        }
+
+        if (transactionAmount.getAddress() == null) {
+            map.putNull("address");
+        } else {
+            map.putString("address", transactionAmount.getAddress());
+        }
+
+        map.putBoolean("isChange", transactionAmount.getIsChange());
+
+        if (transactionAmount.getAccountNumber() == null) {
+            map.putNull("accountNumber");
+        } else {
+            map.putString("accountNumber", transactionAmount.getAccountNumber());
+        }
+
+        if (transactionAmount.getSortCode() == null) {
+            map.putNull("sortCode");
+        } else {
+            map.putString("sortCode", transactionAmount.getSortCode());
+        }
+
+        if (transactionAmount.getBic() == null) {
+            map.putNull("bic");
+        } else {
+            map.putString("bic", transactionAmount.getBic());
+        }
+
+        if (transactionAmount.getIban() == null) {
+            map.putNull("iban");
+        } else {
+            map.putString("iban", transactionAmount.getIban());
+        }
+
+        return map;
+    }
+
+    public static WritableMap mapInternalTransaction(InternalTransaction internalTransaction) {
+        WritableMap map = Arguments.createMap();
+
+        if (internalTransaction.getFromUserId() == null) {
+            map.putNull("fromUserId");
+        } else {
+            map.putString("fromUserId", internalTransaction.getFromUserId());
+        }
+
+        if (internalTransaction.getFromUserIntegratorId() == null) {
+            map.putNull("fromUserIntegratorId");
+        } else {
+            map.putString("fromUserIntegratorId", internalTransaction.getFromUserIntegratorId());
+        }
+
+        if (internalTransaction.getFromAccountId() == null) {
+            map.putNull("fromAccountId");
+        } else {
+            map.putString("fromAccountId", internalTransaction.getFromAccountId());
+        }
+
+        if (internalTransaction.getFromAddress() == null) {
+            map.putNull("fromAddress");
+        } else {
+            map.putString("fromAddress", internalTransaction.getFromAddress());
+        }
+
+        if (internalTransaction.getToUserId() == null) {
+            map.putNull("toUserId");
+        } else {
+            map.putString("toUserId", internalTransaction.getToUserId());
+        }
+
+        if (internalTransaction.getToUserIntegratorId() == null) {
+            map.putNull("toUserIntegratorId");
+        } else {
+            map.putString("toUserIntegratorId", internalTransaction.getToUserIntegratorId());
+        }
+
+        if (internalTransaction.getToAccountId() == null) {
+            map.putNull("toAccountId");
+        } else {
+            map.putString("toAccountId", internalTransaction.getToAccountId());
+        }
+
+        if (internalTransaction.getToAddress() == null) {
+            map.putNull("toAddress");
+        } else {
+            map.putString("toAddress", internalTransaction.getToAddress());
+        }
+
+        if (internalTransaction.getAmount() == null) {
+            map.putNull("amount");
+        } else {
+            map.putString("amount", internalTransaction.getAmount().toPlainString());
+        }
+
+        if (internalTransaction.getFiatAmount() == null) {
+            map.putNull("fiatAmount");
+        } else {
+            WritableMap fiatAmounts = Arguments.createMap();
+            for (HashMap.Entry entry : internalTransaction.getFiatAmount().entrySet()) {
+                fiatAmounts.putDouble((String) entry.getKey(), ((Double) entry.getValue()));
+            }
+            map.putMap("fiatAmount", fiatAmounts);
+        }
+
+        return map;
+    }
+
     public static WritableMap mapTransaction(Transaction transaction) {
         WritableMap map = Arguments.createMap();
 
@@ -1138,33 +1307,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("type", transaction.getType());
         map.putString("currencyCode", transaction.getCurrencyCode());
         map.putString("direction", transaction.getDirection());
-
-        if (transaction.getFromUserId() == null) {
-            map.putNull("fromUserId");
-        } else {
-            map.putString("fromUserId", transaction.getFromUserId());
-        }
-
-        if (transaction.getToUserId() == null) {
-            map.putNull("toUserId");
-        } else {
-            map.putString("toUserId", transaction.getToUserId());
-        }
-
-        if (transaction.getFromAccountId() == null) {
-            map.putNull("fromAccountId");
-        } else {
-            map.putString("fromAccountId", transaction.getFromAccountId());
-        }
-
-        if (transaction.getToAccountId() == null) {
-            map.putNull("toAccountId");
-        } else {
-            map.putString("toAccountId", transaction.getToAccountId());
-        }
-
         map.putString("network", transaction.getNetwork());
         map.putString("status", transaction.getStatus());
+
+        WritableArray senders = RNZumoKitModule.mapTransactionAmounts(transaction.getSenders());
+        map.putArray("senders", senders);
+
+        WritableArray recipients = RNZumoKitModule.mapTransactionAmounts(transaction.getRecipients());
+        map.putArray("recipients", recipients);
+
+        WritableArray internalTransactions = RNZumoKitModule.mapInternalTransactions(transaction.getInternalTransactions());
+        map.putArray("internalTransactions", internalTransactions);
 
         if (transaction.getAmount() == null) {
             map.putNull("amount");
@@ -1253,21 +1406,27 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                         transaction.getCryptoProperties().getGasLimit());
             }
 
-            WritableMap fiatAmounts = Arguments.createMap();
-            for (HashMap.Entry entry :
-                    transaction.getCryptoProperties().getFiatAmount().entrySet()) {
-                fiatAmounts.putString((String) entry.getKey(),
-                        ((BigDecimal) entry.getValue()).toPlainString());
+            if (transaction.getCryptoProperties().getFiatAmount() == null) {
+                cryptoProperties.putNull("fiatAmount");
+            } else {
+                WritableMap fiatAmounts = Arguments.createMap();
+                for (HashMap.Entry entry :
+                        transaction.getCryptoProperties().getFiatAmount().entrySet()) {
+                    fiatAmounts.putDouble((String) entry.getKey(), ((Double) entry.getValue()));
+                }
+                cryptoProperties.putMap("fiatAmount", fiatAmounts);
             }
-            cryptoProperties.putMap("fiatAmount", fiatAmounts);
 
-            WritableMap fiatFee = Arguments.createMap();
-            for (HashMap.Entry entry :
-                    transaction.getCryptoProperties().getFiatFee().entrySet()) {
-                fiatFee.putString((String) entry.getKey(),
-                        ((BigDecimal) entry.getValue()).toPlainString());
+            if (transaction.getCryptoProperties().getFiatFee() == null) {
+                cryptoProperties.putNull("fiatFee");
+            } else {
+                WritableMap fiatFee = Arguments.createMap();
+                for (HashMap.Entry entry :
+                        transaction.getCryptoProperties().getFiatFee().entrySet()) {
+                    fiatFee.putDouble((String) entry.getKey(), ((Double) entry.getValue()));
+                }
+                cryptoProperties.putMap("fiatFee", fiatFee);
             }
-            cryptoProperties.putMap("fiatFee", fiatFee);
 
             map.putMap("cryptoProperties", cryptoProperties);
         }
