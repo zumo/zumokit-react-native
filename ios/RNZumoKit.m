@@ -804,17 +804,6 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     };
 }
 
-- (NSDictionary *)mapFiatMap:(NSDictionary<NSString *, NSNumber *>*)fiatAmountsMap
-{
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-
-    [fiatAmountsMap enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
-        dict[key] = [obj descriptionWithLocale:[self decimalLocale]];
-    }];
-
-    return dict;
-}
-
 - (NSDictionary *)mapTransactionAmount:(ZKTransactionAmount *)transactionAmount
 {
     return @{
@@ -823,7 +812,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"userIntegratorId": [transactionAmount userIntegratorId] ? [transactionAmount userIntegratorId] : [NSNull null],
         @"accountId": [transactionAmount accountId] ? [transactionAmount accountId] : [NSNull null],
         @"amount": [transactionAmount amount] ? [[transactionAmount amount] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
-        @"fiatAmount": [transactionAmount fiatAmount] ? [self mapFiatMap:[transactionAmount fiatAmount]] : [NSNull null],
+        @"fiatAmount": [transactionAmount fiatAmount] ? [transactionAmount fiatAmount] : [NSNull null],
         @"address": [transactionAmount address] ? [transactionAmount address] : [NSNull null],
         @"isChange": @([transactionAmount isChange]),
         @"accountNumber": [transactionAmount accountNumber] ? [transactionAmount accountNumber] : [NSNull null],
@@ -845,7 +834,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"toAccountId": [internalTransaction toAccountId] ? [internalTransaction toAccountId] : [NSNull null],
         @"toAddress": [internalTransaction toAddress] ? [internalTransaction toAddress] : [NSNull null],
         @"amount": [[internalTransaction amount] descriptionWithLocale:[self decimalLocale]],
-        @"fiatAmount": [internalTransaction fiatAmount] ? [self mapFiatMap:[internalTransaction fiatAmount]] : [NSNull null]
+        @"fiatAmount": [internalTransaction fiatAmount] ? [internalTransaction fiatAmount] : [NSNull null]
     };
 }
 
@@ -860,8 +849,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         cryptoProperties[@"data"] = transaction.cryptoProperties.data ? transaction.cryptoProperties.data : [NSNull null];
         cryptoProperties[@"gasPrice"] = transaction.cryptoProperties.gasPrice ? [transaction.cryptoProperties.gasPrice descriptionWithLocale:[self decimalLocale]] : [NSNull null];
         cryptoProperties[@"gasLimit"] = transaction.cryptoProperties.gasLimit ? [transaction.cryptoProperties.gasLimit descriptionWithLocale:[self decimalLocale]] : [NSNull null];
-        cryptoProperties[@"fiatAmount"] = transaction.cryptoProperties.fiatAmount ? [self mapFiatMap:transaction.cryptoProperties.fiatAmount] : [NSNull null];
-        cryptoProperties[@"fiatFee"] = transaction.cryptoProperties.fiatFee ? [self mapFiatMap:transaction.cryptoProperties.fiatFee] : [NSNull null];
+        cryptoProperties[@"fiatAmount"] = transaction.cryptoProperties.fiatAmount ? transaction.cryptoProperties.fiatAmount : [NSNull null];
+        cryptoProperties[@"fiatFee"] = transaction.cryptoProperties.fiatFee ? transaction.cryptoProperties.fiatFee : [NSNull null];
     }
 
     NSMutableDictionary *fiatProperties = [[NSMutableDictionary alloc] init];
