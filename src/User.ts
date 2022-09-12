@@ -5,6 +5,10 @@ import {
   AccountFiatProperties,
   AccountDataSnapshot,
   Card,
+  ComposedTransaction,
+  ComposedExchange,
+  Transaction,
+  Exchange,
 } from "zumokit/src/models";
 import {
   AccountJSON,
@@ -16,6 +20,7 @@ import {
   CardType,
   CardStatus,
   CardDetails,
+  CustodyType,
   KbaAnswer,
   AuthenticationConfig,
 } from "zumokit/src/interfaces";
@@ -156,27 +161,32 @@ export class User {
    * @param  currencyCode   currency code, e.g. 'BTC', 'ETH' or 'GBP'
    * @param  network        network type, e.g. 'MAINNET', 'TESTNET' or 'RINKEBY'
    * @param  type           account type, e.g. 'STANDARD', 'COMPATIBILITY' or 'SEGWIT'
+   * @param  custodyType    custody type, e.g. 'CUSTODY' or 'NON-CUSTODY'
    */
-  getAccount(currencyCode: CurrencyCode, network: Network, type: AccountType) {
+  getAccount(
+    currencyCode: CurrencyCode,
+    network: Network,
+    type: AccountType,
+    custodyType: CustodyType
+  ) {
     return this.accounts.find(
       (account) =>
         account.currencyCode === currencyCode &&
         account.network === network &&
-        account.type === type
+        account.type === type &&
+        account.custodyType === custodyType
     );
   }
 
   /**
-   * Check if user is a fiat customer on 'MAINNET' or 'TESTNET' network.
-   * @param  network 'MAINNET' or 'TESTNET'
+   * Check if user is a registered fiat customer.
    */
-  async isFiatCustomer(network: Network): Promise<boolean> {
-    return RNZumoKit.isFiatCustomer(network);
+  async isFiatCustomer(): Promise<boolean> {
+    return RNZumoKit.isFiatCustomer();
   }
 
   /**
-   * Make user fiat customer on specified network by providing user's personal details.
-   * @param  network        'MAINNET' or 'TESTNET'
+   * Make user fiat customer by providing user's personal details.
    * @param  firstName       first name
    * @param  middleName      middle name or null
    * @param  lastName        last name
@@ -186,7 +196,6 @@ export class User {
    * @param  address         home address
    */
   async makeFiatCustomer(
-    network: Network,
     firstName: string,
     middleName: string | null,
     lastName: string,
@@ -196,7 +205,6 @@ export class User {
     address: Address
   ): Promise<void> {
     return RNZumoKit.makeFiatCustomer(
-      network,
       firstName,
       middleName,
       lastName,
@@ -208,12 +216,12 @@ export class User {
   }
 
   /**
-   * Create fiat account on specified network and currency code. User must already be fiat customer on specified network.
-   * @param  network        'MAINNET' or 'TESTNET'
-   * @param  currencyCode  country code in ISO 4217 format, e.g. 'GBP'
+   * Create custody or fiat account for specified currency. When creating a fiat account,
+   * user must already be fiat customer.
+   * @param  currencyCode  country code, e.g. 'GBP', 'BTC', 'ETH'
    */
-  async createFiatAccount(network: Network, currencyCode: CurrencyCode) {
-    const json = await RNZumoKit.createFiatAccount(network, currencyCode);
+  async createAccount(currencyCode: CurrencyCode) {
+    const json = await RNZumoKit.createAccount(currencyCode);
     return new Account(json);
   }
 
@@ -358,5 +366,140 @@ export class User {
       this.accountDataListeners.splice(index, 1);
       index = this.accountDataListeners.indexOf(listener);
     }
+  }
+
+  /**
+   * Compose transaction between custody or fiat accounts in Zumo ecosystem.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#internal-transaction">Send Transactions</a>
+   * guide for usage details.
+   *
+   * @param fromAccountId custody or fiat {@link  Account Account} identifier
+   * @param toAccountId   custody or fiat {@link  Account Account} identifier
+   * @param amount        amount in source account currency
+   * @param sendMax       send maximum possible funds to destination (defaults to false)
+   */
+  async composeTransaction(
+    fromAccountId: string,
+    toAccountId: string,
+    amount: Decimal | null,
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeTransaction(
+      fromAccountId,
+      toAccountId,
+      amount ? amount.toString() : null,
+      sendMax
+    );
+
+    return new ComposedTransaction(json);
+  }
+
+  /**
+   * Compose custody withdraw transaction from custody account.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#custody-withdraw-transaction">Send Transactions</a>
+   * guide for usage details.
+   *
+   * @param fromAccountId custody or fiat {@link  Account Account} identifier
+   * @param destination   destination address or non-custodial account identifier
+   * @param amount        amount in source account currency
+   * @param sendMax       send maximum possible funds to destination (defaults to false)
+   */
+  async composeCustodyWithdrawTransaction(
+    fromAccountId: string,
+    destination: string,
+    amount: Decimal | null,
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeCustodyWithdrawTransaction(
+      fromAccountId,
+      destination,
+      amount ? amount.toString() : null,
+      sendMax
+    );
+
+    return new ComposedTransaction(json);
+  }
+
+  /**
+   * Compose transaction from user fiat account to user's nominated account.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#nominated-transaction">Send Transactions</a>
+   * guide for usage details.
+   *
+   * @param fromAccountId {@link  Account Account} identifier
+   * @param amount          amount in source account currency
+   * @param sendMax        send maximum possible funds to destination (defaults to false)
+   */
+  async composeNominatedTransaction(
+    fromAccountId: string,
+    amount: Decimal | null,
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeNominatedTransaction(
+      fromAccountId,
+      amount ? amount.toString() : null,
+      sendMax
+    );
+
+    return new ComposedTransaction(json);
+  }
+
+  /**
+   * Submit a transaction.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/send-transactions#submit-transaction">Send Transactions</a>
+   * guide for usage details.
+   *
+   * @param composedTransaction Composed transaction retrieved as a result
+   *                            of one of the compose transaction methods
+   * @param metadata            Optional metadata that will be attached to transaction
+   */
+  async submitTransaction(
+    composedTransaction: ComposedTransaction,
+    metadata: any = null
+  ) {
+    const json = await RNZumoKit.submitTransaction(
+      composedTransaction.json,
+      JSON.stringify(metadata)
+    );
+
+    return new Transaction(json);
+  }
+
+  /**
+   * Compose exchange.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/make-exchanges#compose-exchange">Make Exchanges</a>
+   * guide for usage details.
+   *
+   * @param fromAccountId       {@link  Account Account} identifier
+   * @param toAccountId         {@link  Account Account} identifier
+   * @param amount              amount in deposit account currency
+   * @param sendMax             exchange maximum possible funds (defaults to false)
+   */
+  async composeExchange(
+    fromAccountId: string,
+    toAccountId: string,
+    amount: Decimal | null,
+    sendMax = false
+  ) {
+    const json = await RNZumoKit.composeExchange(
+      fromAccountId,
+      toAccountId,
+      amount ? amount.toString() : null,
+      sendMax
+    );
+
+    return new ComposedExchange(json);
+  }
+
+  /**
+   * Submit an exchange.
+   * Refer to <a href="https://developers.zumo.money/docs/guides/make-exchanges#submit-exchange">Make Exchanges</a>
+   * guide for usage details.
+   *
+   * @param composedExchange Composed exchange retrieved as the result
+   *                          of {@link composeExchange} method
+   */
+  async submitExchange(composedExchange: ComposedExchange) {
+    const json = await RNZumoKit.submitExchange(composedExchange.json);
+    return new Exchange(json);
   }
 }
