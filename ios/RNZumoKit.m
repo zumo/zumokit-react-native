@@ -222,10 +222,10 @@ RCT_EXPORT_METHOD(unlockWallet:(NSString *)password resolver:(RCTPromiseResolveB
     }
 }
 
-RCT_EXPORT_METHOD(isFiatCustomer:(NSString *)network resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(isFiatCustomer:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        if ([_user isFiatCustomer:network]){
+        if ([_user isFiatCustomer]){
             resolve(@(YES));
         } else {
             resolve(@(NO));
@@ -235,10 +235,10 @@ RCT_EXPORT_METHOD(isFiatCustomer:(NSString *)network resolver:(RCTPromiseResolve
     }
 }
 
-RCT_EXPORT_METHOD(makeFiatCustomer:(NSString *)network firstName:(NSString *)firstName middleName:(NSString *)middleName lastName:(NSString *)lastName dateOfBirth:(NSString *)dateOfBirth email:(NSString *)email phone:(NSString *)phone addressData:(NSDictionary *)addressData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(makeFiatCustomer:(NSString *)firstName middleName:(NSString *)middleName lastName:(NSString *)lastName dateOfBirth:(NSString *)dateOfBirth email:(NSString *)email phone:(NSString *)phone addressData:(NSDictionary *)addressData resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_user makeFiatCustomer:network firstName:firstName middleName:middleName lastName:lastName dateOfBirth:dateOfBirth email:email phone:phone address:[self unboxAddress:addressData] completion:^(NSError * _Nullable error) {
+        [_user makeFiatCustomer:firstName middleName:middleName lastName:lastName dateOfBirth:dateOfBirth email:email phone:phone address:[self unboxAddress:addressData] completion:^(NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -252,10 +252,10 @@ RCT_EXPORT_METHOD(makeFiatCustomer:(NSString *)network firstName:(NSString *)fir
     }
 }
 
-RCT_EXPORT_METHOD(createFiatAccount:(NSString *)network currencyCode:(NSString *)currencyCode resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(createAccount:(NSString *)currencyCode resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_user createFiatAccount:network currencyCode:currencyCode completion:^(ZKAccount * _Nullable account, NSError * _Nullable error) {
+        [_user createAccount:currencyCode completion:^(ZKAccount * _Nullable account, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -419,7 +419,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData meta
 
         ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type signedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee nonce:nonce];
 
-        [_wallet submitTransaction:composedTransaction metadata:metadata completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_user submitTransaction:composedTransaction metadata:metadata completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -451,7 +451,7 @@ RCT_EXPORT_METHOD(composeEthTransaction:(NSString *)accountId gasPrice:(NSString
    }
 }
 
-RCT_EXPORT_METHOD(composeTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId destination:(NSString *)destination amount:(NSString *)amount feeRate:(NSString *)feeRate sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(composeBtcTransaction:(NSString *)accountId changeAccountId:(NSString *)changeAccountId destination:(NSString *)destination amount:(NSString *)amount feeRate:(NSString *)feeRate sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
         [_wallet composeTransaction:accountId changeAccountId:changeAccountId destination:destination amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL feeRate:[NSDecimalNumber decimalNumberWithString:feeRate locale:[self decimalLocale]] sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
@@ -468,10 +468,10 @@ RCT_EXPORT_METHOD(composeTransaction:(NSString *)accountId changeAccountId:(NSSt
     }
 }
 
-RCT_EXPORT_METHOD(composeInternalFiatTransaction:(NSString *)fromAccountId toAccountId:(NSString *)toAccountId amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(composeTransaction:(NSString *)fromAccountId toAccountId:(NSString *)toAccountId amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_wallet composeInternalFiatTransaction:fromAccountId toAccountId:toAccountId amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_user composeTransaction:fromAccountId toAccountId:toAccountId amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -485,10 +485,27 @@ RCT_EXPORT_METHOD(composeInternalFiatTransaction:(NSString *)fromAccountId toAcc
    }
 }
 
-RCT_EXPORT_METHOD(composeTransactionToNominatedAccount:(NSString *)fromAccountId amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(composeCustodyWithdrawTransaction:(NSString *)fromAccountId destination:(NSString *)destination amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_wallet composeTransactionToNominatedAccount:fromAccountId amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_user composeCustodyWithdrawTransaction:fromAccountId destination:destination amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
+
+            if(error != nil) {
+                [self rejectPromiseWithNSError:reject error:error];
+                return;
+            }
+
+            resolve([self mapComposedTransaction:transaction]);
+        }];
+    } @catch (NSException *exception) {
+       [self rejectPromiseWithMessage:reject errorMessage:exception.description];
+   }
+}
+
+RCT_EXPORT_METHOD(composeNominatedTransaction:(NSString *)fromAccountId amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+{
+    @try {
+        [_user composeNominatedTransaction:fromAccountId amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -506,7 +523,7 @@ RCT_EXPORT_METHOD(composeTransactionToNominatedAccount:(NSString *)fromAccountId
 RCT_EXPORT_METHOD(composeExchange:(NSString *)fromAccountId toAccountId:(NSString *)toAccountId amount:(NSString *)amount sendMax:(BOOL)sendMax resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
-        [_wallet composeExchange:fromAccountId toAccountId:toAccountId  amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
+        [_user composeExchange:fromAccountId toAccountId:toAccountId  amount:amount ? [NSDecimalNumber decimalNumberWithString:amount locale:[self decimalLocale]] : NULL sendMax:sendMax completion:^(ZKComposedExchange * _Nullable exchange, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -539,7 +556,7 @@ RCT_EXPORT_METHOD(submitExchange:(NSDictionary *)composedExchangeData resolver:(
 
         ZKComposedExchange * composedExchange = [[ZKComposedExchange alloc] initWithSignedTransaction:signedTransaction fromAccount:fromAccount toAccount:toAccount quote:quote exchangeSetting:exchangeSetting exchangeAddress:exchangeAddress amount:amount returnAmount:returnAmount outgoingTransactionFee:outgoingTransactionFee exchangeFee:exchangeFee returnTransactionFee:returnTransactionFee nonce:nonce];
 
-       [_wallet submitExchange:composedExchange completion:^(ZKExchange * _Nullable exchange, NSError * _Nullable error) {
+       [_user submitExchange:composedExchange completion:^(ZKExchange * _Nullable exchange, NSError * _Nullable error) {
 
            if(error != nil) {
                [self rejectPromiseWithNSError:reject error:error];
@@ -595,24 +612,6 @@ RCT_EXPORT_METHOD(getAccounts:(RCTPromiseResolveBlock)resolve rejector:(RCTPromi
         NSArray<ZKAccount *> *accounts = [_user getAccounts];
 
         resolve([self mapAccounts:accounts]);
-    } @catch (NSException *exception) {
-        [self rejectPromiseWithMessage:reject errorMessage:exception.description];
-    }
-}
-
-RCT_EXPORT_METHOD(getAccount:(NSString *)symbol network:(NSString *)network type:(NSString *)type resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
-{
-    @try {
-        ZKAccount * account = [_user getAccount:symbol network:network type:type];
-
-        if(account) {
-            resolve([self mapAccount:account]);
-        } else {
-            [self rejectPromiseWith:reject
-                          errorType:ZKZumoKitErrorTypeINVALIDREQUESTERROR
-                          errorCode:ZKZumoKitErrorCodeACCOUNTNOTFOUND
-                       errorMessage:@"Account not found."];
-        }
     } @catch (NSException *exception) {
         [self rejectPromiseWithMessage:reject errorMessage:exception.description];
     }
@@ -732,7 +731,11 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"currencyCode": [account currencyCode],
         @"network": [account network],
         @"type": [account type],
+        @"custodyType": [account custodyType],
         @"balance": [[account balance] descriptionWithLocale:[self decimalLocale]],
+        @"ledgerBalance": [[account ledgerBalance] descriptionWithLocale:[self decimalLocale]],
+        @"availableBalance": [[account availableBalance] descriptionWithLocale:[self decimalLocale]],
+        @"overdraftLimit": [[account overdraftLimit] descriptionWithLocale:[self decimalLocale]],
         @"hasNominatedAccount": @([account hasNominatedAccount]),
         @"cryptoProperties": [account cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [account fiatProperties] ? [self mapAccountFiatProperties:account.fiatProperties] : [NSNull null],
@@ -1176,10 +1179,14 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSString *accountCurrencyCode = accountData[@"currencyCode"];
     NSString *accountNetwork = accountData[@"network"];
     NSString *accountType = accountData[@"type"];
+    NSString *accountCustodyType = accountData[@"custodyType"];
     NSString *accountBalance = accountData[@"balance"];
+    NSString *accountLedgerBalance = accountData[@"ledgerBalance"];
+    NSString *accountAvailableBalance = accountData[@"availableBalance"];
+    NSString *accountOverdraftLimit = accountData[@"overdraftLimit"];
     BOOL accountHasNominatedAccount = accountData[@"hasNominatedAccount"];
 
-    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType balance:[NSDecimalNumber decimalNumberWithString:accountBalance locale:[self decimalLocale]] hasNominatedAccount:accountHasNominatedAccount cryptoProperties:cryptoProperties fiatProperties:fiatProperties cards:cards];
+    return [[ZKAccount alloc] initWithId:accountId currencyType:accountCurrencyType currencyCode:accountCurrencyCode network:accountNetwork type:accountType custodyType:accountCustodyType balance:[NSDecimalNumber decimalNumberWithString:accountBalance locale:[self decimalLocale]] ledgerBalance:[NSDecimalNumber decimalNumberWithString:accountLedgerBalance locale:[self decimalLocale]] availableBalance:[NSDecimalNumber decimalNumberWithString:accountAvailableBalance locale:[self decimalLocale]] overdraftLimit:[NSDecimalNumber decimalNumberWithString:accountOverdraftLimit locale:[self decimalLocale]] hasNominatedAccount:accountHasNominatedAccount cryptoProperties:cryptoProperties fiatProperties:fiatProperties cards:cards];
 }
 
 - (ZKQuote *)unboxQuote:(NSDictionary *)quote

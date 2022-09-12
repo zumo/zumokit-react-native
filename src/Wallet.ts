@@ -78,7 +78,7 @@ export class Wallet {
     feeRate: Decimal,
     sendMax = false
   ) {
-    const json = await RNZumoKit.composeTransaction(
+    const json = await RNZumoKit.composeBtcTransaction(
       fromAccountId,
       changeAccountId,
       destinationAddress,
