@@ -272,18 +272,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void isFiatCustomer(String network, Promise promise) {
+    public void isFiatCustomer(Promise promise) {
         if (this.user == null) {
             rejectPromise(promise, "User not found.");
             return;
         }
 
-        promise.resolve(this.user.isFiatCustomer(network));
+        promise.resolve(this.user.isFiatCustomer());
     }
 
     @ReactMethod
     public void makeFiatCustomer(
-            String network,
             String firstName,
             String middleName,
             String lastName,
@@ -299,7 +298,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         this.user.makeFiatCustomer(
-                network,
                 firstName,
                 middleName,
                 lastName,
@@ -321,13 +319,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void createFiatAccount(String network, String currencyCode, Promise promise) {
+    public void createAccount(String currencyCode, Promise promise) {
         if (this.user == null) {
             rejectPromise(promise, "User not found.");
             return;
         }
 
-        this.user.createFiatAccount(network, currencyCode, new AccountCallback() {
+        this.user.createAccount(currencyCode, new AccountCallback() {
             @Override
             public void onError(Exception e) {
                 rejectPromise(promise, e);
@@ -531,24 +529,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // - Account Management
 
     @ReactMethod
-    public void getAccount(String symbol, String network, String type, Promise promise) {
-        if (this.user == null) {
-            rejectPromise(promise, "User not found.");
-            return;
-        }
-
-        Account account = this.user.getAccount(symbol, network, type);
-
-        if (account == null) {
-            rejectPromise(promise, "Account not found.");
-            return;
-        }
-
-        WritableMap response = RNZumoKitModule.mapAccount(account);
-        promise.resolve(response);
-    }
-
-    @ReactMethod
     public void getAccounts(Promise promise) {
         if (this.user == null) {
             rejectPromise(promise, "User not found.");
@@ -566,8 +546,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void submitTransaction(ReadableMap composedTransactionMap, String metadata, Promise promise) {
-        if (this.wallet == null) {
-            rejectPromise(promise, "Wallet not found.");
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
             return;
         }
 
@@ -592,7 +572,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                         nonce
                 );
 
-        this.wallet.submitTransaction(composedTransaction, metadata, new SubmitTransactionCallback() {
+        this.user.submitTransaction(composedTransaction, metadata, new SubmitTransactionCallback() {
 
             @Override
             public void onError(Exception error) {
@@ -653,7 +633,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void composeTransaction(
+    public void composeBtcTransaction(
             String accountId,
             String changeAccountId,
             String destination,
@@ -689,19 +669,19 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void composeInternalFiatTransaction(
+    public void composeTransaction(
             String fromAccountId,
             String toAccountId,
             String amount,
             Boolean sendMax,
             Promise promise
     ) {
-        if (this.wallet == null) {
-            rejectPromise(promise, "Wallet not found.");
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
             return;
         }
 
-        this.wallet.composeInternalFiatTransaction(
+        this.user.composeTransaction(
                 fromAccountId,
                 toAccountId,
                 (amount == null) ? null : new BigDecimal(amount),
@@ -721,18 +701,50 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void composeTransactionToNominatedAccount(
+    public void composeCustodyWithdrawTransaction(
+            String fromAccountId,
+            String destination,
+            String amount,
+            Boolean sendMax,
+            Promise promise
+    ) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.composeCustodyWithdrawTransaction(
+                fromAccountId,
+                destination,
+                (amount == null) ? null : new BigDecimal(amount),
+                sendMax,
+                new ComposeTransactionCallback() {
+                    @Override
+                    public void onError(Exception error) {
+                        rejectPromise(promise, error);
+                    }
+
+                    @Override
+                    public void onSuccess(ComposedTransaction transaction) {
+                        WritableMap map = RNZumoKitModule.mapComposedTransaction(transaction);
+                        promise.resolve(map);
+                    }
+                });
+    }
+
+    @ReactMethod
+    public void composeNominatedTransaction(
             String fromAccountId,
             String amount,
             Boolean sendMax,
             Promise promise
     ) {
-        if (this.wallet == null) {
-            rejectPromise(promise, "Wallet not found.");
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
             return;
         }
 
-        this.wallet.composeTransactionToNominatedAccount(
+        this.user.composeNominatedTransaction(
                 fromAccountId,
                 (amount == null) ? null : new BigDecimal(amount),
                 sendMax,
@@ -758,12 +770,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             Boolean sendMax,
             Promise promise
     ) {
-        if (this.wallet == null) {
-            rejectPromise(promise, "Wallet not found.");
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
             return;
         }
 
-        this.wallet.composeExchange(
+        this.user.composeExchange(
                 fromAccountId,
                 toAccountId,
                 (amount == null) ? null : new BigDecimal(amount),
@@ -784,8 +796,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void submitExchange(ReadableMap composedExchangeMap, Promise promise) {
-        if (this.wallet == null) {
-            rejectPromise(promise, "Wallet not found.");
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
             return;
         }
 
@@ -821,7 +833,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 nonce
         );
 
-        this.wallet.submitExchange(composedExchange, new SubmitExchangeCallback() {
+        this.user.submitExchange(composedExchange, new SubmitExchangeCallback() {
             @Override
             public void onError(Exception error) {
                 rejectPromise(promise, error);
@@ -1052,7 +1064,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("currencyCode", account.getCurrencyCode());
         map.putString("network", account.getNetwork());
         map.putString("type", account.getType());
+        map.putString("custodyType", account.getCustodyType());
         map.putString("balance", account.getBalance().toPlainString());
+        map.putString("ledgerBalance", account.getLedgerBalance().toPlainString());
+        map.putString("availableBalance", account.getAvailableBalance().toPlainString());
+        map.putString("overdraftLimit", account.getOverdraftLimit().toPlainString());
         map.putBoolean("hasNominatedAccount", account.getHasNominatedAccount());
 
         if (account.getCryptoProperties() == null) {
@@ -1851,7 +1867,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String currencyCode = map.getString("currencyCode");
         String network = map.getString("network");
         String type = map.getString("type");
+        String custodyType = map.getString("custodyType");
         BigDecimal balance = new BigDecimal(map.getString("balance"));
+        BigDecimal ledgerBalance = new BigDecimal(map.getString("ledgerBalance"));
+        BigDecimal availableBalance = new BigDecimal(map.getString("availableBalance"));
+        BigDecimal overdraftLimit = new BigDecimal(map.getString("overdraftLimit"));
         Boolean hasNominatedAccount = map.getBoolean("hasNominatedAccount");
 
         ReadableArray cardsArray =  map.getArray("cards");
@@ -1866,7 +1886,11 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 currencyCode,
                 network,
                 type,
+                custodyType,
                 balance,
+                ledgerBalance,
+                availableBalance,
+                overdraftLimit,
                 hasNominatedAccount,
                 cryptoProperties,
                 fiatProperties,
