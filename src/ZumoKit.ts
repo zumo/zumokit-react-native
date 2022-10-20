@@ -1,25 +1,22 @@
-import { NativeModules, NativeEventEmitter } from 'react-native';
+import { NativeModules, NativeEventEmitter } from "react-native";
 import {
   ExchangeRate,
   ExchangeRates,
-  ExchangeSetting,
-  ExchangeSettings,
   TransactionFeeRate,
   TransactionFeeRates,
   HistoricalExchangeRates,
-} from 'zumokit/src/models';
+} from "zumokit/src/models";
 import {
   LogLevel,
   CurrencyCode,
   TokenSet,
   HistoricalExchangeRatesJSON,
   ExchangeRateJSON,
-  ExchangeSettingJSON,
   TransactionFeeRateJSON,
-} from 'zumokit/src/interfaces';
-import { Utils } from './Utils';
-import { User } from './User';
-import { tryCatchProxy } from './utility/errorProxy';
+} from "zumokit/src/interfaces";
+import { Utils } from "./Utils";
+import { User } from "./User";
+import { tryCatchProxy } from "./utility/errorProxy";
 
 const {
   /** @internal */
@@ -48,9 +45,6 @@ class ZumoKit {
 
   /** Mapping between currency pairs and available exchange rates. */
   exchangeRates: ExchangeRates = {};
-
-  /** Mapping between currency pairs and available exchange settings. */
-  exchangeSettings: ExchangeSettings = {};
 
   /** Mapping between cryptocurrencies and available transaction fee rates. */
   transactionFeeRates: TransactionFeeRates = {};
@@ -81,7 +75,7 @@ class ZumoKit {
     }) => void,
     logLevel: LogLevel
   ) {
-    this.emitter.addListener('OnLog', (message: string) => {
+    this.emitter.addListener("OnLog", (message: string) => {
       listener(JSON.parse(message));
     });
 
@@ -96,20 +90,29 @@ class ZumoKit {
    * @param transactionServiceUrl  ZumoKit Transaction Service URL
    * @param cardServiceUrl         ZumoKit Card Service URL
    * @param notificationServiceUrl ZumoKit Notification Service URL
+   * @param exchangeServiceUrl     ZumoKit Exchange Service URL
    */
   init(
     apiKey: string,
     apiUrl: string,
     txServiceUrl: string,
     cardServiceUrl: string,
-    notificationServiceUrl: string
+    notificationServiceUrl: string,
+    exchangeServiceUrl: string
   ) {
-    this.emitter.addListener('AuxDataChanged', async () => {
+    this.emitter.addListener("AuxDataChanged", async () => {
       await this.updateAuxData();
       this.changeListeners.forEach((listener) => listener());
     });
 
-    RNZumoKit.init(apiKey, apiUrl, txServiceUrl, cardServiceUrl, notificationServiceUrl);
+    RNZumoKit.init(
+      apiKey,
+      apiUrl,
+      txServiceUrl,
+      cardServiceUrl,
+      notificationServiceUrl,
+      exchangeServiceUrl
+    );
   }
 
   /**
@@ -139,23 +142,12 @@ class ZumoKit {
    *
    * @return exchange rate or null
    */
-  getExchangeRate(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeRate | null {
+  getExchangeRate(
+    fromCurrency: CurrencyCode,
+    toCurrency: CurrencyCode
+  ): ExchangeRate | null {
     return Object.keys(this.exchangeRates).includes(fromCurrency)
       ? this.exchangeRates[fromCurrency]![toCurrency]!
-      : null;
-  }
-
-  /**
-   * Get exchange setting for selected currency pair.
-   *
-   * @param fromCurrency   currency code
-   * @param toCurrency     currency code
-   *
-   * @return exchange setting or null
-   */
-  getExchangeSetting(fromCurrency: CurrencyCode, toCurrency: CurrencyCode): ExchangeSetting | null {
-    return Object.keys(this.exchangeSettings).includes(fromCurrency)
-      ? this.exchangeSettings[fromCurrency]![toCurrency]!
       : null;
   }
 
@@ -209,17 +201,12 @@ class ZumoKit {
       string,
       Record<string, ExchangeRateJSON>
     >;
-    const exchangeSettingsJSON = (await RNZumoKit.getExchangeSettings()) as Record<
-      string,
-      Record<string, ExchangeSettingJSON>
-    >;
     const transactionFeeRatesJSON = (await RNZumoKit.getTransactionFeeRates()) as Record<
       string,
       TransactionFeeRateJSON
     >;
 
     this.exchangeRates = ExchangeRates(exchangeRatesJSON);
-    this.exchangeSettings = ExchangeSettings(exchangeSettingsJSON);
     this.transactionFeeRates = TransactionFeeRates(transactionFeeRatesJSON);
   }
 }
