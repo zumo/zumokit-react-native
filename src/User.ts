@@ -470,7 +470,10 @@ export class User {
    * Fetch trading pairs that are currently supported.
    */
   async fetchTradingPairs() {
-    const tradingPairsJSON = (await RNZumoKit.fetchTradingPairs()) as TradingPairJSON[];
+    const tradingPairsJSON = JSON.parse(
+      await RNZumoKit.fetchTradingPairs()
+    ) as TradingPairJSON[];
+
     return tradingPairsJSON.map((json) => new TradingPair(json));
   }
 

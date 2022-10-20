@@ -29,7 +29,6 @@ import money.zumo.zumokit.ChangeListener;
 import money.zumo.zumokit.ComposeExchangeCallback;
 import money.zumo.zumokit.ComposedExchange;
 import money.zumo.zumokit.Exchange;
-import money.zumo.zumokit.ExchangeSetting;
 import money.zumo.zumokit.AccountCryptoProperties;
 import money.zumo.zumokit.AccountFiatProperties;
 import money.zumo.zumokit.HistoricalExchangeRatesCallback;
@@ -56,6 +55,7 @@ import money.zumo.zumokit.AccountCallback;
 import money.zumo.zumokit.TransactionFeeRate;
 import money.zumo.zumokit.ExchangeRate;
 import money.zumo.zumokit.Quote;
+import money.zumo.zumokit.StringifiedJsonCallback;
 import money.zumo.zumokit.exceptions.ZumoKitException;
 
 import java.math.BigDecimal;
@@ -138,7 +138,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String apiUrl, 
         String transactionServiceUrl, 
         String cardServiceUrl,
-        String notificationServiceUrl) {
+        String notificationServiceUrl,
+        String exchangeServiceUrl) {
         this.user = null;
         this.wallet = null;
         this.zumokit = new ZumoKit(
@@ -146,7 +147,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             apiUrl, 
             transactionServiceUrl, 
             cardServiceUrl,
-            notificationServiceUrl);
+            notificationServiceUrl,
+                exchangeServiceUrl);
 
         RNZumoKitModule module = this;
         this.zumokit.addChangeListener(new ChangeListener() {
@@ -763,6 +765,26 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void fetchTradingPairs(Promise promise) {
+        if (this.user == null) {
+            rejectPromise(promise, "User not found.");
+            return;
+        }
+
+        this.user.fetchTradingPairs(new StringifiedJsonCallback() {
+            @Override
+            public void onError(Exception error) {
+                rejectPromise(promise, error);
+            }
+
+            @Override
+            public void onSuccess(String stringifiedJson) {
+                promise.resolve(stringifiedJson);
+            }
+        });
+    }
+
+    @ReactMethod
     public void composeExchange(
             String fromAccountId,
             String toAccountId,
@@ -801,36 +823,17 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        String signedTransaction = composedExchangeMap.getString("signedTransaction");
         Account fromAccount =
                 RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("fromAccount"));
         Account toAccount =
                 RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("toAccount"));
         Quote quote =
                 RNZumoKitModule.unboxQuote(composedExchangeMap.getMap("quote"));
-        ExchangeSetting exchangeSetting =
-                RNZumoKitModule.unboxExchangeSetting(composedExchangeMap.getMap("exchangeSetting"));
-        String exchangeAddress = composedExchangeMap.getString("exchangeAddress");
-        BigDecimal amount = new BigDecimal(composedExchangeMap.getString("amount"));
-        BigDecimal returnAmount = new BigDecimal(composedExchangeMap.getString("returnAmount"));
-        BigDecimal outgoingTransactionFee = new BigDecimal(composedExchangeMap.getString("outgoingTransactionFee"));
-        BigDecimal exchangeFee = new BigDecimal(composedExchangeMap.getString("exchangeFee"));
-        BigDecimal returnTransactionFee = new BigDecimal(composedExchangeMap.getString("returnTransactionFee"));
-        String nonce = composedExchangeMap.getString("nonce");
 
         ComposedExchange composedExchange = new ComposedExchange(
-                signedTransaction,
                 fromAccount,
                 toAccount,
-                quote,
-                exchangeSetting,
-                exchangeAddress,
-                amount,
-                returnAmount,
-                outgoingTransactionFee,
-                exchangeFee,
-                returnTransactionFee,
-                nonce
+                quote
         );
 
         this.user.submitExchange(composedExchange, new SubmitExchangeCallback() {
@@ -892,16 +895,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         promise.resolve(mapExchangeRates(this.zumokit.getExchangeRates()));
-    }
-
-    @ReactMethod
-    public void getExchangeSettings(Promise promise) {
-        if (this.zumokit == null) {
-            rejectPromise(promise, "ZumoKit not initialized.");
-            return;
-        }
-
-        promise.resolve(mapExchangeSettings(this.zumokit.getExchangeSettings()));
     }
 
     @ReactMethod
@@ -1556,31 +1549,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public static WritableMap mapComposedExchange(ComposedExchange exchange) {
         WritableMap map = Arguments.createMap();
 
-        map.putString("signedTransaction", exchange.getSignedTransaction());
-        map.putMap("fromAccount", RNZumoKitModule.mapAccount(exchange.getFromAccount()));
-        map.putMap("toAccount", RNZumoKitModule.mapAccount(exchange.getToAccount()));
+        map.putMap("debitAccount", RNZumoKitModule.mapAccount(exchange.getDebitAccount()));
+        map.putMap("creditAccount", RNZumoKitModule.mapAccount(exchange.getCreditAccount()));
         map.putMap("quote", RNZumoKitModule.mapQuote(exchange.getQuote()));
-        map.putMap("exchangeSetting", RNZumoKitModule.mapExchangeSetting(
-                exchange.getExchangeSetting()));
-
-        if (exchange.getExchangeAddress() == null) {
-            map.putNull("exchangeAddress");
-        } else {
-            map.putString("exchangeAddress", exchange.getExchangeAddress());
-        }
-
-        map.putString("amount", exchange.getAmount().toPlainString());
-        map.putString("returnAmount", exchange.getReturnAmount().toPlainString());
-        map.putString("outgoingTransactionFee",
-                exchange.getOutgoingTransactionFee().toPlainString());
-        map.putString("exchangeFee", exchange.getExchangeFee().toPlainString());
-        map.putString("returnTransactionFee", exchange.getReturnTransactionFee().toPlainString());
-
-        if (exchange.getNonce() == null) {
-            map.putNull("nonce");
-        } else {
-            map.putString("nonce", exchange.getNonce());
-        }
 
         return map;
     }
@@ -1590,34 +1561,38 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
         map.putString("id", exchange.getId());
         map.putString("status", exchange.getStatus());
-        map.putString("fromCurrency", exchange.getFromCurrency());
-        map.putString("fromAccountId", exchange.getFromAccountId());
-        map.putString("outgoingTransactionId", exchange.getOutgoingTransactionId());
-        map.putString("toCurrency", exchange.getToCurrency());
-        map.putString("toAccountId", exchange.getToAccountId());
-
-        if (exchange.getReturnTransactionId() == null) {
-            map.putNull("returnTransactionId");
-        } else {
-            map.putString("returnTransactionId", exchange.getReturnTransactionId());
-        }
-
+        map.putString("pair", exchange.getPair());
+        map.putString("side", exchange.getSide());
+        map.putString("price", exchange.getPrice().toPlainString());
         map.putString("amount", exchange.getAmount().toPlainString());
+        map.putString("debitAccountId", exchange.getDebitAccountId());
+        map.putString("debitTransactionId", exchange.getDebitTransactionId());
+        map.putString("creditAccountId", exchange.getCreditAccountId());
 
-        if (exchange.getOutgoingTransactionFee() == null) {
-            map.putNull("outgoingTransactionFee");
+        if (exchange.getCreditTransactionId() == null) {
+            map.putNull("creditTransactionId");
         } else {
-            map.putString("outgoingTransactionFee",
-                    exchange.getOutgoingTransactionFee().toPlainString());
+            map.putString("creditTransactionId", exchange.getCreditTransactionId());
         }
 
-        map.putString("returnAmount", exchange.getReturnAmount().toPlainString());
-        map.putString("exchangeFee", exchange.getExchangeFee().toPlainString());
-        map.putString("returnTransactionFee", exchange.getReturnTransactionFee().toPlainString());
         map.putMap("quote", RNZumoKitModule.mapQuote(exchange.getQuote()));
-        map.putMap("exchangeRates", RNZumoKitModule.mapExchangeRates(exchange.getExchangeRates()));
-        map.putMap("exchangeSetting",
-                RNZumoKitModule.mapExchangeSetting(exchange.getExchangeSetting()));
+
+        WritableMap rates = Arguments.createMap();
+        for (HashMap.Entry<String, HashMap<String, BigDecimal>> outerEntry :
+                exchange.getRates().entrySet()) {
+            String fromCurrency = outerEntry.getKey();
+            WritableMap innerMap = Arguments.createMap();
+
+            for (HashMap.Entry<String, BigDecimal> innerEntry :
+                    outerEntry.getValue().entrySet()) {
+                String toCurrency = innerEntry.getKey();
+                String rate = innerEntry.getValue().toPlainString();
+                innerMap.putString(toCurrency, rate);
+            }
+
+            rates.putMap(fromCurrency, innerMap);
+        }
+        map.putMap("rates", rates);
 
         if (exchange.getNonce() == null) {
             map.putNull("nonce");
@@ -1625,13 +1600,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             map.putString("nonce", exchange.getNonce());
         }
 
-        map.putInt("submittedAt", exchange.getSubmittedAt());
-
-        if (exchange.getConfirmedAt() == null) {
-            map.putNull("confirmedAt");
-        } else {
-            map.putInt("confirmedAt", exchange.getConfirmedAt());
-        }
+        map.putString("createdAt", exchange.getCreatedAt());
+        map.putString("updatedAt", exchange.getUpdatedAt());
 
         return map;
     }
@@ -1645,54 +1615,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         return response;
-    }
-
-    public static WritableMap mapExchangeSetting(ExchangeSetting setting) {
-        WritableMap mappedSettings = Arguments.createMap();
-
-        mappedSettings.putString("id", setting.getId());
-        mappedSettings.putString("fromCurrency", setting.getFromCurrency());
-        mappedSettings.putString("toCurrency", setting.getToCurrency());
-        mappedSettings.putString("minExchangeAmount",
-                setting.getMinExchangeAmount().toPlainString());
-        mappedSettings.putString("exchangeFeeRate",
-                setting.getExchangeFeeRate().toPlainString());
-        mappedSettings.putString("outgoingTransactionFeeRate",
-                setting.getOutgoingTransactionFeeRate().toPlainString());
-        mappedSettings.putString("returnTransactionFee",
-                setting.getReturnTransactionFee().toPlainString());
-
-        WritableMap exchangeAddress = Arguments.createMap();
-        for (HashMap.Entry entry : setting.getExchangeAddress().entrySet()) {
-          exchangeAddress.putString(entry.getKey().toString(), (String) entry.getValue());
-        }
-
-        mappedSettings.putMap("exchangeAddress", exchangeAddress);
-
-        return mappedSettings;
-    }
-
-    public static WritableMap mapExchangeSettings(
-            HashMap<String, HashMap<String, ExchangeSetting>> exchangeSettings
-    ) {
-        WritableMap outerMap = Arguments.createMap();
-
-        for (HashMap.Entry<String, HashMap<String, ExchangeSetting>> outerEntry :
-                exchangeSettings.entrySet()) {
-            String fromCurrency = outerEntry.getKey();
-            WritableMap innerMap = Arguments.createMap();
-
-            for (HashMap.Entry<String, ExchangeSetting> innerEntry :
-                    outerEntry.getValue().entrySet()) {
-                String toCurrency = innerEntry.getKey();
-                WritableMap settings = RNZumoKitModule.mapExchangeSetting(innerEntry.getValue());
-                innerMap.putMap(toCurrency, settings);
-            }
-
-            outerMap.putMap(fromCurrency, innerMap);
-        }
-
-        return outerMap;
     }
 
     public static WritableMap mapExchangeRate(ExchangeRate rate) {
@@ -1711,17 +1633,16 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         WritableMap mappedQuote = Arguments.createMap();
 
         mappedQuote.putString("id", quote.getId());
-        mappedQuote.putInt("expireTime", quote.getExpireTime());
-        mappedQuote.putString("fromCurrency", quote.getFromCurrency());
-        mappedQuote.putString("toCurrency", quote.getToCurrency());
-        mappedQuote.putString("depositAmount", quote.getDepositAmount().toPlainString());
-        mappedQuote.putString("value", quote.getValue().toPlainString());
-
-        if (quote.getExpiresIn() == null) {
-            mappedQuote.putNull("expiresIn");
-        } else {
-            mappedQuote.putInt("expiresIn", quote.getExpiresIn());
-        }
+        mappedQuote.putInt("ttl", quote.getTtl());
+        mappedQuote.putString("createdAt", quote.getCreatedAt());
+        mappedQuote.putString("expiresAt", quote.getExpiresAt());
+        mappedQuote.putString("from", quote.getFrom());
+        mappedQuote.putString("to", quote.getTo());
+        mappedQuote.putString("price", quote.getPrice().toPlainString());
+        mappedQuote.putString("feeRate", quote.getFeeRate().toPlainString());
+        mappedQuote.putString("debitAmount", quote.getDebitAmount().toPlainString());
+        mappedQuote.putString("feeAmount", quote.getFeeAmount().toPlainString());
+        mappedQuote.putString("creditAmount", quote.getCreditAmount().toPlainString());
 
         return mappedQuote;
     }
@@ -1900,50 +1821,29 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
     public static Quote unboxQuote(ReadableMap map) {
         String id = map.getString("id");
-        int expireTime = map.getInt("expireTime");
-        String fromCurrency = map.getString("fromCurrency");
-        String toCurrency = map.getString("toCurrency");
-        BigDecimal depositAmount = new BigDecimal(map.getString("depositAmount"));
-        BigDecimal value = new BigDecimal(map.getString("value"));
+        int ttl = map.getInt("ttl");
+        String createdAt = map.getString("fromCurrency");
+        String expiresAt = map.getString("expiresAt");
+        String from = map.getString("from");
+        String to = map.getString("to");
+        BigDecimal price = new BigDecimal(map.getString("price"));
+        BigDecimal feeRate = new BigDecimal(map.getString("feeRate"));
+        BigDecimal debitAmount = new BigDecimal(map.getString("debitAmount"));
+        BigDecimal feeAmount = new BigDecimal(map.getString("feeAmount"));
+        BigDecimal creditAmount = new BigDecimal(map.getString("creditAmount"));
 
-        Integer expiresIn = null;
-        if (!map.isNull("expiresIn")) {
-            expiresIn = map.getInt("expiresIn");
-        }
-
-        return new Quote(id, expireTime, expiresIn, fromCurrency, toCurrency, depositAmount, value);
-    }
-
-    public static ExchangeSetting unboxExchangeSetting(ReadableMap map) {
-        String id = map.getString("id");
-        String fromCurrency = map.getString("fromCurrency");
-        String toCurrency = map.getString("toCurrency");
-        BigDecimal minExchangeAmount = new BigDecimal(map.getString("minExchangeAmount"));
-        BigDecimal exchangeFeeRate = new BigDecimal(map.getString("exchangeFeeRate"));
-        BigDecimal outgoingTransactionFeeRate =
-                new BigDecimal(map.getString("outgoingTransactionFeeRate"));
-        BigDecimal returnTransactionFee = new BigDecimal(map.getString("returnTransactionFee"));
-
-        HashMap<String, String> exchangeAddress = new HashMap<>();
-
-        ReadableMap exchangeAddressMap = map.getMap("exchangeAddress");
-        ReadableMapKeySetIterator iterator = exchangeAddressMap.keySetIterator();
-        while (iterator.hasNextKey()) {
-            String network = iterator.nextKey();
-            String address = exchangeAddressMap.getString(network);
-
-            exchangeAddress.put(network, address);
-        }
-
-        return new ExchangeSetting(
+        return new Quote(
                 id,
-                exchangeAddress,
-                fromCurrency,
-                toCurrency,
-                minExchangeAmount,
-                exchangeFeeRate,
-                outgoingTransactionFeeRate,
-                returnTransactionFee
+                ttl,
+                createdAt,
+                expiresAt,
+                from,
+                to,
+                price,
+                feeRate,
+                debitAmount,
+                feeAmount,
+                creditAmount
         );
     }
 

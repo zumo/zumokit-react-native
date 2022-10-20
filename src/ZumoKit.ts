@@ -31,7 +31,7 @@ class ZumoKit {
   // The emitter that bubbles events from the native side
   private emitter = new NativeEventEmitter(RNZumoKit);
 
-  // Listeners for exchange rates, exchange settings and transaction fee rates changes
+  // Listeners for exchange rates and transaction fee rates changes
   private changeListeners: Array<() => void> = [];
 
   /** ZumoKit SDK semantic version tag if exists, commit hash otherwise. */
