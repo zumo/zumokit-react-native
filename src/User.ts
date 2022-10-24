@@ -9,6 +9,7 @@ import {
   ComposedExchange,
   Transaction,
   Exchange,
+  TradingPair,
 } from "zumokit/src/models";
 import {
   AccountJSON,
@@ -23,6 +24,7 @@ import {
   CustodyType,
   KbaAnswer,
   AuthenticationConfig,
+  TradingPairJSON,
 } from "zumokit/src/interfaces";
 import { Wallet } from "./Wallet";
 import { tryCatchProxy } from "./utility/errorProxy";
@@ -465,24 +467,35 @@ export class User {
   }
 
   /**
+   * Fetch trading pairs that are currently supported.
+   */
+  async fetchTradingPairs() {
+    const tradingPairsJSON = JSON.parse(
+      await RNZumoKit.fetchTradingPairs()
+    ) as TradingPairJSON[];
+
+    return tradingPairsJSON.map((json) => new TradingPair(json));
+  }
+
+  /**
    * Compose exchange.
    * Refer to <a href="https://developers.zumo.money/docs/guides/make-exchanges#compose-exchange">Make Exchanges</a>
    * guide for usage details.
    *
-   * @param fromAccountId       {@link  Account Account} identifier
-   * @param toAccountId         {@link  Account Account} identifier
+   * @param debitAccountId      {@link  Account Account} identifier
+   * @param creditAccountId         {@link  Account Account} identifier
    * @param amount              amount in deposit account currency
    * @param sendMax             exchange maximum possible funds (defaults to false)
    */
   async composeExchange(
-    fromAccountId: string,
-    toAccountId: string,
+    debitAccountId: string,
+    creditAccountId: string,
     amount: Decimal | null,
     sendMax = false
   ) {
     const json = await RNZumoKit.composeExchange(
-      fromAccountId,
-      toAccountId,
+      debitAccountId,
+      creditAccountId,
       amount ? amount.toString() : null,
       sendMax
     );
