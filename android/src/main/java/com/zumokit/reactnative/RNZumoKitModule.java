@@ -1636,7 +1636,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         mappedQuote.putInt("ttl", quote.getTtl());
         mappedQuote.putString("createdAt", quote.getCreatedAt());
         mappedQuote.putString("expiresAt", quote.getExpiresAt());
-        mappedQuote.putString("debitCurrency", quote.getFrom());
+        mappedQuote.putString("debitCurrency", quote.getDebitCurrency());
         mappedQuote.putString("creditCurrency", quote.getCreditCurrency());
         mappedQuote.putString("price", quote.getPrice().toPlainString());
         mappedQuote.putString("feeRate", quote.getFeeRate().toPlainString());
