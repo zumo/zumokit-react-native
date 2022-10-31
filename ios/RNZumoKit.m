@@ -965,8 +965,8 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"ttl": [NSNumber numberWithInt:[quote ttl]],
         @"createdAt": [quote createdAt],
         @"expiresAt": [quote expiresAt],
-        @"from": [quote from],
-        @"to": [quote to],
+        @"debitCurrency": [quote debitCurrency],
+        @"creditCurrency": [quote creditCurrency],
         @"price": [[quote price] descriptionWithLocale:[self decimalLocale]],
         @"feeRate": [[quote feeRate] descriptionWithLocale:[self decimalLocale]],
         @"debitAmount": [[quote debitAmount] descriptionWithLocale:[self decimalLocale]],
@@ -1157,15 +1157,15 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSNumber *ttl = quote[@"ttl"];
     NSString *createdAt = quote[@"createdAt"];
     NSString *expiresAt = quote[@"expiresAt"];
-    NSString *from = quote[@"from"];
-    NSString *to = quote[@"to"];
+    NSString *debitCurrency = quote[@"debitCurrency"];
+    NSString *creditCurrency = quote[@"creditCurrency"];
     NSString *price = quote[@"price"];
     NSString *feeRate = quote[@"feeRate"];
     NSString *debitAmount = quote[@"debitAmount"];
     NSString *feeAmount = quote[@"feeAmount"];
     NSString *creditAmount = quote[@"creditAmount"];
 
-    return [[ZKQuote alloc] initWithId:quoteId ttl:ttl.intValue createdAt:createdAt expiresAt:expiresAt from:from to:to price:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] feeRate:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] debitAmount:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] feeAmount:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] creditAmount:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]]];
+    return [[ZKQuote alloc] initWithId:quoteId ttl:ttl.intValue createdAt:createdAt expiresAt:expiresAt debitCurrency:debitCurrency creditCurrency:creditCurrency price:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] feeRate:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] debitAmount:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] feeAmount:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]] creditAmount:[NSDecimalNumber decimalNumberWithString:price locale:[self decimalLocale]]];
 }
 
 - (ZKAddress *)unboxAddress:(NSDictionary *)data
