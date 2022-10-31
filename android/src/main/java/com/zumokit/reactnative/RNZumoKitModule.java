@@ -1822,7 +1822,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public static Quote unboxQuote(ReadableMap map) {
         String id = map.getString("id");
         int ttl = map.getInt("ttl");
-        String createdAt = map.getString("fromCurrency");
+        String createdAt = map.getString("createdAt");
         String expiresAt = map.getString("expiresAt");
         String debitCurrency = map.getString("debitCurrency");
         String creditCurrency = map.getString("creditCurrency");
