@@ -1636,8 +1636,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         mappedQuote.putInt("ttl", quote.getTtl());
         mappedQuote.putString("createdAt", quote.getCreatedAt());
         mappedQuote.putString("expiresAt", quote.getExpiresAt());
-        mappedQuote.putString("from", quote.getFrom());
-        mappedQuote.putString("to", quote.getTo());
+        mappedQuote.putString("debitCurrency", quote.getDebitCurrency());
+        mappedQuote.putString("creditCurrency", quote.getCreditCurrency());
         mappedQuote.putString("price", quote.getPrice().toPlainString());
         mappedQuote.putString("feeRate", quote.getFeeRate().toPlainString());
         mappedQuote.putString("debitAmount", quote.getDebitAmount().toPlainString());
@@ -1822,10 +1822,10 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     public static Quote unboxQuote(ReadableMap map) {
         String id = map.getString("id");
         int ttl = map.getInt("ttl");
-        String createdAt = map.getString("fromCurrency");
+        String createdAt = map.getString("createdAt");
         String expiresAt = map.getString("expiresAt");
-        String from = map.getString("from");
-        String to = map.getString("to");
+        String debitCurrency = map.getString("debitCurrency");
+        String creditCurrency = map.getString("creditCurrency");
         BigDecimal price = new BigDecimal(map.getString("price"));
         BigDecimal feeRate = new BigDecimal(map.getString("feeRate"));
         BigDecimal debitAmount = new BigDecimal(map.getString("debitAmount"));
@@ -1837,8 +1837,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 ttl,
                 createdAt,
                 expiresAt,
-                from,
-                to,
+                debitCurrency,
+                creditCurrency,
                 price,
                 feeRate,
                 debitAmount,
