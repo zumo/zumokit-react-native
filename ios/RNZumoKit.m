@@ -877,6 +877,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"senders": [self mapTransactionAmounts:[transaction senders]],
         @"recipients": [self mapTransactionAmounts:[transaction recipients]],
         @"internalTransactions": [self mapInternalTransactions:[transaction internalTransactions]],
+        @"custodyOrder": [transaction custodyOrder] ? [transaction custodyOrder] : [NSNull null],
         @"cryptoProperties": [transaction cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
         @"cardProperties": [transaction cardProperties] ? cardProperties : [NSNull null],

@@ -1328,6 +1328,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         WritableArray internalTransactions = RNZumoKitModule.mapInternalTransactions(transaction.getInternalTransactions());
         map.putArray("internalTransactions", internalTransactions);
 
+        if (transaction.getCustodyOrder() == null) {
+            map.putNull("custodyOrder");
+        } else {
+            map.putString("custodyOrder", transaction.getCustodyOrder());
+        }
+
         if (transaction.getAmount() == null) {
             map.putNull("amount");
         } else {
