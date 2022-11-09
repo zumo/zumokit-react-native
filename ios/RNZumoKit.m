@@ -913,7 +913,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
          @"price": [[exchange price] descriptionWithLocale:[self decimalLocale]],
          @"amount": [[exchange amount] descriptionWithLocale:[self decimalLocale]],
          @"debitAccountId": [exchange debitAccountId],
-         @"debitTransactionId": [exchange debitTransactionId],
+         @"debitTransactionId": [exchange debitTransactionId] ? [exchange debitTransactionId] : [NSNull null],
          @"creditAccountId": [exchange creditAccountId],
          @"creditTransactionId": [exchange creditTransactionId] ? [exchange creditTransactionId] : [NSNull null],
          @"quote": [self mapQuote:[exchange quote]],

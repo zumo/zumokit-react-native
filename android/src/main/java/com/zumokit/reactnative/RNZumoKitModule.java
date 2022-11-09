@@ -1572,8 +1572,13 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         map.putString("price", exchange.getPrice().toPlainString());
         map.putString("amount", exchange.getAmount().toPlainString());
         map.putString("debitAccountId", exchange.getDebitAccountId());
-        map.putString("debitTransactionId", exchange.getDebitTransactionId());
         map.putString("creditAccountId", exchange.getCreditAccountId());
+
+        if (exchange.getDebitTransactionId() == null) {
+            map.putNull("debitTransactionId");
+        } else {
+            map.putString("debitTransactionId", exchange.getDebitTransactionId());
+        }
 
         if (exchange.getCreditTransactionId() == null) {
             map.putNull("creditTransactionId");
