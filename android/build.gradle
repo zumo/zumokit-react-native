@@ -40,5 +40,5 @@ dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.java-websocket:Java-WebSocket:1.4.0'
-    implementation 'money.zumo.zumokit:zumokit:4.3.3-alpha.1'
+    implementation 'money.zumo.zumokit:zumokit:4.4.0'
 }
