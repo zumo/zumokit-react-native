@@ -824,9 +824,9 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         Account fromAccount =
-                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("fromAccount"));
+                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("debitAccount"));
         Account toAccount =
-                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("toAccount"));
+                RNZumoKitModule.unboxAccount(composedExchangeMap.getMap("creditAccount"));
         Quote quote =
                 RNZumoKitModule.unboxQuote(composedExchangeMap.getMap("quote"));
 
