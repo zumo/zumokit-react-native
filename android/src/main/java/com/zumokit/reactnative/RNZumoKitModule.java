@@ -28,6 +28,7 @@ import money.zumo.zumokit.CardDetailsCallback;
 import money.zumo.zumokit.ChangeListener;
 import money.zumo.zumokit.ComposeExchangeCallback;
 import money.zumo.zumokit.ComposedExchange;
+import money.zumo.zumokit.CustodyOrder;
 import money.zumo.zumokit.Exchange;
 import money.zumo.zumokit.AccountCryptoProperties;
 import money.zumo.zumokit.AccountFiatProperties;
@@ -139,7 +140,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         String transactionServiceUrl, 
         String cardServiceUrl,
         String notificationServiceUrl,
-        String exchangeServiceUrl) {
+        String exchangeServiceUrl,
+        String custodyServiceUrl) {
         this.user = null;
         this.wallet = null;
         this.zumokit = new ZumoKit(
@@ -148,7 +150,8 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             transactionServiceUrl, 
             cardServiceUrl,
             notificationServiceUrl,
-                exchangeServiceUrl);
+                exchangeServiceUrl,
+                custodyServiceUrl);
 
         RNZumoKitModule module = this;
         this.zumokit.addChangeListener(new ChangeListener() {
@@ -554,24 +557,26 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         }
 
         String type = composedTransactionMap.getString("type");
-        String signedTransaction = composedTransactionMap.getString("signedTransaction");
         Account account = RNZumoKitModule.unboxAccount(composedTransactionMap.getMap("account"));
         String destination = composedTransactionMap.getString("destination");
         BigDecimal amount = new BigDecimal(composedTransactionMap.getString("amount"));
-        String data = composedTransactionMap.getString("data");
         BigDecimal fee = new BigDecimal(composedTransactionMap.getString("fee"));
         String nonce = composedTransactionMap.getString("nonce");
+        String signedTransaction = composedTransactionMap.getString("signedTransaction");
+        String custodyOrderId = composedTransactionMap.getString("custodyOrderId");
+        String data = composedTransactionMap.getString("data");
 
         ComposedTransaction composedTransaction =
                 new ComposedTransaction(
                         type,
-                        signedTransaction,
                         account,
                         destination,
                         amount,
-                        data,
                         fee,
-                        nonce
+                        nonce,
+                        signedTransaction,
+                        custodyOrderId,
+                        data
                 );
 
         this.user.submitTransaction(composedTransaction, metadata, new SubmitTransactionCallback() {
@@ -1100,6 +1105,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
 
         map.putString("type", transaction.getType());
 
+        if (transaction.getCustodyOrderId() == null) {
+            map.putNull("custodyOrderId");
+        } else {
+            map.putString("custodyOrderId", transaction.getCustodyOrderId());
+        }
+
         if (transaction.getSignedTransaction() == null) {
             map.putNull("signedTransaction");
         } else {
@@ -1328,12 +1339,6 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         WritableArray internalTransactions = RNZumoKitModule.mapInternalTransactions(transaction.getInternalTransactions());
         map.putArray("internalTransactions", internalTransactions);
 
-        if (transaction.getCustodyOrder() == null) {
-            map.putNull("custodyOrder");
-        } else {
-            map.putString("custodyOrder", transaction.getCustodyOrder());
-        }
-
         if (transaction.getAmount() == null) {
             map.putNull("amount");
         } else {
@@ -1514,6 +1519,75 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             }
 
             map.putMap("cardProperties", cardProperties);
+        }
+
+        if (transaction.getCustodyOrder() == null) {
+            map.putNull("custodyOrder");
+        } else {
+            WritableMap custodyOrder = Arguments.createMap();
+
+            custodyOrder.putString("id", transaction.getCustodyOrder().getId());
+            custodyOrder.putString("type", transaction.getCustodyOrder().getType());
+            custodyOrder.putString("status", transaction.getCustodyOrder().getStatus());
+
+            if (transaction.getCustodyOrder().getAmount() == null) {
+                custodyOrder.putNull("amount");
+            } else {
+                custodyOrder.putString("amount",
+                        transaction.getCustodyOrder().getAmount().toPlainString());
+            }
+
+            custodyOrder.putBoolean("feeInAmount", transaction.getCustodyOrder().getFeeInAmount());
+
+            if (transaction.getCustodyOrder().getEstimatedFees() == null) {
+                custodyOrder.putNull("estimatedFees");
+            } else {
+                custodyOrder.putString("estimatedFees",
+                        transaction.getCustodyOrder().getEstimatedFees().toPlainString());
+            }
+
+            if (transaction.getCustodyOrder().getFees() == null) {
+                custodyOrder.putNull("fees");
+            } else {
+                custodyOrder.putString("fees",
+                        transaction.getCustodyOrder().getFees().toPlainString());
+            }
+
+            if (transaction.getCustodyOrder().getFromAddresses() == null) {
+                custodyOrder.putNull("fromAddresses");
+            } else {
+                WritableArray fromAddresses = Arguments.createArray();
+
+                for (String address : transaction.getCustodyOrder().getFromAddresses()) {
+                    fromAddresses.pushString(address);
+                }
+
+                custodyOrder.putArray("fromAddresses", fromAddresses);
+            }
+
+            if (transaction.getCustodyOrder().getFromAccountId() == null) {
+                custodyOrder.putNull("fromAccountId");
+            } else {
+                custodyOrder.putString("fromAccountId",
+                        transaction.getCustodyOrder().getFromAccountId());
+            }
+
+            if (transaction.getCustodyOrder().getToAddress() == null) {
+                custodyOrder.putNull("toAddress");
+            } else {
+                custodyOrder.putString("toAddress", transaction.getCustodyOrder().getToAddress());
+            }
+
+            if (transaction.getCustodyOrder().getToAccountId() == null) {
+                custodyOrder.putNull("toAccountId");
+            } else {
+                custodyOrder.putString("toAccountId", transaction.getCustodyOrder().getToAccountId());
+            }
+
+            custodyOrder.putInt("createdAt", transaction.getCustodyOrder().getCreatedAt());
+            custodyOrder.putInt("updatedAt", transaction.getCustodyOrder().getUpdatedAt());
+
+            map.putMap("custodyOrder", custodyOrder);
         }
 
         if (transaction.getExchange() == null) {
