@@ -113,11 +113,11 @@ RCT_EXPORT_METHOD(addLogListener:(NSString *)logLevel)
 
 # pragma mark - Initialization + Authentication
 
-RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl transactionServiceUrl:(NSString *)transactionServiceUrl cardServiceUrl:(NSString *)cardServiceUrl  notificationServiceUrl:(NSString *)notificationServiceUrl exchangeServiceUrl:(NSString *)exchangeServiceUrl)
+RCT_EXPORT_METHOD(init:(NSString *)apiKey apiUrl:(NSString *)apiUrl transactionServiceUrl:(NSString *)transactionServiceUrl cardServiceUrl:(NSString *)cardServiceUrl  notificationServiceUrl:(NSString *)notificationServiceUrl exchangeServiceUrl:(NSString *)exchangeServiceUrl custodyServiceUrl:(NSString *)custodyServiceUrl)
 {
     _user = nil;
     _wallet = nil;
-    _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl transactionServiceUrl:transactionServiceUrl cardServiceUrl:cardServiceUrl notificationServiceUrl:notificationServiceUrl exchangeServiceUrl:exchangeServiceUrl];
+    _zumoKit = [[ZumoKit alloc] initWithApiKey:apiKey apiUrl:apiUrl transactionServiceUrl:transactionServiceUrl cardServiceUrl:cardServiceUrl notificationServiceUrl:notificationServiceUrl exchangeServiceUrl:exchangeServiceUrl custodyServiceUrl:custodyServiceUrl];
     [_zumoKit addChangeListener:self];
 }
 
@@ -425,15 +425,16 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData meta
 {
     @try {
         NSString * type = composedTransactionData[@"type"];
-        NSString * signedTransaction = (composedTransactionData[@"signedTransaction"] == [NSNull null]) ? NULL : composedTransactionData[@"signedTransaction"];
         ZKAccount *account = [self unboxAccount:composedTransactionData[@"account"]];
         NSString * destination = (composedTransactionData[@"destination"] == [NSNull null]) ? NULL : composedTransactionData[@"destination"];
         NSDecimalNumber * amount = (composedTransactionData[@"amount"] == [NSNull null]) ? NULL : [NSDecimalNumber decimalNumberWithString:composedTransactionData[@"amount"] locale:[self decimalLocale]];
-        NSString * data = (composedTransactionData[@"data"] == [NSNull null]) ? NULL : composedTransactionData[@"data"];
         NSDecimalNumber * fee = [NSDecimalNumber decimalNumberWithString:composedTransactionData[@"fee"] locale:[self decimalLocale]];
         NSString * nonce = composedTransactionData[@"nonce"];
+        NSString * signedTransaction = (composedTransactionData[@"signedTransaction"] == [NSNull null]) ? NULL : composedTransactionData[@"signedTransaction"];
+        NSString * custodyOrderId = (composedTransactionData[@"custodyOrderId"] == [NSNull null]) ? NULL : composedTransactionData[@"custodyOrderId"];
+        NSString * data = (composedTransactionData[@"data"] == [NSNull null]) ? NULL : composedTransactionData[@"data"];
 
-        ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type signedTransaction:signedTransaction account:account destination:destination amount:amount data:data fee:fee nonce:nonce];
+        ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type account:account destination:destination amount:amount fee:fee nonce:nonce signedTransaction:signedTransaction custodyOrderId:custodyOrderId data:data];
 
         [_user submitTransaction:composedTransaction metadata:metadata completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
@@ -775,6 +776,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     NSMutableDictionary *dict = [@{
         @"type": [composedTransaction type],
         @"signedTransaction": [composedTransaction signedTransaction] ? [composedTransaction signedTransaction] : [NSNull null],
+        @"custodyOrderId": [composedTransaction custodyOrderId] ? [composedTransaction custodyOrderId] : [NSNull null],
         @"account": [self mapAccount:[composedTransaction account]],
         @"destination": [composedTransaction destination] ? [composedTransaction destination] : [NSNull null],
         @"amount": [composedTransaction amount] ? [[composedTransaction amount] descriptionWithLocale:[self decimalLocale]] : [NSNull null],
@@ -863,6 +865,23 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         cardProperties[@"merchantName"] = transaction.cardProperties.merchantName ? transaction.cardProperties.merchantName : [NSNull null];
         cardProperties[@"merchantCountry"] = transaction.cardProperties.merchantCountry ? transaction.cardProperties.merchantCountry : [NSNull null];
     }
+    
+    NSMutableDictionary *custodyOrder = [[NSMutableDictionary alloc] init];
+    if ([transaction custodyOrder]) {
+        custodyOrder[@"id"] = transaction.custodyOrder.id;
+        custodyOrder[@"type"] = transaction.custodyOrder.type;
+        custodyOrder[@"status"] = transaction.custodyOrder.status;
+        custodyOrder[@"amount"] = transaction.custodyOrder.amount ? [transaction.custodyOrder.amount descriptionWithLocale:[self decimalLocale]] : [NSNull null];
+        custodyOrder[@"feeInAmount"] = @(transaction.custodyOrder.feeInAmount);
+        custodyOrder[@"estimatedFees"] = transaction.custodyOrder.estimatedFees ? [transaction.custodyOrder.estimatedFees descriptionWithLocale:[self decimalLocale]] : [NSNull null];
+        custodyOrder[@"fees"] = transaction.custodyOrder.fees ? [transaction.custodyOrder.fees descriptionWithLocale:[self decimalLocale]] : [NSNull null];
+        custodyOrder[@"fromAddresses"] = transaction.custodyOrder.fromAddresses ?  transaction.custodyOrder.fromAddresses : [NSNull null];
+        custodyOrder[@"fromAccountId"] = transaction.custodyOrder.fromAccountId ?  transaction.custodyOrder.fromAccountId : [NSNull null];
+        custodyOrder[@"toAddress"] = transaction.custodyOrder.toAddress ?  transaction.custodyOrder.toAddress : [NSNull null];
+        custodyOrder[@"toAccountId"] = transaction.custodyOrder.toAccountId ?  transaction.custodyOrder.toAccountId : [NSNull null];
+        custodyOrder[@"createdAt"] = @(transaction.custodyOrder.createdAt);
+        custodyOrder[@"updatedAt"] = @(transaction.custodyOrder.updatedAt);
+    }
 
     NSMutableDictionary *dict = [@{
         @"id": [transaction id],
@@ -877,7 +896,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         @"senders": [self mapTransactionAmounts:[transaction senders]],
         @"recipients": [self mapTransactionAmounts:[transaction recipients]],
         @"internalTransactions": [self mapInternalTransactions:[transaction internalTransactions]],
-        @"custodyOrder": [transaction custodyOrder] ? [transaction custodyOrder] : [NSNull null],
+        @"custodyOrder": [transaction custodyOrder] ? custodyOrder : [NSNull null],
         @"cryptoProperties": [transaction cryptoProperties] ? cryptoProperties : [NSNull null],
         @"fiatProperties": [transaction fiatProperties] ? fiatProperties : [NSNull null],
         @"cardProperties": [transaction cardProperties] ? cardProperties : [NSNull null],

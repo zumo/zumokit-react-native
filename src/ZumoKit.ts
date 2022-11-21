@@ -91,6 +91,7 @@ class ZumoKit {
    * @param cardServiceUrl         ZumoKit Card Service URL
    * @param notificationServiceUrl ZumoKit Notification Service URL
    * @param exchangeServiceUrl     ZumoKit Exchange Service URL
+   * @param custodyServiceUrl      ZumoKit Custody Service URL
    */
   init(
     apiKey: string,
@@ -98,7 +99,8 @@ class ZumoKit {
     txServiceUrl: string,
     cardServiceUrl: string,
     notificationServiceUrl: string,
-    exchangeServiceUrl: string
+    exchangeServiceUrl: string,
+    custodyServiceUrl: string
   ) {
     this.emitter.addListener("AuxDataChanged", async () => {
       await this.updateAuxData();
@@ -111,7 +113,8 @@ class ZumoKit {
       txServiceUrl,
       cardServiceUrl,
       notificationServiceUrl,
-      exchangeServiceUrl
+      exchangeServiceUrl,
+      custodyServiceUrl
     );
   }
 
