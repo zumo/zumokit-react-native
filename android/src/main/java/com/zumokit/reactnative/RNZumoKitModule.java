@@ -1572,6 +1572,19 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                         transaction.getCustodyOrder().getFromAccountId());
             }
 
+            if (transaction.getCustodyOrder().getFromUserId() == null) {
+                custodyOrder.putNull("fromUserId");
+            } else {
+                custodyOrder.putString("fromUserId", transaction.getCustodyOrder().getFromUserId());
+            }
+
+            if (transaction.getCustodyOrder().getFromUserIntegratorId() == null) {
+                custodyOrder.putNull("fromUserIntegratorId");
+            } else {
+                custodyOrder.putString("fromUserIntegratorId",
+                        transaction.getCustodyOrder().getFromUserIntegratorId());
+            }
+
             if (transaction.getCustodyOrder().getToAddress() == null) {
                 custodyOrder.putNull("toAddress");
             } else {
@@ -1582,6 +1595,19 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 custodyOrder.putNull("toAccountId");
             } else {
                 custodyOrder.putString("toAccountId", transaction.getCustodyOrder().getToAccountId());
+            }
+
+            if (transaction.getCustodyOrder().getToUserId() == null) {
+                custodyOrder.putNull("toUserId");
+            } else {
+                custodyOrder.putString("toUserId", transaction.getCustodyOrder().getToUserId());
+            }
+
+            if (transaction.getCustodyOrder().getToUserIntegratorId() == null) {
+                custodyOrder.putNull("toUserIntegratorId");
+            } else {
+                custodyOrder.putString("toUserIntegratorId",
+                        transaction.getCustodyOrder().getToUserIntegratorId());
             }
 
             custodyOrder.putInt("createdAt", transaction.getCustodyOrder().getCreatedAt());
