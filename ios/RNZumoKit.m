@@ -877,8 +877,12 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         custodyOrder[@"fees"] = transaction.custodyOrder.fees ? [transaction.custodyOrder.fees descriptionWithLocale:[self decimalLocale]] : [NSNull null];
         custodyOrder[@"fromAddresses"] = transaction.custodyOrder.fromAddresses ?  transaction.custodyOrder.fromAddresses : [NSNull null];
         custodyOrder[@"fromAccountId"] = transaction.custodyOrder.fromAccountId ?  transaction.custodyOrder.fromAccountId : [NSNull null];
+        custodyOrder[@"fromUserId"] = transaction.custodyOrder.fromUserId ?  transaction.custodyOrder.fromUserId : [NSNull null];
+        custodyOrder[@"fromUserIntegratorId"] = transaction.custodyOrder.fromUserIntegratorId ?  transaction.custodyOrder.fromUserIntegratorId : [NSNull null];
         custodyOrder[@"toAddress"] = transaction.custodyOrder.toAddress ?  transaction.custodyOrder.toAddress : [NSNull null];
         custodyOrder[@"toAccountId"] = transaction.custodyOrder.toAccountId ?  transaction.custodyOrder.toAccountId : [NSNull null];
+        custodyOrder[@"toUserId"] = transaction.custodyOrder.toUserId ?  transaction.custodyOrder.toUserId : [NSNull null];
+        custodyOrder[@"toUserIntegratorId"] = transaction.custodyOrder.toUserIntegratorId ?  transaction.custodyOrder.toUserIntegratorId : [NSNull null];
         custodyOrder[@"createdAt"] = @(transaction.custodyOrder.createdAt);
         custodyOrder[@"updatedAt"] = @(transaction.custodyOrder.updatedAt);
     }
