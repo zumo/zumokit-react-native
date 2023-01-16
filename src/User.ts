@@ -452,14 +452,18 @@ export class User {
    *
    * @param composedTransaction Composed transaction retrieved as a result
    *                            of one of the compose transaction methods
+   * @param toAccountId         Debit account id override, only applicable to direct custody deposits.
+   *                            In case no account id is specified senders custody account will be debited.
    * @param metadata            Optional metadata that will be attached to transaction
    */
   async submitTransaction(
     composedTransaction: ComposedTransaction,
+    toAccountId: string | null = null,
     metadata: any = null
   ) {
     const json = await RNZumoKit.submitTransaction(
       composedTransaction.json,
+      toAccountId,
       JSON.stringify(metadata)
     );
 
