@@ -550,7 +550,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
     // - Transactions
 
     @ReactMethod
-    public void submitTransaction(ReadableMap composedTransactionMap, String metadata, Promise promise) {
+    public void submitTransaction(ReadableMap composedTransactionMap, String toAccountId, String metadata, Promise promise) {
         if (this.user == null) {
             rejectPromise(promise, "User not found.");
             return;
@@ -579,7 +579,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                         data
                 );
 
-        this.user.submitTransaction(composedTransaction, metadata, new SubmitTransactionCallback() {
+        this.user.submitTransaction(composedTransaction, toAccountId, metadata, new SubmitTransactionCallback() {
 
             @Override
             public void onError(Exception error) {
@@ -1047,6 +1047,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
         if (account.getCryptoProperties() != null) {
             cryptoProperties.putString("path", account.getCryptoProperties().getPath());
             cryptoProperties.putString("address", account.getCryptoProperties().getAddress());
+
+            if (account.getCryptoProperties().getDirectDepositAddress() == null) {
+                cryptoProperties.putNull("directDepositAddress");
+            } else {
+                cryptoProperties.putString("directDepositAddress", account.getCryptoProperties().getDirectDepositAddress());
+            }
 
             if (account.getCryptoProperties().getNonce() == null) {
                 cryptoProperties.putNull("nonce");
@@ -1870,6 +1876,12 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
             ReadableMap cryptoPropertiesData = map.getMap("cryptoProperties");
 
             String address = cryptoPropertiesData.getString("address");
+
+            String directDepositAddress = null;
+            if (!cryptoPropertiesData.isNull("directDepositAddress")) {
+                directDepositAddress = cryptoPropertiesData.getString("directDepositAddress");
+            }
+
             String path = cryptoPropertiesData.getString("path");
 
             Integer nonce = null;
@@ -1877,7 +1889,7 @@ public class RNZumoKitModule extends ReactContextBaseJavaModule {
                 nonce = cryptoPropertiesData.getInt("nonce");
             }
 
-            cryptoProperties = new AccountCryptoProperties(address, path, nonce);
+            cryptoProperties = new AccountCryptoProperties(address, directDepositAddress, path, nonce);
         }
 
         AccountFiatProperties fiatProperties = null;

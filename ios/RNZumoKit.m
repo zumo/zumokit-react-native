@@ -421,7 +421,7 @@ RCT_EXPORT_METHOD(setAuthentication:(NSString *)cardId knowledgeBase:(NSArray<NS
     }
 }
 
-RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData metadata:(NSString *)metadata resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData toAccountId:(NSString *)toAccountId metadata:(NSString *)metadata resolver:(RCTPromiseResolveBlock)resolve rejector:(RCTPromiseRejectBlock)reject)
 {
     @try {
         NSString * type = composedTransactionData[@"type"];
@@ -436,7 +436,7 @@ RCT_EXPORT_METHOD(submitTransaction:(NSDictionary *)composedTransactionData meta
 
         ZKComposedTransaction * composedTransaction = [[ZKComposedTransaction alloc] initWithType:type account:account destination:destination amount:amount fee:fee nonce:nonce signedTransaction:signedTransaction custodyOrderId:custodyOrderId data:data];
 
-        [_user submitTransaction:composedTransaction metadata:metadata completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
+        [_user submitTransaction:composedTransaction toAccountId:toAccountId metadata:metadata completion:^(ZKTransaction * _Nullable transaction, NSError * _Nullable error) {
 
             if(error != nil) {
                 [self rejectPromiseWithNSError:reject error:error];
@@ -712,6 +712,7 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
     if ([account cryptoProperties]){
         cryptoProperties[@"path"] = account.cryptoProperties.path;
         cryptoProperties[@"address"] = account.cryptoProperties.address;
+        cryptoProperties[@"directDepositAddress"] = account.cryptoProperties.directDepositAddress ? account.cryptoProperties.directDepositAddress : [NSNull null];
         cryptoProperties[@"nonce"] = account.cryptoProperties.nonce ? account.cryptoProperties.nonce : [NSNull null];
     }
     
@@ -1131,10 +1132,11 @@ RCT_EXPORT_METHOD(generateMnemonic:(int)wordLength resolver:(RCTPromiseResolveBl
         NSDictionary *cryptoPropertiesData = accountData[@"cryptoProperties"];
 
         NSString *accountAddress = cryptoPropertiesData[@"address"];
+        NSString *accountDirectDepositAddress = (cryptoPropertiesData[@"directDepositAddress"] == [NSNull null]) ? NULL : cryptoPropertiesData[@"directDepositAddress"];
         NSString *accountPath = cryptoPropertiesData[@"path"];
         NSNumber *accountNonce = (cryptoPropertiesData[@"nonce"] == [NSNull null]) ? NULL : cryptoPropertiesData[@"nonce"];
 
-        cryptoProperties = [[ZKAccountCryptoProperties alloc] initWithAddress:accountAddress path:accountPath nonce:accountNonce];
+        cryptoProperties = [[ZKAccountCryptoProperties alloc] initWithAddress:accountAddress directDepositAddress:accountDirectDepositAddress path:accountPath nonce:accountNonce];
     }
 
     ZKAccountFiatProperties *fiatProperties;
