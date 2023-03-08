@@ -16,7 +16,7 @@ function handler(fun: any) {
       if (e instanceof Error) {
         throw e;
       } else {
-        throw new ZumoKitError(e);
+        throw new ZumoKitError(e as any);
       }
     }
   };
