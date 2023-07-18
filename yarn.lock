@@ -1591,9 +1591,9 @@ which@^2.0.1:
     isexe "^2.0.0"
 
 word-wrap@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
-  integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.4.tgz#cb4b50ec9aca570abd1f52f33cd45b6c61739a9f"
+  integrity sha512-2V81OA4ugVo5pRo46hAoD2ivUJx8jXmWXfUkY4KFNw0hEptvN0QfH3K4nHiwzGeKl5rFKedV48QVoqYavy4YpA==
 
 wordwrap@^1.0.0:
   version "1.0.0"
@@ -1605,7 +1605,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-zumokit@4.8.11:
-  version "4.8.11"
-  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-4.8.11.tgz#82511b53e893864923d4df2101a9ae25c6b983e0"
-  integrity sha512-FNfIUbUEjNXdYMdy8S9QGdENeDZoy4TSuG5FR9BP5BcOpAu4VoIUd68FrWC93SDxHZKfsB2GOuruofTP4SYY6g==
+zumokit@4.9.0:
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/zumokit/-/zumokit-4.9.0.tgz#c08a441eba6f804c284efbad0aac8a2070bbe605"
+  integrity sha512-Aa86GIpTeSKufMErAZn7siyx+p+Pn8YsaVg6nGqfAvd8MTSMQpKLHUSbrdu8F27JZ8+nkDHuF2tKWNDuwji1dQ==
